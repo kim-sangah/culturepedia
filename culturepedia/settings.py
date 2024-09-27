@@ -39,8 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    #thrid
     'rest_framework',
-    'rest_framework_simplejwt',
+    
+    #app
     'accounts',
     'performances',
 ]
@@ -98,6 +101,12 @@ REST_FRAMEWORK = {
     )
 }
 
+AUTHENTICATION_BACKENDS = [
+    'accounts.auth_backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',  # 기본 백엔드
+]
+
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -121,6 +130,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+
+}
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -142,3 +159,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+

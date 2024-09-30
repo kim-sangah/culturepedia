@@ -1,13 +1,12 @@
-# accounts/urls.py
 from django.urls import path
-from .views import UserSignupView,UserSignupDelete,UserLoginView
+from . import views
 
-# 회원가입과 회원탈퇴 API 경로
+#API 경로
 urlpatterns = [
-    path("", UserSignupView.as_view()),  # 회원가입
-    path("delete/", UserSignupDelete.as_view()),  # 회원탈퇴 
-    # path("login/", UserLoginView.as_view()), #로그인
-
-    
-
+    path("", views.UserSignupView.as_view()),  #회원가입
+    path("delete/", views.UserSignupDelete.as_view()),  #회원탈퇴 
+    path("signin/", views.UserLoginView.as_view()),  #로그인
+    path("signout/", views.UserSignoutView.as_view()),  #로그아웃
+    path("modify/", views.UserModifyView.as_view()),  #회원정보수정
+    path("profile/{user.pk}/", views.UserProfileView.as_view()),  #프로필 조회
 ]

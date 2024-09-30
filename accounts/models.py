@@ -10,7 +10,7 @@ class User(AbstractUser):
     ]
     #필수필드: email, password, username  선택필드: gender, birthday
     email = models.EmailField(unique=True)  #email 필드 고유값 설정
-    password = models.CharField(max_length=20)
+    password = models.CharField(max_length=120)
     username = models.CharField(max_length=20)
     gender = models.CharField(max_length=1, choices=gender, null=True, blank=True)
     birthday = models.DateField(null = True, blank =True)

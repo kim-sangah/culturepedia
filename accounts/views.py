@@ -95,10 +95,12 @@ class UserProfileView(APIView):
 
         if serializer.is_valid(raise_exception=True):
             password = request.data.pop('password', None)
-            if password is not None:
+            if password is not None: 
+                serializer.save()
                 user.set_password(password)
                 user.save()
-            serializer.save()
+            else:
+                serializer.save()
             return Response({"message": "회원정보수정이 완료되었습니다."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     

@@ -9,13 +9,13 @@ class User(AbstractUser):
         ('F', '여성'),
     ]
     #필수필드: email, password, username  선택필드: gender, birthday
-    email = models.EmailField(unique=True) #email 필드를 고유값으로 설정
+    email = models.EmailField(unique=True)  #email 필드 고유값 설정
     password = models.CharField(max_length=20)
     username = models.CharField(max_length=20)
     gender = models.CharField(max_length=1, choices=gender, null=True, blank=True)
     birthday = models.DateField(null = True, blank =True)
     
-    USERNAME_FIELD = 'email' #이메일을 사용자 식별자로 설정
+    USERNAME_FIELD = 'email'  #email 유저 식별자 설정
     REQUIRED_FIELDS = [] 
     
     def __str__(self):

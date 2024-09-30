@@ -39,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
     #thrid
     'rest_framework',
-    
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     #app
     'accounts',
     'performances',
@@ -103,7 +103,7 @@ REST_FRAMEWORK = {
 
 AUTHENTICATION_BACKENDS = [
     'accounts.auth_backends.EmailBackend',
-    'django.contrib.auth.backends.ModelBackend',  # 기본 백엔드
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 

@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from culturepedia import settings
 import xml.etree.ElementTree as ET
+from datetime import datetime
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
 
@@ -11,12 +12,22 @@ API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
 class OPENAPIViews(APIView):
 
     def get(self, request, *args, **kwargs):
+        now_date = datetime.now().strftime('%Y%m%d')
+
         url = "https://www.kopis.or.kr/openApi/restful/pblprfr"
+
+        stdate = request.GET.get('stdate', '20160101')
+        eddate = request.GET.get('eddate', now_date)
+        cpage = request.GET.get('cpage', '1')
+        prfplccd = request.GET.get('prfplccd', None)
 
         params = {
             'service': API_KEY,
-            'cpage': '1',
+            'stdate': stdate,
+            'eddate': eddate,
+            'cpage': cpage,
             'rows': '10',
+            'prfplccd': prfplccd,
         }
 
         # 외부 API 호출
@@ -31,15 +42,16 @@ class OPENAPIViews(APIView):
                 product_data = []
                 for item in root.findall('db'):  # XML 구조에 맞게 태그명 조정
                     data = {
+                        '공연ID': item.find('mt20id').text if item.find('mt20id') is not None else None,
                         '공연명': item.find('prfnm').text if item.find('prfnm') is not None else None,
+                        '장르': item.find('genrenm').text if item.find('genrenm') is not None else None,
+                        '공연상태': item.find('prfstate').text if item.find('prfstate') is not None else None,
                         '공연시작일': item.find('prfpdfrom').text if item.find('prfpdfrom') is not None else None,
                         '공연종료일': item.find('prfpdto').text if item.find('prfpdto') is not None else None,
-                        '공연장명': item.find('fcltynm').text if item.find('fcltynm') is not None else None,
                         '포스터': item.find('poster').text if item.find('poster') is not None else None,
-                        '공연지역': item.find('area').text if item.find('area') is not None else None,
-                        '장르': item.find('genrenm').text if item.find('genrenm') is not None else None,
+                        '공연장명': item.find('fcltynm').text if item.find('fcltynm') is not None else None,
                         '오픈런': item.find('openrun').text if item.find('openrun') is not None else None,
-                        '공연상태': item.find('prfstate').text if item.find('prfstate') is not None else None,
+                        '공연지역': item.find('area').text if item.find('area') is not None else None,
                     }
                     product_data.append(data)
             except ET.ParseError:

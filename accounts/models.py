@@ -5,8 +5,8 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     
     gender = [
-        ('M', '남성'),
-        ('F', '여성'),
+        ('M', '남'),
+        ('F', '여'),
     ]
     #필수필드: email, password, username  선택필드: gender, birthday
     email = models.EmailField(unique=True)  #email 필드 고유값 설정

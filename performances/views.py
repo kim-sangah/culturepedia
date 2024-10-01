@@ -77,7 +77,7 @@ class PerformanceDetail(APIView):
     
     
 #찜하기 로그인한 사용자만 가능
-class ArticleLikeView(APIView):
+class PerformanceLikeView(APIView):
     permission_classes = [IsAuthenticated] # 로그인한 사용자만 가능
     
     def post(self,request,pk):
@@ -89,12 +89,12 @@ class ArticleLikeView(APIView):
         if PerformanceLike.objects.filter(user=user, article=article).exists():
             return Response({"message":"이미 찜한 공연입니다."},status=status.HTTP_400_BAD_REQUEST)
         
-        #찜하기 추가
+        #찜하기 추가및 like 증가
         PerformanceLike.objects.create(user=user, article=article)
-        # article.like += 1
-        # article.save()
+        article.like += 1
+        article.save()
 
-        return Response({"message":"찜하기 완료"},status=status.HTTP_201_CREATED)
+        return Response({"message":"찜한 공연목록에 추가 되었습니다 "},status=status.HTTP_201_CREATED)
     
     
     def delete(self, request, pk):
@@ -105,7 +105,7 @@ class ArticleLikeView(APIView):
         like = get_object_or_404(PerformanceLike, user=user, article=article)
         like.delete()
 
-        # if article.like_count > 0:
-        #     article.like_count -= 1
+        # if article.like > 0:
+        #     article.like -= 1
         #     article.save()
-        return Response({"message":"찜하기 취소"}, status=status.HTTP_200_OK)
+        return Response({"message":"찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)

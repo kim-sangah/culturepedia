@@ -103,8 +103,8 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    'accounts.auth_backends.EmailBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    'accounts.auth_backends.EmailBackend', 
+    'django.contrib.auth.backends.ModelBackend', 
 ]
 
 

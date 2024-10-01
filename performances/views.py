@@ -1,7 +1,9 @@
 import requests
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotAuthenticated
@@ -9,7 +11,44 @@ from django.shortcuts import get_object_or_404
 from .models import Article,PerformanceLike
 from .serializers import ArticleSerializer
 from culturepedia import settings
+from .serializers import ArticleSerializer, ReviewSerializer
+from .models import Article, Review
 import xml.etree.ElementTree as ET
+
+
+#공연 리뷰
+class ReviewAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    #공연 리뷰 작성
+    def post(self, request, pk):
+        article = get_object_or_404(Article, pk=pk)
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(article_id=article, author=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_object(self, review_pk):
+        return get_object_or_404(Review, pk=review_pk)
+    #공연 리뷰 수정
+    def put(self, request, review_pk):
+        review = self.get_object(review_pk)
+        if review.author != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = ReviewSerializer(review, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #공연 리뷰 삭제
+    def delete(self, request, review_pk):
+        comment = self.get_object(review_pk)
+        if comment.author != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        comment.delete()
+        return Response({"message": "리뷰가 삭제되었습니다."},status=status.HTTP_204_NO_CONTENT)
+
+
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
 

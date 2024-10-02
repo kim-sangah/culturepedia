@@ -150,7 +150,9 @@ class OPENAPISearchViews(APIView):
     # 전체 조회 및 검색(공연명, 공연시설명, 제작사, 출연진)
     def get(self, request, *args, **kwargs):
 
-        lookup_url = "https://www.kopis.or.kr/openApi/restful/pblprfr/"
+        search = request.GET.get('search', None)
+
+        lookup_url = f"https://www.kopis.or.kr/openApi/restful/pblprfr/{search}"
 
         now_date = datetime.now().strftime('%Y%m%d')
 

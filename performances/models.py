@@ -3,6 +3,15 @@ from django.contrib.auth import get_user_model
 
 
 User = get_user_model()
+
+class Facility(models.Model):
+    name = models.CharField(max_length=100)
+    seatscale = models.IntegerField()
+    relateurl = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    telno = models.CharField(max_length=20)
+
+
 class Performance(models.Model):
     facility_id = models.ForeignKey('Facility',on_delete=models.CASCADE, null=True) #외래키 참조
     title = models.CharField(max_length=100, null=True )

@@ -14,8 +14,8 @@ class Facility(models.Model):
 
 
 class Performance(models.Model):
-    facility_id = models.ForeignKey('Facility',on_delete=models.CASCADE, null=True) #외래키 참조
-    title = models.CharField(max_length=100, null=True )
+    facility_id = models.ForeignKey('Facility', on_delete=models.CASCADE, null=True) #외래키 참조
+    title = models.CharField(max_length=100, null=True)
     
     #공연시작날짜만 들어감
     start_date = models.DateField() 

@@ -289,7 +289,7 @@ class ReviewCreateAPIView(APIView):
         article = get_object_or_404(Article, pk=pk)
         serializer = ReviewSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(article_id=article, author=request.user)
+            serializer.save(article=article, author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

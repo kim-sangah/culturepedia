@@ -1,53 +1,13 @@
 import requests
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import NotAuthenticated
-from django.shortcuts import get_object_or_404
-from .models import Article,PerformanceLike
-from .serializers import ArticleSerializer
-from culturepedia import settings
+from .models import Article, Review, PerformanceLike
 from .serializers import ArticleSerializer, ReviewSerializer
-from .models import Article, Review
+from culturepedia import settings
 import xml.etree.ElementTree as ET
-
-
-#공연 리뷰
-class ReviewAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    #공연 리뷰 작성
-    def post(self, request, pk):
-        article = get_object_or_404(Article, pk=pk)
-        serializer = ReviewSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(article_id=article, author=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def get_object(self, review_pk):
-        return get_object_or_404(Review, pk=review_pk)
-    #공연 리뷰 수정
-    def put(self, request, review_pk):
-        review = self.get_object(review_pk)
-        if review.author != request.user:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        serializer = ReviewSerializer(review, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    #공연 리뷰 삭제
-    def delete(self, request, review_pk):
-        comment = self.get_object(review_pk)
-        if comment.author != request.user:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        comment.delete()
-        return Response({"message": "리뷰가 삭제되었습니다."},status=status.HTTP_204_NO_CONTENT)
-
 
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
@@ -93,58 +53,90 @@ class OPENAPIViews(APIView):
             # API 요청 실패하면 성공이 아닌 실패로
             return Response({'error': f"Failed to retrieve data. Status code: {response.status_code}"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(product_data, status=status.HTTP_200_OK)
-    
-    
-    
+
+
+
 #게시글 목록 조회 및 등록
 class PerformanceDetail(APIView):
     #게시글등록
-    def post(self,request):
+    def post(self, request):
         title = request.data.get("title")
         article = Article.objects.create(title=title)
         serializer = ArticleSerializer(article)
-        
-        # return Response({"message": "게시글 등록완료", "id":article.id},status=status.HTTP_200_OK)
         return Response(serializer.data)
-        
     
     #특정 게시글 조회
-    def get(self,request,pk):
+    def get(self, request, pk):
         article = get_object_or_404(Article, pk=pk)
         serializer = ArticleSerializer(article)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    
-#찜하기 로그인한 사용자만 가능
+
+
+#공연 찜
 class PerformanceLikeView(APIView):
-    permission_classes = [IsAuthenticated] # 로그인한 사용자만 가능
-    
+    permission_classes = [IsAuthenticated]
+
+    #공연 찜하기
     def post(self,request,pk):
         article = get_object_or_404(Article, pk=pk)
         user = request.user
         
         #이미 찜했는지 확인하기
-        
         if PerformanceLike.objects.filter(user=user, article=article).exists():
-            return Response({"message":"이미 찜한 공연입니다."},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "이미 찜한 공연입니다."},status=status.HTTP_400_BAD_REQUEST)
         
-        #찜하기 추가및 like 증가
+        #찜하기 및 카운트 증가
         PerformanceLike.objects.create(user=user, article=article)
         article.like += 1
         article.save()
+        return Response({"message": "찜한 공연목록에 추가 되었습니다 "},status=status.HTTP_201_CREATED)
 
-        return Response({"message":"찜한 공연목록에 추가 되었습니다 "},status=status.HTTP_201_CREATED)
-    
-    
+    #공연 찜 취소
     def delete(self, request, pk):
         article = get_object_or_404(Article, pk=pk)
         user =request.user
         
-        # 찜하기 취소 및 카운트 감소
+        # 찜 취소 및 카운트 감소
         like = get_object_or_404(PerformanceLike, user=user, article=article)
         like.delete()
+        return Response({"message": "찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)
 
-        # if article.like > 0:
-        #     article.like -= 1
-        #     article.save()
-        return Response({"message":"찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)
+
+#공연 리뷰
+class ReviewCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    #공연 리뷰 작성
+    def post(self, request, pk):
+        article = get_object_or_404(Article, pk=pk)
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(article_id=article, author=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReviewAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self, review_pk):
+        return get_object_or_404(Review, pk=review_pk)
+    
+    #공연 리뷰 수정
+    def put(self, request, review_pk):
+        review = self.get_object(review_pk)
+        if review.author != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = ReviewSerializer(review, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    #공연 리뷰 삭제
+    def delete(self, request, review_pk):
+        comment = self.get_object(review_pk)
+        if comment.author != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        comment.delete()
+        return Response({"message": "리뷰가 삭제되었습니다."},status=status.HTTP_204_NO_CONTENT)

@@ -1,6 +1,5 @@
 from .models import User
 from rest_framework import serializers
-from performances.models import Article,PerformanceLike
 from performances.serializers import ArticleSerializer
 
 

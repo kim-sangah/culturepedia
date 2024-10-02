@@ -5,9 +5,9 @@ from .serializers import UserSerializer, UserModifySerializer
 from .validators import validate_user_data
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
@@ -66,7 +66,7 @@ class UserSignoutView(APIView):
         refresh_token = request.data.get('refresh')
 
         if not refresh_token:
-            return Response({"message:비밀번호가 틀렸습니다."},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "비밀번호가 틀렸습니다."},status=status.HTTP_400_BAD_REQUEST)
         token = RefreshToken(refresh_token)
         token.blacklist()
         return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_205_RESET_CONTENT)
@@ -78,13 +78,13 @@ class UserProfileView(APIView):
 
     #프로필 조회
     def get(self, request, pk):
-        print(f"Requested user ID : {pk}")
+        #print(f"Requested user ID : {pk}")
         user = get_object_or_404(User, id=pk)
         if request.user != user:
-            raise PermissionDenied('권한이 없습니다.',status=status.HTTP_400_BAD_REQUEST)
+            raise PermissionDenied(status=status.HTTP_400_BAD_REQUEST)
         
         serializer = UserSerializer(user)
-        print(f"데이터 입력 : {serializer.data}")
+        #print(f"데이터 입력 : {serializer.data}")
         return Response(serializer.data)
     
     #회원정보 수정

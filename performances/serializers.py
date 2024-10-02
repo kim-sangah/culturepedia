@@ -5,7 +5,7 @@ from rest_framework import serializers
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
-        fields = ('__all__',)
+        fields = ('id', 'title', 'like')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -13,5 +13,5 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('article_id', 'rating', 'title', 'content', 'created_at', 'updated_at')
-        read_only_fields = ('article_id',)
+        fields = ('article_id', 'author', 'rating', 'title', 'content', 'created_at', 'updated_at')
+        read_only_fields = ('article_id', 'author')

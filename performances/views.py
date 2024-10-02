@@ -34,7 +34,7 @@ class OPENAPIViews(APIView):
         product_data = []
 
         if search:
-            params['rows'] = 100
+            params['rows'] = 10
 
         # 외부 API 호출
         response = requests.get(base_url, params=params)
@@ -54,10 +54,6 @@ class OPENAPIViews(APIView):
                     mt20id = item.find('mt20id').text if item.find(
                         'mt20id') is not None else None
 
-                    if search:
-                        if not (search in title or search in facility_name or search in prfcrew or search in prfcast):
-                            continue
-
                     detail_url = f"{base_url}/{mt20id}?service={API_KEY}"
                     detail_response = requests.get(detail_url)
 
@@ -67,6 +63,10 @@ class OPENAPIViews(APIView):
                     prfcast_elem = detail_root.find('.//prfcast')
                     prfcrew = prfcrew_elem.text if prfcrew_elem is not None else None
                     prfcast = prfcast_elem.text if prfcast_elem is not None else None
+
+                    if search:
+                        if not (search in title or search in facility_name or search in prfcrew or search in prfcast):
+                            continue
 
                     data = {
                         '공연ID': mt20id,

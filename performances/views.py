@@ -66,6 +66,7 @@ class OPENAPIViews(APIView):
                         '축제': item.find('festival').text if item.find('festival') is not None else None,
                         '뮤지컬라이센스': item.find('musicallicense').text if item.find('musicallicense') is not None else None,
                         '뮤지컬창작': item.find('musicalcreate').text if item.find('musicalcreate') is not None else None,
+                        '공연시간': item.find('dtguidance').text if item.find('dtguidance') is not None else None,
                     }
                     # performance_data의 '소개이미지목록'에 있는 소개이미지들을 list로 저장
                     styurls_element = item.find('styurls')

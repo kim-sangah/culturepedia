@@ -1,15 +1,20 @@
 import requests
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from .models import PerformanceReview,PerformanceLike
+from .serializers import ArticleSerializer
 from culturepedia import settings
 import xml.etree.ElementTree as ET
+
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
 
 
 class OPENAPIViews(APIView):
-
+    
     def get(self, request, *args, **kwargs):
         url = "https://www.kopis.or.kr/openApi/restful/pblprfr"
 
@@ -47,5 +52,57 @@ class OPENAPIViews(APIView):
         else:
             # API 요청 실패하면 성공이 아닌 실패로
             return Response({'error': f"Failed to retrieve data. Status code: {response.status_code}"}, status=status.HTTP_400_BAD_REQUEST)
-
         return Response(product_data, status=status.HTTP_200_OK)
+
+
+
+#게시글 목록 조회 및 등록
+class PerformanceDetail(APIView):
+    #게시글등록
+    def post(self, request):
+        title = request.data.get("title")
+        performance_review = PerformanceReview.objects.create(title=title)
+        serializer = ArticleSerializer(performance_review)
+        return Response(serializer.data)
+    
+    #특정 게시글 조회
+    def get(self, request, pk):
+        performance_review = get_object_or_404(PerformanceReview, pk=pk)
+        serializer = ArticleSerializer(performance_review)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+#공연 찜
+class PerformanceLikeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    #공연 찜하기
+    def post(self,request,pk):
+        like_review = get_object_or_404(PerformanceReview, pk=pk)
+        user = request.user
+        
+        #이미 찜했는지 확인하기
+        if PerformanceLike.objects.filter(user=user, article=like_review).exists():
+            return Response({"message": "이미 찜한 공연입니다."},status=status.HTTP_400_BAD_REQUEST)
+        
+        #찜하기 및 카운트 증가
+        PerformanceLike.objects.create(user=user, article=like_review)
+        like_review.like += 1
+        like_review.save()
+        return Response({"message": "찜한 공연목록에 추가 되었습니다 "},status=status.HTTP_201_CREATED)
+
+    #공연 찜 취소
+    def delete(self, request, pk):
+        like_review = get_object_or_404(PerformanceReview, pk=pk)
+        user =request.user
+        
+        # 찜 취소 및 카운트 감소
+        like = get_object_or_404(PerformanceLike, user=user, article=like_review)
+        like.delete()
+        
+        if like_review.like > 0:
+            like_review.like -=1
+            like_review.save()
+        return Response({"message": "찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)
+
+

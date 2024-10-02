@@ -13,7 +13,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)  #email 필드 고유값 설정
     password = models.CharField(max_length=120)
     username = models.CharField(max_length=20)
-    gender = models.CharField(max_length=10, choices=gender_choicse, default='Other')
+    gender = models.CharField(max_length=10, choices=gender_choicse, null = True, blank =True)
     birthday = models.DateField(null = True, blank =True)
     
     USERNAME_FIELD = 'email'  #email 유저 식별자 설정

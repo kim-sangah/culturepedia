@@ -1,14 +1,15 @@
 from .models import User
 from rest_framework import serializers
-from performances.serializers import ArticleSerializer
+from performances.serializers import ArticleSerializer, ReviewSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
+    reviews = ReviewSerializer(many=True)
     liked_articles = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'gender', 'birthday', 'liked_articles')
+        fields = ('email', 'username', 'gender', 'birthday', 'reviews', 'liked_articles')
 
     def get_liked_articles(self, obj):
         #각 사용자가 찜한 항목을 performancesLike 모델을 통해 가져와서 목록을 알려준다.
@@ -18,7 +19,8 @@ class UserSerializer(serializers.ModelSerializer):
         if articles:
             return ArticleSerializer(articles, many=True).data  # ArticleSerializer로 직렬화
         return 0
-    
+
+
 class UserModifySerializer(serializers.ModelSerializer):
     class Meta:
         model = User

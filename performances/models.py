@@ -11,7 +11,7 @@ class Article(models.Model):
 
 
 class Review(models.Model):
-    article_id = models.ForeignKey(Article, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
     title = models.CharField(max_length=20)

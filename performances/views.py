@@ -14,9 +14,9 @@ class OPENAPIViews(APIView):
     def get(self, request, *args, **kwargs):
         now_date = datetime.now().strftime('%Y%m%d')
 
-        url = "https://www.kopis.or.kr/openApi/restful/pblprfr"
+        base_url = "https://www.kopis.or.kr/openApi/restful/pblprfr"
 
-        stdate = request.GET.get('stdate', '20160101')
+        stdate = request.GET.get('stdate', '20240101')
         eddate = request.GET.get('eddate', now_date)
         cpage = request.GET.get('cpage', '1')
         prfplccd = request.GET.get('prfplccd', None)
@@ -31,8 +31,13 @@ class OPENAPIViews(APIView):
             'prfplccd': prfplccd,
         }
 
+        product_data = []
+
+        if search:
+            params['rows'] = 100
+
         # 외부 API 호출
-        response = requests.get(url, params=params)
+        response = requests.get(base_url, params=params)
 
         if response.status_code == 200:
             try:
@@ -46,13 +51,25 @@ class OPENAPIViews(APIView):
                         'prfnm') is not None else None
                     facility_name = item.find('fcltynm').text if item.find(
                         'fcltynm') is not None else None
+                    mt20id = item.find('mt20id').text if item.find(
+                        'mt20id') is not None else None
 
                     if search:
-                        if not (search in title or search in facility_name):
+                        if not (search in title or search in facility_name or search in prfcrew or search in prfcast):
                             continue
 
+                    detail_url = f"{base_url}/{mt20id}?service={API_KEY}"
+                    detail_response = requests.get(detail_url)
+
+                    detail_root = ET.fromstring(detail_response.content)
+
+                    prfcrew_elem = detail_root.find('.//prfcrew')
+                    prfcast_elem = detail_root.find('.//prfcast')
+                    prfcrew = prfcrew_elem.text if prfcrew_elem is not None else None
+                    prfcast = prfcast_elem.text if prfcast_elem is not None else None
+
                     data = {
-                        '공연ID': item.find('mt20id').text if item.find('mt20id') is not None else None,
+                        '공연ID': mt20id,
                         '공연명': title,
                         '장르': item.find('genrenm').text if item.find('genrenm') is not None else None,
                         '공연상태': item.find('prfstate').text if item.find('prfstate') is not None else None,
@@ -62,8 +79,11 @@ class OPENAPIViews(APIView):
                         '공연장명': facility_name,
                         '오픈런': item.find('openrun').text if item.find('openrun') is not None else None,
                         '공연지역': item.find('area').text if item.find('area') is not None else None,
+                        '제작사': prfcrew,
+                        '출연진': prfcast,
                     }
                     product_data.append(data)
+
             except ET.ParseError:
                 return Response({'error': 'Failed to parse XML data'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:

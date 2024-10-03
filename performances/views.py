@@ -73,6 +73,7 @@ class PerformanceDetail(APIView):
 
 
 #공연 찜
+
 class PerformanceLikeView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -85,10 +86,11 @@ class PerformanceLikeView(APIView):
         if PerformanceLike.objects.filter(user=user, article=like_review).exists():
             return Response({"message": "이미 찜한 공연입니다."},status=status.HTTP_400_BAD_REQUEST)
         
-        #찜하기 및 카운트 증가
+        #찜하기 
         PerformanceLike.objects.create(user=user, article=like_review)
-        like_review.like += 1
-        like_review.save()
+
+        
+        
         return Response({"message": "찜한 공연목록에 추가 되었습니다 "},status=status.HTTP_201_CREATED)
 
     #공연 찜 취소
@@ -96,13 +98,10 @@ class PerformanceLikeView(APIView):
         like_review = get_object_or_404(PerformanceReview, pk=pk)
         user =request.user
         
-        # 찜 취소 및 카운트 감소
+        # 찜 취소 
         like = get_object_or_404(PerformanceLike, user=user, article=like_review)
         like.delete()
-        
-        if like_review.like > 0:
-            like_review.like -=1
-            like_review.save()
+
         return Response({"message": "찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)
 
 

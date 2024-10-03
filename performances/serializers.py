@@ -5,4 +5,4 @@ from rest_framework import serializers
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = PerformanceReview
-        fields = ('id', 'title', 'like')
+        fields = ('id', 'title', 'created_at')

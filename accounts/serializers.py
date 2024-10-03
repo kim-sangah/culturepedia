@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         result = []
         for article in articles:
             performance_data = {
-                "performance_id": article.id,
+                "performance_id": article.id, #id 출력
                 "title": article.title,
                 "date": article.created_at.date()  # 날짜만 출력
             }

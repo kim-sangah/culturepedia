@@ -109,8 +109,7 @@ class UserProfileView(APIView):
             return Response({"message": "회원정보수정이 완료되었습니다."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #회원탈퇴
-class UserDeleteView(APIView):
-    def delete(self,request,pk=None):
+def delete(self, request, pk):
         user = request.user
         password = request.data.get("password")
         
@@ -119,8 +118,6 @@ class UserDeleteView(APIView):
 
         if not user.check_password(password):
             return Response({"message": "비밀번호가 일치하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        user.is_active = False
-        user.save()
 
+        user.delete()
         return Response({"message": "회원탈퇴가 완료되었습니다."}, status=status.HTTP_204_NO_CONTENT)

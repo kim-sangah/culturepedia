@@ -20,13 +20,13 @@ def run_kopis_api():
             [venv_python, script_path], capture_output=True, text=True, encoding='utf-8')
 
         if result.returncode == 0:
-            logger.info(f"Kopis API Success: {result.stdout}")
+            print(f"Kopis API Success: {result.stdout}")
             run_loaddata()
         else:
-            logger.error(f"Kopis API Error: {result.stderr}")
+            print(f"Kopis API Error: {result.stderr}")
 
     except Exception as e:
-        logger.error(f"Error running kopis_api.py: {e}")
+        print(f"Error running kopis_api.py: {e}")
 
 
 def run_loaddata():
@@ -41,11 +41,11 @@ def run_loaddata():
             [venv_python, manage_py_path, 'loaddata', fixture_path],
             capture_output=True, text=True, encoding='utf-8')
         if result.returncode == 0:
-            logger.info(f"Loaddata Success: {result.stdout}")
+            print(f"Loaddata Success: {result.stdout}")
         else:
-            logger.error(f"Loaddata Error: {result.stderr}")
+            print(f"Loaddata Error: {result.stderr}")
     except Exception as e:
-        logger.error(f"Error running loaddata: {e}")
+        print(f"Error running loaddata: {e}")
 
 
 def start_scheduler():
@@ -56,7 +56,7 @@ def start_scheduler():
     # 매일 자정에 kopis_api.py 파일 실행
     scheduler.add_job(
         run_kopis_api,
-        trigger=CronTrigger(hour=00, minute=00),
+        trigger=CronTrigger(hour=17, minute=27),
         id='run_kopis_api_job',
         max_instances=1,
         replace_existing=True,
@@ -64,4 +64,4 @@ def start_scheduler():
 
     # 스케줄러 시작
     scheduler.start()
-    logger.info("Scheduler started and job 'run_kopis_api' added.")
+    print("Scheduler started and job 'run_kopis_api' added.")

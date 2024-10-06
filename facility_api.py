@@ -7,8 +7,8 @@ api_key = config.API_KEY
 
 performance_res = []
 
-for pageNum in range(1, 37):
-    url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate=20240901&eddate=20241030&rows=100&cpage={pageNum}'
+for pageNum in range(1, 50):
+    url = f'http://www.kopis.or.kr/openApi/restful/prfplc/{}?service={api_key}'
     response = requests.get(url)
     data = xmltodict.parse(response.content)
 
@@ -29,9 +29,9 @@ for pageNum in range(1, 37):
                     }
             performance_res.append(dict)
         except:
-            pass    
+            pass
 
 
-with open('performances_list.json', "w", encoding='utf-8') as f:
+with open('performance_370.json', "w", encoding='utf-8') as f:
 
     json.dump(performance_res, f, ensure_ascii=False, indent=4)

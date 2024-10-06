@@ -1,37 +1,44 @@
 import requests
 import json
-from culturepedia import config
+import os
+import django
 import xmltodict
+from culturepedia import config
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')
+django.setup()
+
+from performances.models import Performance
 
 api_key = config.API_KEY
+facility_ids = Performance.objects.values_list('facility_kopis_id', flat=True)
 
-performance_res = []
+facility_res = []
 
-for pageNum in range(1, 50):
-    url = f'http://www.kopis.or.kr/openApi/restful/prfplc/{}?service={api_key}'
+for facility_code in facility_ids:
+    url = f'http://www.kopis.or.kr/openApi/restful/prfplc/{facility_code}?service={api_key}'
     response = requests.get(url)
     data = xmltodict.parse(response.content)
 
     for item in data['dbs']['db']:
         try:
             dict = {
-                    "model" : "performances.Performlist",
-                    "pk" : item['mt20id'],
+                    "model" : "performances.facility",
+                    "pk" : item['mt10id'],
                     'fields':
                     {
-                        "title": item['prfnm'],
-                        "start_date": item['prfpdfrom'],
-                        "end_date": item['prfpdto'],
-                        "facility_name": item['fcltynm'],
-                        "type": item['genrenm'],
-                        "state": item['prfstate']
+                        "name": item['fcltynm'],
+                        "seatscale": item['seatscale'],
+                        "relateurl": item['relateurl'],
+                        "address": item['adres'],
+                        "telno": item['telno'],
                     }
                     }
-            performance_res.append(dict)
+            facility_res.append(dict)
         except:
             pass
 
 
-with open('performance_370.json', "w", encoding='utf-8') as f:
+with open('facility.json', "w", encoding='utf-8') as f:
 
-    json.dump(performance_res, f, ensure_ascii=False, indent=4)
+    json.dump(facility_res, f, ensure_ascii=False, indent=4)

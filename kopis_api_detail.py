@@ -1,15 +1,19 @@
 import requests
 import json
-from culturepedia import config
-from django.db import models
-from .performances.models import Performlist
+import os
+import django
 import xmltodict
+from culturepedia import config
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')
+django.setup()
+
+from performances.models import Performlist
 
 api_key = config.API_KEY
 performance_ids = Performlist.objects.values_list('kopis_id', flat=True)
 
-performance_res = []
+performance_detail_res = []
 
 for performance_code in performance_ids:
     url = f'http://www.kopis.or.kr/openApi/restful/pblprfr/{performance_code}?service={api_key}'
@@ -49,11 +53,11 @@ for performance_code in performance_ids:
                         "styurl": item['styurls'],
                     }
                     }
-            performance_res.append(dict)
+            performance_detail_res.append(dict)
         except:
             pass
 
 
 with open('performances_detail.json', "w", encoding='utf-8') as f:
 
-    json.dump(performance_res, f, ensure_ascii=False, indent=4)
+    json.dump(performance_detail_res, f, ensure_ascii=False, indent=4)

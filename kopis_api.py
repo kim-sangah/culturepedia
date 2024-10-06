@@ -7,7 +7,7 @@ api_key = config.API_KEY
 
 performance_res = []
 
-for pageNum in range(1, 37):
+for pageNum in range(1, 6):
     url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate=20240901&eddate=20241030&rows=100&cpage={pageNum}'
     response = requests.get(url)
     data = xmltodict.parse(response.content)

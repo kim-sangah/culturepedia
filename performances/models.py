@@ -16,46 +16,40 @@ class Performlist(models.Model):
 
 
 class Performance(models.Model):
-    kopis_id = models.CharField(primary_key=True, max_length=10)
-    title = models.CharField(max_length=100, null=True)
+    kopis_id = models.CharField(primary_key=True, max_length=20)
+    title = models.CharField(max_length=200, null=True)
     state = models.CharField(max_length=20)
-    start_date = models.CharField(max_length=20) 
-    end_date = models.CharField(max_length=20)
+    start_date = models.CharField(max_length=100) 
+    end_date = models.CharField(max_length=100)
     facility_kopis_id = models.ForeignKey('Facility', on_delete=models.DO_NOTHING, related_name='performance_facility')
     facility_name = models.CharField(max_length=100)
-    type = models.CharField(max_length=10)
-    area = models.CharField(max_length=10)
+    type = models.CharField(max_length=100)
+    area = models.CharField(max_length=100)
     synopsis = models.TextField(null=True, blank=True)
     cast = models.CharField(max_length=100)
     crew = models.CharField(max_length=100)
-    runtime = models.CharField(max_length=10)
-    age = models.CharField(max_length=10)
-    production = models.CharField(max_length=20)
-    agency = models.CharField(max_length=20)
-    pricing = models.CharField(max_length=100)
+    runtime = models.CharField(max_length=100)
+    age = models.CharField(max_length=100)
+    production = models.CharField(max_length=200)
+    agency = models.CharField(max_length=200)
+    pricing = models.TextField()
     visit = models.CharField(max_length=2)
     daehakro = models.CharField(max_length=2)
     festival = models.CharField(max_length=2)
     musicallicense = models.CharField(max_length=2)
     musicalcreate = models.CharField(max_length=2)
-    dtguidance = models.CharField(max_length=100)
+    dtguidance = models.TextField()
     poster = models.TextField()
     styurl = models.TextField()
 
-    def __str__(self):
-        return self.title
-
 
 class Facility(models.Model):
-    kopis_id = models.CharField(primary_key=True, max_length=10)
-    name = models.CharField(max_length=100)
+    kopis_id = models.CharField(primary_key=True, max_length=20)
+    name = models.CharField(max_length=200)
     seatscale = models.IntegerField()
-    relateurl = models.CharField(max_length=100)
-    address = models.CharField(max_length=100)
-    telno = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.name
+    relateurl = models.TextField()
+    address = models.TextField()
+    telno = models.CharField(max_length=200)
 
 
 class Article(models.Model):

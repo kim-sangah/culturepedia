@@ -56,7 +56,7 @@ def start_scheduler():
     # 매일 자정에 kopis_api.py 파일 실행
     scheduler.add_job(
         run_kopis_api,
-        trigger=CronTrigger(hour=17, minute=27),
+        trigger=CronTrigger(hour=00, minute=00),
         id='run_kopis_api_job',
         max_instances=1,
         replace_existing=True,

@@ -7,8 +7,6 @@ import sys
 import subprocess
 from django.conf import settings
 
-logger = logging.getLogger(__name__)
-
 
 # JSON 파일을 생성하는 함수
 def run_script(script_name):
@@ -55,30 +53,30 @@ def process_scripts():
     else:
         return
 
-    # 2. facility_api.py 실행
-    if run_script('facility_api.py'):
-        run_loaddata('facility.json')  # facility_api의 데이터를 로드
+    # 2. kopis_api_detail.py 실행
+    if run_script('kopis_api_detail.py'):
+        # 3. facility_api.py 실행
+        if run_script('facility_api.py'):
+            run_loaddata('facility.json')  # facility_api의 데이터를 로드
+            # kopis_api_detail의 데이터를 로드
+            run_loaddata('performances_detail.json')
     else:
         return
 
-    # 3. kopis_detail_api.py 실행
-    if run_script('kopis_detail_api.py'):
-        # kopis_detail_api의 데이터를 로드
-        run_loaddata('performances_detail.json')
-    else:
-        return
+# BackgroundScheduler를 시작하고 작업을 등록하는 함수
 
 
 def start_scheduler():
-    """BackgroundScheduler를 시작하고 작업을 등록하는 함수"""
-    scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
-    scheduler.add_jobstore(jobstores.DjangoJobStore(),
-                           "default")  # Django DB에 저장
+    # scheduler의 실행중이지 않다면
+    if not hasattr(start_scheduler, 'scheduler_running'):
+        scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
+        scheduler.add_jobstore(jobstores.DjangoJobStore(),
+                               "default")  # Django DB에 저장
 
-    # 매일 자정에 run_all_scripts 실행
+    # 매일 자정에 procees_scripts 실행
     scheduler.add_job(
         process_scripts,
-        trigger=CronTrigger(hour=15, minute=24),
+        trigger=CronTrigger(hour=20, minute=37),
         id='process_scripts',
         max_instances=1,
         replace_existing=True,
@@ -86,4 +84,5 @@ def start_scheduler():
 
     # 스케줄러 시작
     scheduler.start()
+    start_scheduler.scheduler_running = True  # 중복 실행 방지 플래그 설정
     print("Scheduler started and job 'process_scripts' added.")

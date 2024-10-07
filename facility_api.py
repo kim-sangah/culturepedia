@@ -74,7 +74,7 @@ for facility_code in facility_ids:
                 existing_ids.add(mt10id)
 
         except Exception as e:
-            print(f"Error occurred: {e}")
+            pass
     else:
         pass
 

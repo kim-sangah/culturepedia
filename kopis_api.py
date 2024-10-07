@@ -17,7 +17,7 @@ api_key = config.API_KEY
 performance_res = []
 existing_ids = set()  # 중복 확인을 위한 set
 
-for pageNum in range(1, 22):
+for pageNum in range(1, 23):
     url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate=20240901&eddate=20241001&rows=100&cpage={pageNum}'
 
     response = requests.get(url)

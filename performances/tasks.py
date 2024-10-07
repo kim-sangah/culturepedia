@@ -51,20 +51,20 @@ def run_loaddata(fixture_name):
 def process_scripts():
     # 1. kopis_api.py 실행
     if run_script('kopis_api.py'):
-        run_loaddata('performance_370.json')  # kopis_api의 데이터를 로드
+        run_loaddata('performances_list.json')  # kopis_api의 데이터를 로드
     else:
         return
 
     # 2. facility_api.py 실행
     if run_script('facility_api.py'):
-        run_loaddata('facility_370.json')  # facility_api의 데이터를 로드
+        run_loaddata('facility.json')  # facility_api의 데이터를 로드
     else:
         return
 
     # 3. kopis_detail_api.py 실행
     if run_script('kopis_detail_api.py'):
         # kopis_detail_api의 데이터를 로드
-        run_loaddata('performance_detail_370.json')
+        run_loaddata('performances_detail.json')
     else:
         return
 
@@ -78,7 +78,7 @@ def start_scheduler():
     # 매일 자정에 run_all_scripts 실행
     scheduler.add_job(
         process_scripts,
-        trigger=CronTrigger(hour=0, minute=0),
+        trigger=CronTrigger(hour=15, minute=24),
         id='process_scripts',
         max_instances=1,
         replace_existing=True,
@@ -86,4 +86,4 @@ def start_scheduler():
 
     # 스케줄러 시작
     scheduler.start()
-    print("Scheduler started and job 'run_all_scripts' added.")
+    print("Scheduler started and job 'process_scripts' added.")

@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import Performance, Review, PerformanceLike
-from .serializers import PerformanceSerializer, ReviewSerializer
+from .serializers import ReviewSerializer
 from culturepedia import settings
 import xml.etree.ElementTree as ET
 from datetime import datetime
@@ -231,23 +231,6 @@ class OPENAPISearchViews(APIView):
             # API 요청 실패하면 성공이 아닌 실패로
             return Response({'error': f"Failed to retrieve data. Status code: {response.status_code}"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(product_data, status=status.HTTP_200_OK)
-
-
-
-# #게시글 목록 조회 및 등록
-# class PerformanceDetail(APIView):
-#     #게시글등록
-#     def post(self, request):
-#         title = request.data.get("title")
-#         article = Article.objects.create(title=title)
-#         serializer = ArticleSerializer(article)
-#         return Response(serializer.data)
-    
-#     #특정 게시글 조회
-#     def get(self, request, pk):
-#         article = get_object_or_404(Article, pk=pk)
-#         serializer = ArticleSerializer(article)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 #공연 찜

@@ -9,6 +9,7 @@ class User(AbstractUser):
         ('F', 'Female'),
         ('O', 'Other')
     ]
+    
     #필수필드: email, password, username  선택필드: gender, birthday
     email = models.EmailField(unique=True)  #email 필드 고유값 설정
     password = models.CharField(max_length=120)

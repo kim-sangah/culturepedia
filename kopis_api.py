@@ -58,8 +58,8 @@ for pageNum in range(1, 37):
 
             # 공연이 없으면 생성
             except Performance.DoesNotExist:
-                dict_data = {
-                    "model": "performances.performance",
+                dict = {
+                    "model": "performances.Performlist",
                     "pk": item['mt20id'],
                     'fields': {
                         "title": item['prfnm'],
@@ -71,7 +71,7 @@ for pageNum in range(1, 37):
                     }
                 }
 
-                performance_res.append(dict_data)
+                performance_res.append(dict)
                 existing_ids.add(mt20id)
 
         except Exception as e:

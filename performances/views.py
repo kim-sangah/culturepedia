@@ -9,6 +9,9 @@ from .serializers import PerformanceSerializer, ReviewSerializer
 from culturepedia import settings
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from openai import OpenAI
+from django.conf import settings
+from .bots import generate_recommendation
 
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
@@ -318,3 +321,24 @@ class ReviewAPIView(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
         comment.delete()
         return Response({"message": "리뷰가 삭제되었습니다."},status=status.HTTP_204_NO_CONTENT)
+    
+
+# OPENAI API 사용한 공연 추천
+class RecommendationAPIView(APIView):
+    def post(self, request):
+        user_input = request.data.get('user_input')
+        recommendations = generate_recommendation(user_input)
+    
+        return Response({"recommendations": recommendations}, status=200)
+    
+
+    def get_user_preferences():
+        # 사용자가 별점 4점 이상으로 평가하거나 찜한 공연 불러오기
+        reviews = Review.objects.filter(rating__gte=4).values('performance_id')
+        likes = PerformanceLike.objects.all().values('performance_id')
+    
+        # 사용자가 4점 이상으로 평가하거나 찜한 공연의 ID를 user_preferences 리스트에 넣기
+        user_preferences = list({r['performance_id'] for r in reviews})
+        user_preferences += list({l['performance_id'] for l in likes if l['performance_id'] not in user_preferences})
+    
+        return user_preferences

@@ -8,10 +8,11 @@ from culturepedia import config
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')
 django.setup()
 
-from performances.models import Performance
+with open('performances/fixtures/performances_detail.json', 'r', encoding='utf-8') as f:
+    performances_detail = json.load(f)
 
 api_key = config.API_KEY
-facility_ids = Performance.objects.values_list('facility_kopis_id', flat=True)
+facility_ids = [performance['fields']['facility_kopis_id'] for performance in performances_detail]
 
 facility_res = []
 
@@ -20,25 +21,32 @@ for facility_code in facility_ids:
     response = requests.get(url)
     data = xmltodict.parse(response.content)
 
-    for item in data['dbs']['db']:
+    db_data = data['dbs']['db']
+
+    if isinstance(db_data, dict):
         try:
-            dict = {
+            facility_dict = {
                     "model" : "performances.facility",
-                    "pk" : item['mt10id'],
+                    "pk" : db_data['mt10id'],
                     'fields':
                     {
-                        "name": item['fcltynm'],
-                        "seatscale": item['seatscale'],
-                        "relateurl": item['relateurl'],
-                        "address": item['adres'],
-                        "telno": item['telno'],
+                        "name": db_data['fcltynm'],
+                        "seatscale": db_data['seatscale'],
+                        "relateurl": db_data['relateurl'],
+                        "address": db_data['adres'],
+                        "telno": db_data['telno'],
                     }
                     }
-            facility_res.append(dict)
+            facility_res.append(facility_dict)
         except:
             pass
+    else:
+        pass
 
+folder_path = 'performances/fixtures'
+os.makedirs(folder_path, exist_ok=True)
+
+file_path = os.path.join(folder_path, 'facility.json')
 
 with open('facility.json', "w", encoding='utf-8') as f:
-
     json.dump(facility_res, f, ensure_ascii=False, indent=4)

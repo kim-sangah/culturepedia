@@ -26,39 +26,34 @@ class Performance(models.Model):
     type = models.CharField(max_length=100)
     area = models.CharField(max_length=100)
     synopsis = models.TextField(null=True, blank=True)
-    cast = models.CharField(max_length=100)
-    crew = models.CharField(max_length=100)
-    runtime = models.CharField(max_length=100)
-    age = models.CharField(max_length=100)
-    production = models.CharField(max_length=200)
-    agency = models.CharField(max_length=200)
-    pricing = models.TextField()
+    cast = models.CharField(max_length=100, null=True)
+    crew = models.CharField(max_length=100, null=True)
+    runtime = models.CharField(max_length=100, null=True)
+    age = models.CharField(max_length=100, null=True)
+    production = models.CharField(max_length=200, null=True)
+    agency = models.CharField(max_length=200, null=True)
+    pricing = models.TextField(null=True)
     visit = models.CharField(max_length=2)
     daehakro = models.CharField(max_length=2)
     festival = models.CharField(max_length=2)
     musicallicense = models.CharField(max_length=2)
     musicalcreate = models.CharField(max_length=2)
-    dtguidance = models.TextField()
-    poster = models.TextField()
-    styurl = models.TextField()
+    dtguidance = models.TextField(null=True)
+    poster = models.TextField(null=True)
+    styurl = models.TextField(null=True)
 
 
 class Facility(models.Model):
     kopis_id = models.CharField(primary_key=True, max_length=20)
     name = models.CharField(max_length=200)
-    seatscale = models.IntegerField()
-    relateurl = models.TextField()
-    address = models.TextField()
-    telno = models.CharField(max_length=200)
-
-
-class Article(models.Model):
-    title = models.CharField(max_length=20)
-    like = models.PositiveIntegerField(default=0) 
+    seatscale = models.IntegerField(null=True)
+    relateurl = models.TextField(null=True)
+    address = models.TextField(null=True)
+    telno = models.CharField(max_length=200, null=True)
 
 
 class Review(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    performance = models.ForeignKey(Performance, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField()
     title = models.CharField(max_length=20)
@@ -72,11 +67,11 @@ class Review(models.Model):
 
 #찜하기 기능
 class PerformanceLike(models.Model):
-    article = models.ForeignKey(Article, related_name='liked_by', on_delete=models.CASCADE) #사용자가 찜하려고 선택한 게시글 제목
-    user = models.ForeignKey(User, related_name='performance_likes', on_delete=models.CASCADE) #로그인한 사용자
+    performance = models.ForeignKey(Performance, related_name='performance_likes', on_delete=models.CASCADE) #사용자가 찜하려고 선택한 게시글 제목
+    user = models.ForeignKey(User, related_name='liked_by', on_delete=models.CASCADE) #로그인한 사용자
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'article'], name='unique_like')
+            models.UniqueConstraint(fields=['user', 'performance'], name='unique_like')
         ]
 

@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Article, Review, PerformanceLike
-from .serializers import ArticleSerializer, ReviewSerializer
+from .models import Performance, Review, PerformanceLike
+from .serializers import PerformanceSerializer, ReviewSerializer
 from culturepedia import settings
 import xml.etree.ElementTree as ET
 from datetime import datetime
@@ -234,20 +234,20 @@ class OPENAPISearchViews(APIView):
 
 
 
-#게시글 목록 조회 및 등록
-class PerformanceDetail(APIView):
-    #게시글등록
-    def post(self, request):
-        title = request.data.get("title")
-        article = Article.objects.create(title=title)
-        serializer = ArticleSerializer(article)
-        return Response(serializer.data)
+# #게시글 목록 조회 및 등록
+# class PerformanceDetail(APIView):
+#     #게시글등록
+#     def post(self, request):
+#         title = request.data.get("title")
+#         article = Article.objects.create(title=title)
+#         serializer = ArticleSerializer(article)
+#         return Response(serializer.data)
     
-    #특정 게시글 조회
-    def get(self, request, pk):
-        article = get_object_or_404(Article, pk=pk)
-        serializer = ArticleSerializer(article)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     #특정 게시글 조회
+#     def get(self, request, pk):
+#         article = get_object_or_404(Article, pk=pk)
+#         serializer = ArticleSerializer(article)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 #공연 찜
@@ -256,26 +256,26 @@ class PerformanceLikeView(APIView):
 
     #공연 찜하기
     def post(self,request,pk):
-        article = get_object_or_404(Article, pk=pk)
+        performance = get_object_or_404(Performance, pk=pk)
         user = request.user
         
         #이미 찜했는지 확인하기
-        if PerformanceLike.objects.filter(user=user, article=article).exists():
+        if PerformanceLike.objects.filter(user=user, performance=performance).exists():
             return Response({"message": "이미 찜한 공연입니다."},status=status.HTTP_400_BAD_REQUEST)
         
         #찜하기 및 카운트 증가
-        PerformanceLike.objects.create(user=user, article=article)
-        article.like += 1
-        article.save()
+        PerformanceLike.objects.create(user=user, performance=performance)
+        # article.like += 1
+        # article.save()
         return Response({"message": "찜한 공연목록에 추가 되었습니다 "},status=status.HTTP_201_CREATED)
 
     #공연 찜 취소
     def delete(self, request, pk):
-        article = get_object_or_404(Article, pk=pk)
+        performance = get_object_or_404(Performance, pk=pk)
         user =request.user
         
         # 찜 취소 및 카운트 감소
-        like = get_object_or_404(PerformanceLike, user=user, article=article)
+        like = get_object_or_404(PerformanceLike, user=user, performance=performance)
         like.delete()
         return Response({"message": "찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)
 
@@ -286,10 +286,10 @@ class ReviewCreateAPIView(APIView):
 
     #공연 리뷰 작성
     def post(self, request, pk):
-        article = get_object_or_404(Article, pk=pk)
+        performance = get_object_or_404(Performance, pk=pk)
         serializer = ReviewSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(article=article, author=request.user)
+            serializer.save(performance=performance, author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -19,16 +19,18 @@ existing_ids = set()  # 중복 확인을 위한 set
 
 for pageNum in range(1, 22):
     url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate=20240901&eddate=20241001&rows=100&cpage={pageNum}'
+
     response = requests.get(url)
     data = xmltodict.parse(response.content)
 
     for item in data['dbs']['db']:
         try:
             mt20id = item['mt20id']
-            facility_name = item['fcltynm']
+            title = item['prfnm']
             start_date = item['prfpdfrom']
             end_date = item['prfpdto']
-            performance_type = item['genrenm']
+            facility_name = item['fcltynm']
+            type = item['genrenm']
             state = item['prfstate']
 
             # 공연ID 중복 체크
@@ -37,10 +39,11 @@ for pageNum in range(1, 22):
 
                 # 업데이트가 필요한 필드들과 새로운 값을 딕셔너리로 정리
                 fields_to_update = {
-                    "facility_name": facility_name,
+                    "title": title,
                     "start_date": start_date,
                     "end_date": end_date,
-                    "type": performance_type,
+                    "facility_name": facility_name,
+                    "type": type,
                     "state": state,
                 }
 
@@ -68,7 +71,7 @@ for pageNum in range(1, 22):
                         "end_date": item['prfpdto'],
                         "facility_name": item['fcltynm'],
                         "type": item['genrenm'],
-                        "state": state,
+                        "state": item['prfstate'],
                     }
                 }
 

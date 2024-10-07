@@ -7,6 +7,8 @@ from PIL import Image
 import pytesseract
 CLIENT = OpenAI(api_key=settings.OPENAI_API_KEY,)
 
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+
 # 사용자가 리뷰하거나 찜한 공연과 입력받은 해시태그를 바탕으로 공연 추천
 def generate_recommendations(user_preferences, input_tags):
     # user_preferences에 있는 공연들을 context로 줌

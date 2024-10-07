@@ -11,7 +11,8 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from openai import OpenAI
 from django.conf import settings
-from .bots import generate_recommendation
+from django.db.models import Q
+from .bots import generate_recommendations, generate_recommendations_with_tags
 
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
@@ -326,16 +327,23 @@ class ReviewAPIView(APIView):
 # OPENAI API 사용한 공연 추천
 class RecommendationAPIView(APIView):
     def post(self, request):
-        user_input = request.data.get('user_input')
-        recommendations = generate_recommendation(user_input)
-    
+        # 요청을 보낸 사용자가 별점 4점 이상으로 평가하거나 찜한 공연 받아오기
+        user_preferences = self.get_user_preferences(request.user)
+
+        # 유저가 입력한 태그 받아오기
+        input_tags = request.data.get('input_tags')
+
+        if user_preferences:
+            recommendations = generate_recommendations(user_preferences, input_tags)
+        else: # 요청을 보낸 사용자가 리뷰하거나 찜한 공연이 없을 때
+            recommendations = generate_recommendations_with_tags(input_tags)
+
         return Response({"recommendations": recommendations}, status=200)
     
-
-    def get_user_preferences():
+    def get_user_preferences(user):
         # 사용자가 별점 4점 이상으로 평가하거나 찜한 공연 불러오기
-        reviews = Review.objects.filter(rating__gte=4).values('performance_id')
-        likes = PerformanceLike.objects.all().values('performance_id')
+        reviews = Review.objects.filter(Q(rating__gte=4) & Q(author=user)).values('performance_id')
+        likes = PerformanceLike.objects.filter(user=user).values('performance_id')
     
         # 사용자가 4점 이상으로 평가하거나 찜한 공연의 ID를 user_preferences 리스트에 넣기
         user_preferences = list({r['performance_id'] for r in reviews})

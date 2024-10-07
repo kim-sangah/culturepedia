@@ -9,19 +9,26 @@ class Performlist(models.Model):
     kopis_id = models.CharField(primary_key=True, max_length=10)
     facility_name = models.CharField(max_length=100)
     title = models.CharField(max_length=100, null=True)
-    start_date = models.CharField(max_length=20) 
+    start_date = models.CharField(max_length=20)
     end_date = models.CharField(max_length=20)
     type = models.CharField(max_length=10)
     state = models.CharField(max_length=10)
+
+
+class Hashtag(models.Model):
+    performance_api_id = models.ForeignKey(
+        'Performance', on_delete=models.CASCADE, related_name='performance_hashtag')
+    name = models.CharField(max_length=10)
 
 
 class Performance(models.Model):
     kopis_id = models.CharField(primary_key=True, max_length=20)
     title = models.CharField(max_length=200, null=True)
     state = models.CharField(max_length=20)
-    start_date = models.CharField(max_length=100) 
+    start_date = models.CharField(max_length=100)
     end_date = models.CharField(max_length=100)
-    facility_kopis_id = models.ForeignKey('Facility', on_delete=models.DO_NOTHING, related_name='performance_facility')
+    facility_kopis_id = models.ForeignKey(
+        'Facility', on_delete=models.DO_NOTHING, related_name='performance_facility')
     facility_name = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
     area = models.CharField(max_length=100)
@@ -40,7 +47,8 @@ class Performance(models.Model):
     musicalcreate = models.CharField(max_length=2)
     dtguidance = models.TextField(null=True)
     poster = models.TextField(null=True)
-    styurl = models.TextField(null=True)
+    # styurl = models.TextField(null=True) JSONField 'styurls'로 수정. styurls 리스트 안에 여러 개의 styurl이 있는 경우 있음
+    styurls = models.JSONField(null=True, blank=True)
 
 
 class Facility(models.Model):
@@ -54,7 +62,8 @@ class Facility(models.Model):
 
 class Review(models.Model):
     performance = models.ForeignKey(Performance, on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField()
     title = models.CharField(max_length=20)
     content = models.TextField()
@@ -65,13 +74,15 @@ class Review(models.Model):
         return self.title
 
 
-#찜하기 기능
+# 찜하기 기능
 class PerformanceLike(models.Model):
-    performance = models.ForeignKey(Performance, related_name='performance_likes', on_delete=models.CASCADE) #사용자가 찜하려고 선택한 게시글 제목
-    user = models.ForeignKey(User, related_name='liked_by', on_delete=models.CASCADE) #로그인한 사용자
+    performance = models.ForeignKey(
+        Performance, related_name='performance_likes', on_delete=models.CASCADE)  # 사용자가 찜하려고 선택한 게시글 제목
+    user = models.ForeignKey(
+        User, related_name='liked_by', on_delete=models.CASCADE)  # 로그인한 사용자
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'performance'], name='unique_like')
+            models.UniqueConstraint(
+                fields=['user', 'performance'], name='unique_like')
         ]
-

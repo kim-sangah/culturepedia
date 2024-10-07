@@ -67,11 +67,5 @@ class Review(models.Model):
 
 #찜하기 기능
 class PerformanceLike(models.Model):
-    performance = models.ForeignKey(Performance, related_name='performance_likes', on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='liked_by', on_delete=models.CASCADE)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['user', 'performance'], name='unique_like')
-        ]
-
+    performance = models.ForeignKey(Performance, related_name='performance_likes', on_delete=models.CASCADE)

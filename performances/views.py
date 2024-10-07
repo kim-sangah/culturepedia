@@ -257,7 +257,6 @@ class PerformanceLikeView(APIView):
         performance = get_object_or_404(Performance, pk=pk)
         user =request.user
         
-        # 찜 취소 및 카운트 감소
         like = get_object_or_404(PerformanceLike, user=user, performance=performance)
         like.delete()
         return Response({"message": "찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)

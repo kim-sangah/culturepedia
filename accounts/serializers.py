@@ -6,15 +6,11 @@ from performances.serializers import PerformanceLikeSerializer, ReviewSerializer
 
 class UserSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True)
-    performance_likes = serializers.SerializerMethodField()
+    likes = PerformanceLikeSerializer(many=True, source='liked_by')
 
-    def get_performance_likes(self, obj):
-        performance_likes = obj.performance_likes.all()
-        return PerformanceLikeSerializer(performance_likes, many=True).data
-    
     class Meta:
         model = User
-        fields = ('email', 'username', 'gender', 'birthday', 'reviews', 'performance_likes')
+        fields = ('email', 'username', 'gender', 'birthday', 'reviews', 'likes')
 
 
 class UserModifySerializer(serializers.ModelSerializer):

@@ -64,7 +64,7 @@ for pageNum in range(1, 2):
             # 공연이 없으면 생성
             except Performlist.DoesNotExist:
                 dict_data = {
-                    "model": "performances.performlist",
+                    "model": "performances.Performlist",
                     "pk": item['mt20id'],
                     'fields': {
                         "title": item['prfnm'],

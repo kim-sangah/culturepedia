@@ -49,7 +49,7 @@ for performance_code in performance_ids:
                 musicalcreate = db_data['musicalcreate']
                 dtguidance = db_data.get('dtguidance', 'N/A')
                 poster = db_data.get('poster', 'N/A')
-                styurl = db_data.get('styurls', 'N/A')                
+                styurls = db_data.get('styurls', 'N/A')                
 
                 try:
                     performance = Performance.objects.get(kopis_id=mt20id)
@@ -78,7 +78,7 @@ for performance_code in performance_ids:
                         "musicalcreate": musicalcreate,
                         "dtguidance": dtguidance,
                         "poster": poster,
-                        "styurl": styurl,
+                        "styurls": styurls,
                     }
 
                     updated = False
@@ -121,7 +121,7 @@ for performance_code in performance_ids:
                         "musicalcreate": db_data['musicalcreate'],
                         "dtguidance": db_data.get('dtguidance', 'N/A'),
                         "poster": db_data.get('poster', 'N/A'),
-                        "styurl": db_data.get('styurls', 'N/A'),
+                        "styurls": db_data.get('styurls', 'N/A'),
                     }
                     }
                     performancedetail_res.append(performance_dict)

@@ -16,8 +16,14 @@ api_key = config.API_KEY
 performance_ids = list(Performlist.objects.values_list('kopis_id', flat=True))
 
 for performance_code in performance_ids:
-    url = f'http://www.kopis.or.kr/openApi/restful/pblprfr/{performance_code}?service={api_key}'
-    response = requests.get(url)
+    try:
+        url = f'http://www.kopis.or.kr/openApi/restful/pblprfr/{performance_code}?service={api_key}'
+        response = requests.get(url)
+        response.raise_for_status()  # Raises an error for bad responses
+    except requests.exceptions.ConnectTimeout:
+        print("Connection timed out. Please check your internet connection or the API status.")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
     data = xmltodict.parse(response.content)
 
     db_data = data['dbs']['db']
@@ -52,7 +58,7 @@ for performance_code in performance_ids:
                         "musicalcreate": db_data['musicalcreate'],
                         "dtguidance": db_data.get('dtguidance', 'N/A'),
                         "poster": db_data.get('poster', 'N/A'),
-                        "styurl": db_data.get('styurls', 'N/A'),
+                        "styurls": db_data.get('styurls', 'N/A'),
                     }
                     }
                     performancedetail_res.append(performance_dict)

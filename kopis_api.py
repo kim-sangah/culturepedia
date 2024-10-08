@@ -6,21 +6,19 @@ import xmltodict
 from culturepedia import config
 from datetime import datetime, timedelta
 
-# Django 환경 설정 로드
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')  # 프로젝트 이름을 지정
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')  #Django 환경 설정 로드, 프로젝트 이름을 지정
 django.setup()
 
 from performances.models import Performlist
 
 api_key = config.API_KEY
-eddate = datetime.today().strftime('%Y%m%d')
-stdate = (datetime.today() - timedelta(days=30)).strftime('%Y%m%d')
 
 performance_res = []
-existing_ids = set()  # 중복 확인을 위한 set
+existing_ids = set()  #중복확인 set
 
-for pageNum in range(1, 2):
-    url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate={stdate}&eddate={eddate}&rows=100&cpage={pageNum}'
+for pageNum in range(1, 3):
+    url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate=20240901&eddate=20241015&rows=100&cpage={pageNum}'
     response = requests.get(url)
     data = xmltodict.parse(response.content)
 

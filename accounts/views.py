@@ -4,8 +4,8 @@ from .models import User
 from .serializers import UserSerializer, UserModifySerializer
 from .validators import validate_user_data
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -78,13 +78,11 @@ class UserProfileView(APIView):
 
     #프로필 조회
     def get(self, request, pk):
-        #print(f"Requested user ID : {pk}")
         user = get_object_or_404(User, id=pk)
         if request.user != user:
             raise PermissionDenied(status=status.HTTP_400_BAD_REQUEST)
         
         serializer = UserSerializer(user)
-        #print(f"데이터 입력 : {serializer.data}")
         return Response(serializer.data)
     
     #회원정보 수정

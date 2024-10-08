@@ -5,48 +5,55 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class Facility(models.Model):
-    name = models.CharField(max_length=100)
-    seatscale = models.IntegerField()
-    relateurl = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
-    telno = models.CharField(max_length=20)
+class Performlist(models.Model):
+    kopis_id = models.CharField(primary_key=True, max_length=10)
+    facility_name = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, null=True)
+    start_date = models.CharField(max_length=20) 
+    end_date = models.CharField(max_length=20)
+    type = models.CharField(max_length=10)
+    state = models.CharField(max_length=10)
 
 
 class Performance(models.Model):
-    facility_id = models.ForeignKey('Facility', on_delete=models.CASCADE, null=True) #외래키 참조
-    title = models.CharField(max_length=100, null=True)
-    
-    #공연시작날짜만 들어감
-    start_date = models.DateField() 
-    end_date = models.DateField()
-    cast = models.CharField(max_length=10)
-    crew = models.CharField(max_length=10)
-    runtime = models.IntegerField(null= True)
-    age = models.IntegerField()
-    entprsmnP = models.CharField(max_length=100)
-    entrprsnmA = models.CharField(max_length=100)
-    pricing = models.IntegerField()# 가격
-    
-    poster = models.ImageField(upload_to="") #일단 경로는 빈칸
-    synopsis = models.CharField(max_length=255)
-    type = models.CharField(max_length=10)
-    state = models.CharField(max_length=10)
-    visit = models.BooleanField(default=False)
-    daehakro = models.BooleanField(default=False)
-    festival = models.BooleanField(default=False)
-    musicallicense = models.BooleanField(default=False)
-    musicalcreate = models.BooleanField(default=False)
-    dtguidance = models.CharField(max_length=100)
+    kopis_id = models.CharField(primary_key=True, max_length=20)
+    title = models.CharField(max_length=200, null=True)
+    state = models.CharField(max_length=20)
+    start_date = models.CharField(max_length=100) 
+    end_date = models.CharField(max_length=100)
+    facility_kopis_id = models.ForeignKey('Facility', on_delete=models.DO_NOTHING, related_name='performance_facility')
+    facility_name = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
+    area = models.CharField(max_length=100)
+    synopsis = models.TextField(null=True, blank=True)
+    cast = models.CharField(max_length=100, null=True)
+    crew = models.CharField(max_length=100, null=True)
+    runtime = models.CharField(max_length=100, null=True)
+    age = models.CharField(max_length=100, null=True)
+    production = models.CharField(max_length=200, null=True)
+    agency = models.CharField(max_length=200, null=True)
+    pricing = models.TextField(null=True)
+    visit = models.CharField(max_length=2)
+    daehakro = models.CharField(max_length=2)
+    festival = models.CharField(max_length=2)
+    musicallicense = models.CharField(max_length=2)
+    musicalcreate = models.CharField(max_length=2)
+    dtguidance = models.TextField(null=True)
+    poster = models.TextField(null=True)
+    styurl = models.TextField(null=True)
 
 
-class Article(models.Model):
-    title = models.CharField(max_length=20)
-    like = models.PositiveIntegerField(default=0) 
+class Facility(models.Model):
+    kopis_id = models.CharField(primary_key=True, max_length=20)
+    name = models.CharField(max_length=200)
+    seatscale = models.IntegerField(null=True)
+    relateurl = models.TextField(null=True)
+    address = models.TextField(null=True)
+    telno = models.CharField(max_length=200, null=True)
 
 
 class Review(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    performance = models.ForeignKey(Performance, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField()
     title = models.CharField(max_length=20)
@@ -60,11 +67,5 @@ class Review(models.Model):
 
 #찜하기 기능
 class PerformanceLike(models.Model):
-    article = models.ForeignKey(Article, related_name='liked_by', on_delete=models.CASCADE) #사용자가 찜하려고 선택한 게시글 제목
-    user = models.ForeignKey(User, related_name='performance_likes', on_delete=models.CASCADE) #로그인한 사용자
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['user', 'article'], name='unique_like')
-        ]
-
+    user = models.ForeignKey(User, related_name='liked_by', on_delete=models.CASCADE)
+    performance = models.ForeignKey(Performance, related_name='performance_likes', on_delete=models.CASCADE)

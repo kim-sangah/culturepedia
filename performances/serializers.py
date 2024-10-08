@@ -1,12 +1,11 @@
-from .models import Performance, Review
+from .models import PerformanceLike, Review
 from rest_framework import serializers
 
 
-class PerformanceSerializer(serializers.ModelSerializer):
+class PerformanceLikeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Performance
-        fields = ('id', 'title', 'like')
-
+        model = PerformanceLike
+        fields = ('user', 'performance')
 
 class ReviewSerializer(serializers.ModelSerializer):
     performance = serializers.ReadOnlyField(source='performance.kopis_id')

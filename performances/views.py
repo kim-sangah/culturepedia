@@ -5,14 +5,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import Performance, Review, PerformanceLike
-from .serializers import PerformanceSerializer, ReviewSerializer
+from .serializers import ReviewSerializer
 from culturepedia import settings
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from openai import OpenAI
 from django.conf import settings
 from django.db.models import Q
-from .bots import generate_recommendations, generate_recommendations_with_tags
+from .bots import generate_synopsis, generate_hashtags_for_performance, generate_recommendations, generate_recommendations_with_tags
 
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
@@ -278,7 +278,6 @@ class PerformanceLikeView(APIView):
         performance = get_object_or_404(Performance, pk=pk)
         user =request.user
         
-        # 찜 취소 및 카운트 감소
         like = get_object_or_404(PerformanceLike, user=user, performance=performance)
         like.delete()
         return Response({"message": "찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)
@@ -334,19 +333,37 @@ class RecommendationAPIView(APIView):
         input_tags = request.data.get('input_tags')
 
         if user_preferences:
+            for performance in user_preferences:
+                # synopsis가 없는 공연의 synopsis를 OpenAI API로 생성
+                if performance.synopsis:
+                    # synopsis가 있지만 공연에 대한 hashtag가 없다면 OpenAI API로 생성
+                    if performance.performance_hashtag:
+                        continue
+                    else:
+                        generate_hashtags_for_performance(performance)
+                else:
+                    generate_synopsis(performance)
+                    # 공연에 대한 hashtag가 없다면 OpenAI API로 생성
+                    if performance.performance_hashtag:
+                        continue
+                    else:
+                        generate_hashtags_for_performance(performance)
             recommendations = generate_recommendations(user_preferences, input_tags)
         else: # 요청을 보낸 사용자가 리뷰하거나 찜한 공연이 없을 때
             recommendations = generate_recommendations_with_tags(input_tags)
 
         return Response({"recommendations": recommendations}, status=200)
     
-    def get_user_preferences(user):
+    def get_user_preferences(self, user):
         # 사용자가 별점 4점 이상으로 평가하거나 찜한 공연 불러오기
-        reviews = Review.objects.filter(Q(rating__gte=4) & Q(author=user)).values('performance_id')
-        likes = PerformanceLike.objects.filter(user=user).values('performance_id')
-    
-        # 사용자가 4점 이상으로 평가하거나 찜한 공연의 ID를 user_preferences 리스트에 넣기
-        user_preferences = list({r['performance_id'] for r in reviews})
-        user_preferences += list({l['performance_id'] for l in likes if l['performance_id'] not in user_preferences})
-    
+        reviews = Review.objects.filter(Q(rating__gte=4) & Q(author=user)).values_list('performance_id', flat=True)
+        likes = PerformanceLike.objects.filter(user=user).values_list('performance_id', flat=True)
+
+        # Set로 리뷰하거나 찜한 공연의 id가 중복되지 않게 저장
+        performance_ids = set(reviews) | set(likes)  # Union of both sets
+
+        # performance_ids에 맞는 Performance object를 받음
+        user_preferences = Performance.objects.filter(kopis_id__in=performance_ids)
+
         return user_preferences
+    

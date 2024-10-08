@@ -5,18 +5,27 @@ from .models import Performance
 from django.db.models import Q
 from PIL import Image
 import pytesseract
+import requests
+from io import BytesIO
 CLIENT = OpenAI(api_key=settings.OPENAI_API_KEY,)
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
-# 사용자가 리뷰하거나 찜한 공연과 입력받은 해시태그를 바탕으로 공연 추천
+# 사용자가 리뷰하거나 찜한 공연들의 해시태그와 입력받은 해시태그를 바탕으로 공연 추천
 def generate_recommendations(user_preferences, input_tags):
     # user_preferences에 있는 공연들을 context로 줌
-    context = f"User is interested in the following performances: {', '.join(user_preferences)}\n"
+    # context = f"User is interested in the following performances: {', '.join(user_preferences)}\n"
+
+    # user_preferences에 있는 공연들의 해시태그를 context로 줌
+    preferred_hashtags = []
+    for performance in user_preferences:
+        preferred_hashtags.append(performance.performance_hashtags)
+
+    context = f"These are the hashtags of performances the user is interested in: {', '.join(preferred_hashtags)}\n"
 
     # input_tags가 있을 경우, input_tags를 context에 추가
     if input_tags:
-        context += f"These are the tags the user has selected: {', '.join(input_tags)}\n"
+        context += f"These are the tags the user has additionally selected: {', '.join(input_tags)}\n"
 
     # 공연중, 공연예정인 공연들을 performance_list로 줌
     performance_list = Performance.objects.filter(
@@ -24,12 +33,9 @@ def generate_recommendations(user_preferences, input_tags):
 
     # performance_list에 있는 각 공연들의 제목과 공연 종류, 줄거리, 해시태그를 context로 줌
     for performance in performance_list:
-        context += f"Performance: {performance['title']},
-        Type: {performance['type']},
-        Synopsis: {performance['synopsis']},
-        Hashtags: {performance['performance_hashtag']}\n"
+        context += f"Performance: {performance['title']}, Type: {performance['type']}, Synopsis: {performance['synopsis']}, Hashtags: {performance['performance_hashtag']}\n"
 
-    prompt = context + "Based on the performances in user_preferences and selected tags in input_tags, recommend performances for the user."
+    prompt = context + "Based on the tags in preffered_tags and the selected tags in input_tags, recommend performances for the user in Korean."
     response = openai.Completion.create(
         engine="gpt-4o-mini",
         prompt=prompt,
@@ -51,13 +57,10 @@ def generate_recommendations_with_tags(input_tags):
 
     # performance_list에 있는 각 공연들의 제목과 공연 종류, 줄거리, 해시태그를 context로 줌
     for performance in performance_list:
-        context += f"Performance: {performance['title']},
-        Type: {performance['type']},
-        Synopsis: {performance['synopsis']},
-        Hashtags: {performance['performance_hashtag']}\n"
+        context += f"Performance: {performance['title']}, Type: {performance['type']}, Synopsis: {performance['synopsis']}, Hashtags: {performance['performance_hashtag']}\n"
 
     prompt = context + \
-        "Based on the selected tags in input_tags, recommend performances for the user."
+        "Based on the selected tags in input_tags, recommend performances for the user in Korean."
     response = openai.Completion.create(
         engine="gpt-4o-mini",
         prompt=prompt,
@@ -72,10 +75,17 @@ def generate_recommendations_with_tags(input_tags):
 # 줄거리 생성
 def generate_synopsis(performance):
     # 줄거리가 없는 공연의 소개이미지나 포스터에 있는 글 추출해 줄거리(공연 설명) 생성
+    styurls_text = ""
+
     if performance.styurls and not performance.synopsis: # 소개이미지가 있는 경우
         for styurl in performance.styurls:
             try:
-                text = pytesseract.image_to_string(Image.open(styurl), lang='kor+eng', timeout=3)
+                response = requests.get(styurl)
+                response.raise_for_status()
+
+                image = Image.open(BytesIO(response.content))
+
+                text = pytesseract.image_to_string(image, lang='kor+eng', timeout=3)
                 if text.strip(): # 추출된 텍스트가 비어있지 않은지 체크
                     styurls_text += text
                 else:
@@ -83,10 +93,16 @@ def generate_synopsis(performance):
             except RuntimeError as TimeoutError:
                 print(f"Error occurred while processing image: {TimeoutError}")
                 continue
+            except FileNotFoundError:
+                print(f"File not found: {styurl}")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
 
-        context = f"This is the text embedded in a descriptive image of a performance: {styurls_text}\n"
+        context = f"This is the Korean text embedded in a descriptive image of a performance: {styurls_text}\n"
         prompt = context + \
-            "Based on the text, generate a concise synopsis or a description of the performance."
+            "Based on the text, generate a concise synopsis or a description of the performance in Korean."
 
         response = openai.Completion.create(
             engine="gpt-4o-mini",
@@ -101,9 +117,9 @@ def generate_synopsis(performance):
         try:
             poster_text = pytesseract.image_to_string(Image.open(performance.poster), lang='kor+eng', timeout=3)
             if poster_text.strip():  # 추출된 텍스트가 비어있지 않은지 체크
-                context = f"This is the text embedded in a performance's poster: {poster_text}\n"
+                context = f"This is the Korean text embedded in a performance's poster: {poster_text}\n"
                 prompt = context + \
-                "Based on the text, generate a concise synopsis or a description of the performance."
+                "Based on the text, generate a concise synopsis or a description of the performance in Korean."
 
                 response = openai.Completion.create(
                     engine="gpt-4o-mini",
@@ -125,9 +141,9 @@ def generate_synopsis(performance):
 def generate_hashtags_for_performance(performance):
     # 줄거리가 있고 해시태그가 생성되지 않은 공연
     if performance.synopsis and not performance.hashtags:
-        context = f"This is the synopsis of a performance: {performance.synopsis}\n"
+        context = f"This is the synopsis of a performance in Korean: {performance.synopsis}\n"
         prompt = context + \
-            "Based on the synopsis, generate three hashtags that best describe the performance."
+            "Based on the synopsis, generate three hashtags that best describe the performance in Korean."
 
         response = openai.Completion.create(
             engine="gpt-4o-mini",
@@ -145,17 +161,8 @@ def generate_hashtags_for_performance(performance):
     # 줄거리가 없고(소개이미지나 포스터도 없어서 줄거리 생성이 되지 않음) 해시태그가 생성되지 않은 공연
     elif not performance.synopsis and not performance.hashtags:
         # 공연의 필드 일부를 정보로 주고 이를 바탕으로 해시태그를 생성하게 함
-        context = f"These are available informations of a performance:
-        {performance.title},
-        {performance.type},
-        {performance.runtime},
-        {performance.age},
-        {performance.daehakro},
-        {performance.festival},
-        {performance.musicallicense},
-        {performance.musicalcreate}"
-
-        prompt = context + "Based on the available information, generate three hashtags that best describe the performance."
+        context = f"These are available informations of a performance in Korean: {performance.title}, {performance.type}, {performance.runtime}, {performance.age}, {performance.daehakro}, {performance.festival}, {performance.musicallicense}, {performance.musicalcreate}"
+        prompt = context + "Based on the available information, generate three hashtags that best describe the performance in Korean."
 
         response = openai.Completion.create(
             engine="gpt-4o-mini",

@@ -80,9 +80,3 @@ class PerformanceLike(models.Model):
         Performance, related_name='performance_likes', on_delete=models.CASCADE)  # 사용자가 찜하려고 선택한 게시글 제목
     user = models.ForeignKey(
         User, related_name='liked_by', on_delete=models.CASCADE)  # 로그인한 사용자
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'performance'], name='unique_like')
-        ]

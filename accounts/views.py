@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
 from .models import User
-from .serializers import UserSerializer, UserModifySerializer
 from .validators import validate_user_data
+from .serializers import UserSerializer, UserModifySerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-#회원가입
+# 회원가입
 class UserSignupView(APIView):
     def post(self, request):
         
@@ -35,17 +35,15 @@ class UserSignupView(APIView):
         return Response(response_dict)
 
 
-#로그인
+# 로그인
 class UserSigninView(APIView):
     def post(self, request):
         email = request.data.get("email")
         password = request.data.get("password")
 
-        #이메일 또는 비밀번호가 비어 있는지 확인
         if not email or not password:
             return Response({"message": "이메일과 비밀번호를 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
 
-        #이메일과 비밀번호로 사용자 인증
         user = authenticate(request, email=email, password=password)
         if user is not None:
             refresh = RefreshToken.for_user(user)
@@ -58,7 +56,7 @@ class UserSigninView(APIView):
             return Response({"message": "이메일 또는 비밀번호가 올바르지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-#로그아웃
+# 로그아웃
 class UserSignoutView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -72,11 +70,11 @@ class UserSignoutView(APIView):
         return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_205_RESET_CONTENT)
 
 
-#프로필
+# 프로필
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
-    #프로필 조회
+    # 프로필 조회
     def get(self, request, pk):
         user = get_object_or_404(User, id=pk)
         if request.user != user:
@@ -85,7 +83,7 @@ class UserProfileView(APIView):
         serializer = UserSerializer(user)
         return Response(serializer.data)
     
-    #회원정보 수정
+    # 회원정보 수정
     def put(self, request, pk):
         user = get_object_or_404(User, id=pk)
         if request.user != user:
@@ -104,7 +102,7 @@ class UserProfileView(APIView):
             return Response({"message": "회원정보수정이 완료되었습니다."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    #회원탈퇴
+    # 회원탈퇴
     def delete(self, request, pk):
         user = request.user
         password = request.data.get("password")

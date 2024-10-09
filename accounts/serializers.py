@@ -1,16 +1,20 @@
 from .models import User
 from rest_framework import serializers
-from performances.models import PerformanceLike
-from performances.serializers import PerformanceLikeSerializer, ReviewSerializer
+from performances.models import Performance
+from performances.serializers import PerformanceListSerializer, ReviewSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True)
-    likes = PerformanceLikeSerializer(many=True, source='liked_by')
+    likes = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('email', 'username', 'gender', 'birthday', 'reviews', 'likes')
+    
+    def get_likes(self, obj):
+        liked = Performance.objects.filter(performance_likes__user=obj)
+        return PerformanceListSerializer(liked, many=True).data
 
 
 class UserModifySerializer(serializers.ModelSerializer):

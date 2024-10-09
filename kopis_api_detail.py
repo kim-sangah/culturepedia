@@ -1,8 +1,8 @@
 import requests
+import xmltodict
 import json
 import os
 import django
-import xmltodict
 from culturepedia import config
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')
@@ -14,16 +14,16 @@ api_key = config.API_KEY
 
 performancedetail_res = []
 existing_ids = set()
-performance_ids = list(Performlist.objects.values_list('kopis_id', flat=True))
+performance_ids = list(Performlist.objects.values_list('kopis_id', flat=True))  # DB 저장된 공연 kopis_id 리스트
 
 for performance_code in performance_ids:
     url = f'http://www.kopis.or.kr/openApi/restful/pblprfr/{performance_code}?service={api_key}'
     response = requests.get(url)
     data = xmltodict.parse(response.content)
 
-    db_data = data.get('dbs', {}).get('db', None)
+    db_data = data.get('dbs', {}).get('db', None)  # xml dbs 안 db
 
-    if isinstance(db_data, dict):
+    if isinstance(db_data, dict):  # 조회된 페이지는 1개 공연 정보
             try:
                 mt20id = db_data['mt20id']
                 title = db_data['prfnm']

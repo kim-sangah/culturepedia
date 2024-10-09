@@ -1,13 +1,14 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-
 User = get_user_model()
+
 
 class Hashtag(models.Model):
     performance_api_id = models.ForeignKey(
         'Performance', on_delete=models.CASCADE, related_name='performance_hashtag')
     name = models.CharField(max_length=10)
+
 
 class Performlist(models.Model):
     kopis_id = models.CharField(primary_key=True, max_length=10)
@@ -25,7 +26,8 @@ class Performance(models.Model):
     state = models.CharField(max_length=20)
     start_date = models.CharField(max_length=100) 
     end_date = models.CharField(max_length=100)
-    facility_kopis_id = models.ForeignKey('Facility', on_delete=models.DO_NOTHING, related_name='performance_facility')
+    facility_kopis_id = models.ForeignKey(
+        'Facility', on_delete=models.DO_NOTHING, related_name='performance_facility')
     facility_name = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
     area = models.CharField(max_length=100)
@@ -46,6 +48,9 @@ class Performance(models.Model):
     poster = models.TextField(null=True)
     styurls = models.JSONField(null=True, blank=True)
 
+    def __str__(self):
+        return self.title
+
 
 class Facility(models.Model):
     kopis_id = models.CharField(primary_key=True, max_length=20)
@@ -57,19 +62,19 @@ class Facility(models.Model):
 
 
 class Review(models.Model):
-    performance = models.ForeignKey(Performance, on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    performance = models.ForeignKey(
+        Performance, on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField()
     title = models.CharField(max_length=20)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.title
 
-
-#찜하기 기능
 class PerformanceLike(models.Model):
-    user = models.ForeignKey(User, related_name='liked_by', on_delete=models.CASCADE)
-    performance = models.ForeignKey(Performance, related_name='performance_likes', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name='liked_by', on_delete=models.CASCADE)
+    performance = models.ForeignKey(
+        Performance, related_name='performance_likes', on_delete=models.CASCADE)

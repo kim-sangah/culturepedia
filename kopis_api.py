@@ -1,13 +1,13 @@
 import requests
+import xmltodict
 import json
 import os
 import django
-import xmltodict
 from culturepedia import config
 from datetime import datetime, timedelta
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')  #Django 환경 설정 로드, 프로젝트 이름을 지정
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')  #Django 환경 설정 로드, 프로젝트 이름 지정
 django.setup()
 
 from performances.models import Performlist
@@ -17,10 +17,19 @@ api_key = config.API_KEY
 performance_res = []
 existing_ids = set()  #중복확인 set
 
-for pageNum in range(1, 3):
-    url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate=20240901&eddate=20241015&rows=100&cpage={pageNum}'
+page_num = 1
+
+while True:
+
+    start_date = (datetime.now() - timedelta(days=5)).strftime('%Y%m%d')
+    end_date = datetime.now().strftime('%Y%m%d')
+
+    url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate={start_date}&eddate={end_date}&rows=100&cpage={page_num}'
     response = requests.get(url)
-    data = xmltodict.parse(response.content)
+    data = xmltodict.parse(response.content)  # xmltodict.parse xml 파싱
+
+    if data['dbs'] is None:
+        break
 
     for item in data['dbs']['db']:
         try:
@@ -36,7 +45,7 @@ for pageNum in range(1, 3):
             try:
                 performance = Performlist.objects.get(kopis_id=mt20id)
 
-                # 업데이트가 필요한 필드들과 새로운 값을 딕셔너리로 정리
+                # 업데이트 필요 필드과 새로운 값 딕셔너리로 정리
                 fields_to_update = {
                     "title": title,
                     "start_date": start_date,
@@ -46,20 +55,20 @@ for pageNum in range(1, 3):
                     "state": state,
                 }
 
-                updated = False  # 변경 여부를 추적하는 플래그
+                updated = False  # 변경 여부 추적 플래그
 
-                # 각 필드를 비교하고, 다를 경우 업데이트
+                # 각 필드 비교 후 다른 경우 업데이트
                 for field, new_value in fields_to_update.items():
                     if getattr(performance, field) != new_value:
                         setattr(performance, field, new_value)
                         updated = True
 
-                # 변경 사항이 있으면 저장
+                # 변경 사항 저장
                 if updated:
                     performance.save()
                     print(f'{mt20id}의 정보가 업데이트되었습니다.')
 
-            # 공연이 없으면 생성
+            # 없는 공연 생성
             except Performlist.DoesNotExist:
                 dict_data = {
                     "model": "performances.Performlist",
@@ -79,13 +88,15 @@ for pageNum in range(1, 3):
 
         except Exception as e:
             print(f"Error occurred: {e}")  # 오류 출력
+    
+    page_num += 1  # while True 시 페이지 증가
 
 # 경로 설정
 folder_path = 'performances/fixtures'
-os.makedirs(folder_path, exist_ok=True)  # 폴더가 없으면 생성
+os.makedirs(folder_path, exist_ok=True)  # 폴더 없는 경우 생성
 
 file_path = os.path.join(folder_path, 'performances_list.json')
 
 # JSON 파일 저장
-with open(file_path, "w", encoding='utf-8') as f:
-    json.dump(performance_res, f, ensure_ascii=False, indent=4)
+with open(file_path, "w", encoding='utf-8') as f:  # 파일 위치, write 쓰기, 문자 인코딩
+    json.dump(performance_res, f, ensure_ascii=False, indent=4)  # 파싱 xml > json 변경 함수

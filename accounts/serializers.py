@@ -13,8 +13,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('email', 'username', 'gender', 'birthday', 'reviews', 'likes')
     
     def get_likes(self, obj):
-        liked = Performance.objects.filter(performance_likes__user=obj)
-        return PerformanceListSerializer(liked, many=True).data
+        likes = Performance.objects.filter(performance_likes__user=obj)
+        return PerformanceListSerializer(likes, many=True).data
 
 
 class UserModifySerializer(serializers.ModelSerializer):

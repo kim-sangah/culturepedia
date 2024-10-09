@@ -26,7 +26,7 @@ while True:
 
     url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate={start_date}&eddate={end_date}&rows=100&cpage={page_num}'
     response = requests.get(url)
-    data = xmltodict.parse(response.content)  # xmltodict.parse xml 파싱
+    data = xmltodict.parse(response.content)  # xml 파싱
 
     if data['dbs'] is None:
         break
@@ -45,7 +45,7 @@ while True:
             try:
                 performance = Performlist.objects.get(kopis_id=mt20id)
 
-                # 업데이트 필요 필드과 새로운 값 딕셔너리로 정리
+                # 업데이트 필요 필드 새로운 값 딕셔너리로 정리
                 fields_to_update = {
                     "title": title,
                     "start_date": start_date,

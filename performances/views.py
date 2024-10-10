@@ -335,19 +335,26 @@ class RecommendationAPIView(APIView):
         if user_preferences:
             for performance in user_preferences:
                 # synopsis가 없는 공연의 synopsis를 OpenAI API로 생성
-                if performance.synopsis:
-                    # synopsis가 있지만 공연에 대한 hashtag가 없다면 OpenAI API로 생성
-                    if performance.performance_hashtag:
-                        continue
-                    else:
-                        generate_hashtags_for_performance(performance)
+                # if performance.synopsis:
+                #     # synopsis가 있지만 공연에 대한 hashtag가 없다면 OpenAI API로 생성
+                #     if performance.performance_hashtag:
+                #         continue
+                #     else:
+                #         generate_hashtags_for_performance(performance)
+                # else:
+                #     generate_synopsis(performance)
+                #     # 공연에 대한 hashtag가 없다면 OpenAI API로 생성
+                #     if performance.performance_hashtag:
+                #         continue
+                #     else:
+                #         generate_hashtags_for_performance(performance)
+                
+                # 공연에 대한 hashtag가 없다면 OpenAI API로 생성
+                if performance.performance_hashtag:
+                    continue
                 else:
-                    generate_synopsis(performance)
-                    # 공연에 대한 hashtag가 없다면 OpenAI API로 생성
-                    if performance.performance_hashtag:
-                        continue
-                    else:
-                        generate_hashtags_for_performance(performance)
+                    generate_hashtags_for_performance(performance)
+                    
             recommendations = generate_recommendations(user_preferences, input_tags)
         else: # 요청을 보낸 사용자가 리뷰하거나 찜한 공연이 없을 때
             recommendations = generate_recommendations_with_tags(input_tags)

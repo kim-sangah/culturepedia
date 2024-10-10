@@ -139,44 +139,65 @@ def generate_synopsis(performance):
 
 # 해시태그 생성
 def generate_hashtags_for_performance(performance):
-    # 줄거리가 있고 해시태그가 생성되지 않은 공연
-    if performance.synopsis and not performance.hashtags:
-        context = f"This is the synopsis of a performance in Korean: {performance.synopsis}\n"
-        prompt = context + \
-            "Based on the synopsis, generate three hashtags that best describe the performance in Korean."
+    question = ''
+    images = []
+    hashtag_list = ''
+    # 공연의 필드 일부를 정보로 주고 이를 바탕으로 해시태그를 생성하게 함
+    if performance.title:
+        question += f'title: {performance.title},'
+    if performance.type:
+        question += f'type: {performance.type},'
+    if performance.synopsis:
+        question += f'synopsis: {performance.synopsis}'
+    if performance.poster:
+        images.append({performance.poster})
+    if performance.styurls:
+        images.append({performance.styurls})
+        
+    context = f"These are available informations of a performance in Korean: {question}"
 
-        response = openai.Completion.create(
-            engine="gpt-4o-mini",
-            prompt=prompt,
-            max_tokens=150,  # 응답의 token 수 제한 (한 문장은 보통 토큰 10~20개)
-            temperature=0.7,  # 모델 응답의 '창의성' 조절
-            n=1,  # 응답 개수
-            stop=None  # max_token 제한 도달할 때까지 토큰 생성
-        )
-        hashtags = response.choices[0].text.strip().split()[:3]
-        for tag in hashtags:
-            performance.performance_hashtag = tag # 수정 필요
-        performance.save()
-        return performance.performance_hashtag.all()
-    # 줄거리가 없고(소개이미지나 포스터도 없어서 줄거리 생성이 되지 않음) 해시태그가 생성되지 않은 공연
-    elif not performance.synopsis and not performance.hashtags:
-        # 공연의 필드 일부를 정보로 주고 이를 바탕으로 해시태그를 생성하게 함
-        context = f"These are available informations of a performance in Korean: {performance.title}, {performance.type}, {performance.runtime}, {performance.age}, {performance.daehakro}, {performance.festival}, {performance.musicallicense}, {performance.musicalcreate}"
-        prompt = context + "Based on the available information, generate three hashtags that best describe the performance in Korean."
-
-        response = openai.Completion.create(
-            engine="gpt-4o-mini",
-            prompt=prompt,
-            max_tokens=150,  # 응답의 token 수 제한 (한 문장은 보통 토큰 10~20개)
-            temperature=0.7,  # 모델 응답의 '창의성' 조절
-            n=1,  # 응답 개수
-            stop=None  # max_token 제한 도달할 때까지 토큰 생성
-        )
-        hashtags = response.choices[0].text.strip().split()[:3]
-        for tag in hashtags:
-            performance.performance_hashtag = tag # 수정 필요
-        performance.save()
-        return performance.performance_hashtag.all()
+    response = CLIENT.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "This is a helper that helps you choose appropriate hashtags."
+                    }
+                ]
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": f"Please select the appropriate hashtag among {hashtag_list} based on the images and information provided: {context}"
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": images
+                        }
+                    }
+                ]
+            },
+        ],
+        max_tokens=150,  # 응답의 token 수 제한 (한 문장은 보통 토큰 10~20개)
+        temperature=0.7,  # 모델 응답의 '창의성' 조절
+        n=1,  # 응답 개수
+    )
+    hashtags = response.choices[0].text.strip().split()[:3]
+    for tag in hashtags:
+        performance.performance_hashtag = tag # 수정 필요
+    performance.save()
+    return performance.performance_hashtag.all()
 
 # def recommendation_bot(user_input):
 #     system_instructions = """

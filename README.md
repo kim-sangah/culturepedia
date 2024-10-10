@@ -19,15 +19,37 @@ It is a platform that allows you to conveniently explore cultural content contai
 ## Full Technology Stack Overview
 - Backend: Python, Django REST Framework (DRF), LLM
 - Frontend: HTML, CSS, Bootstrap
-- Database: SQLite, MySQL
-- Version Control: Git, GitHub
-- IDE: PyCharm, VSCode
+- Database: SQLite
+- Version Control: Github, AWS
+- IDE: VSCode
 - APIs Used: KOPIS API (Korea Performance Information System), OpenAI API
 - Other Tools and Libraries:
-  - python3.10
-  - django==4.2
+  - APScheduler==3.10.4
+  - asgiref==3.8.1
+  - certifi==2024.8.30
+  - charset-normalizer==3.3.2
+  - Django==4.2
+  - django-apscheduler==0.7.0
+  - django-seed==0.3.1
   - djangorestframework==3.15.2
   - djangorestframework-simplejwt==5.3.1
+  - ElementTreeFactory==1.0
+  - Faker==30.1.0
+  - idna==3.10
+  - pillow==10.4.0
+  - psycopg2==2.9.9
+  - PyJWT==2.9.0
+  - python-dateutil==2.9.0.post0
+  - pytz==2024.2
+  - requests==2.32.3
+  - six==1.16.0
+  - sqlparse==0.5.1
+  - toposort==1.10
+  - typing_extensions==4.12.2
+  - tzdata==2024.2
+  - tzlocal==5.2
+  - urllib3==2.2.3
+  - xmltodict==0.13.0
 
 ## Key Features
 ### Accounts
@@ -49,15 +71,23 @@ It is a platform that allows you to conveniently explore cultural content contai
 
 ### Performances
 - Browse Performances
+  - Users can browse performance rankings by category, sort them by sales or newest, and filter performances by region. Clicking on a performance poster or title takes users to the performance’s detail page.
 - Search Performances
+  - Users can search performances by keywords (title, actor, venue, production company).
 - Performance Details
+  - Users can view detailed information about a performance, including the title, start and end dates, venue, cast, crew, runtime, age restrictions, producers, pricing, poster, synopsis, genre, and status.
 - Write Reviews
+  - Users can write reviews for performances they have attended, including a star rating out of 5.
 - Edit Reviews
+  - Users can edit reviews they have written.
 - Delete Reviews
+  - Users can delete reviews they have written.
 - Add to Favorites
-- Add to Favorites
+  - Users can add performances to their favorites list.
 - Remove from Favorites
+  - Users can remove performances from their favorites list.
 - Performance Recommendations
+  - Based on the user’s reviews (ratings of 3 stars or higher), favorites, and search tags, the system recommends personalized performances. If there’s insufficient user data, users can manually choose categories, characteristics, moods, and regions for recommendations.
 
 
 ## Requirements

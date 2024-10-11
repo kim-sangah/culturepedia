@@ -10,6 +10,7 @@ from io import BytesIO
 import base64
 
 CLIENT = OpenAI(api_key=settings.OPENAI_API_KEY,)
+MAX_FILE_SIZE_MB = 10 
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
@@ -191,6 +192,15 @@ def generate_hashtags_for_performance(performance):
                 f"data:{mime_type};base64,{base64_encoded_image}")
 
     # OpenAI API 요청
+        for styurl in performance.styurls:
+            file_size_mb = get_file_size(styurl)
+            if file_size_mb <= MAX_FILE_SIZE_MB:  # 10 MB보다 작거나 같은 크기의 이미지만 append
+                images.append({styurl})
+            else:
+                print(f"Image {styurl} is larger than {MAX_FILE_SIZE_MB} MB and has been excluded.")
+        
+    context = f"These are available informations of a performance in Korean: {question}"
+
     response = CLIENT.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -232,6 +242,26 @@ def generate_hashtags_for_performance(performance):
         performance.performance_hashtag = tag  # 수정 필요
     performance.save()
     return performance.performance_hashtag.all()
+
+# 소개이미지 파일 사이즈 받기
+def get_file_size(url):
+    try:
+        response = requests.get(url, stream=True)
+        
+        total_size = 0
+        
+        # chunk로 나눠진 response를 돌아 각 chunk를 총 크기에 더함 (기본 chunk 사이즈는 1024 바이트)
+        for chunk in response.iter_content(chunk_size=1024):
+            total_size += len(chunk)
+        
+        # 파일 크기 단위를 바이트에서 메가바이트로 변환
+        file_size_mb = total_size / (1024 * 1024)
+        
+        return file_size_mb
+    except requests.RequestException as e:
+        print(f"Error fetching file size for {url}: {e}")
+        return 0
+
 
 # def recommendation_bot(user_input):
 #     system_instructions = """

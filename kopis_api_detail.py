@@ -72,14 +72,14 @@ for performance_code in performance_ids:
                 musicalcreate = db_data['musicalcreate']
                 dtguidance = db_data.get('dtguidance', 'N/A')
                 poster = db_data.get('poster', 'N/A')
-                styurl = db_data.get('styurls', 'N/A')
+                styurls = db_data.get('styurls', 'N/A')
                 
                 images = []
                 
                 if poster:
                     images.append(poster)
-                if styurl:
-                    images.extend(styurl)
+                if styurls:
+                    images.extend(styurls)
                 if images:
                     download_images(images)           
 
@@ -110,7 +110,7 @@ for performance_code in performance_ids:
                         "musicalcreate": musicalcreate,
                         "dtguidance": dtguidance,
                         "poster": poster,
-                        "styurl": styurl,
+                        "styurls": styurls,
                     }
 
                     updated = False

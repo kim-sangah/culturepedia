@@ -12,7 +12,7 @@ from datetime import datetime
 from openai import OpenAI
 from django.conf import settings
 from django.db.models import Q
-from .bots import generate_hashtags_for_performance, generate_recommendations, generate_recommendations_with_tags
+from .bots import generate_hashtags_for_performance, generate_recommendations, generate_recommendations_with_tags, get_file_size
 
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기

@@ -190,7 +190,6 @@ def generate_hashtags_for_performance(performance):
             base64_images.append(
                 f"data:{mime_type};base64,{base64_encoded_image}")
 
-    hashtag_list = 'Horror, Commedy, Action, Romance'
     # OpenAI API 요청
     response = CLIENT.chat.completions.create(
         model="gpt-4o",

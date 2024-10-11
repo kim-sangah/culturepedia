@@ -12,7 +12,7 @@ from datetime import datetime
 from openai import OpenAI
 from django.conf import settings
 from django.db.models import Q
-from .bots import generate_synopsis, generate_hashtags_for_performance, generate_recommendations, generate_recommendations_with_tags
+from .bots import generate_synopsis, generate_hashtags_for_performance, generate_recommendations, generate_recommendations_with_tags, get_file_size
 
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
@@ -235,6 +235,40 @@ class OPENAPISearchViews(APIView):
             # API 요청 실패하면 성공이 아닌 실패로
             return Response({'error': f"Failed to retrieve data. Status code: {response.status_code}"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(product_data, status=status.HTTP_200_OK)
+
+# 파일 사이즈 체크 테스트용
+class FileSizeViews(APIView):
+    def get(self, request, *args, **kwargs):
+        performance_id = kwargs.get('pk')
+        if performance_id:
+            url = f"https://www.kopis.or.kr/openApi/restful/pblprfr/{performance_id}"
+            params = {'service': API_KEY, 'mt20id': performance_id}
+            response = requests.get(url, params=params)
+
+            if response.status_code == 200:
+                try:
+                    root = ET.fromstring(response.content)
+                    item = root.find('db')
+                    if item is not None:
+                        performance_data = {
+                            '공연명': item.find('prfnm').text if item.find('prfnm') is not None else None,
+                        }
+                        # performance_data의 '소개이미지목록'에 있는 소개이미지들을 list로 저장
+                        styurls_element = item.find('styurls')
+                        if styurls_element is not None:
+                            images = [
+                                styurl.text for styurl in styurls_element.findall('styurl')]
+                            performance_data['소개이미지목록'] = images
+                except ET.ParseError:
+                    return Response({'error': 'Failed to parse XML data'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+            file_size_mb = []
+
+            for styurl in performance_data['소개이미지목록']:
+                file_size = get_file_size(styurl)
+                file_size_mb.append(file_size)
+
+        return Response({"file_size_mb": file_size_mb}, status=status.HTTP_200_OK)
 
 
 

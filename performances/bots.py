@@ -7,7 +7,9 @@ from PIL import Image
 import pytesseract
 import requests
 from io import BytesIO
+import os
 CLIENT = OpenAI(api_key=settings.OPENAI_API_KEY,)
+MAX_FILE_SIZE_MB = 10 
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
@@ -141,7 +143,8 @@ def generate_synopsis(performance):
 def generate_hashtags_for_performance(performance):
     question = ''
     images = []
-    hashtag_list = ''
+    hashtag_list = ["#극적인", "#내한공연",  "#시각예술", "#감동적", "#라이브음악", "#실험적", "#웅장한", "#가족친화적", "#이머시브", "#화려한", "#전통적", "#컴팩트한공연장", "#트렌디한", "#로맨틱", "#창의적", "#코믹한", "#미스터리", "#어두운", "#힐링", "#신나는"]
+    
     # 공연의 필드 일부를 정보로 주고 이를 바탕으로 해시태그를 생성하게 함
     if performance.title:
         question += f'title: {performance.title},'
@@ -152,7 +155,12 @@ def generate_hashtags_for_performance(performance):
     if performance.poster:
         images.append({performance.poster})
     if performance.styurls:
-        images.append({performance.styurls})
+        for styurl in performance.styurls:
+            file_size_mb = get_file_size(styurl)
+            if file_size_mb <= MAX_FILE_SIZE_MB:  # 10 MB보다 작거나 같은 크기의 이미지만 append
+                images.append({styurl})
+            else:
+                print(f"Image {styurl} is larger than {MAX_FILE_SIZE_MB} MB and has been excluded.")
         
     context = f"These are available informations of a performance in Korean: {question}"
 
@@ -198,6 +206,26 @@ def generate_hashtags_for_performance(performance):
         performance.performance_hashtag = tag # 수정 필요
     performance.save()
     return performance.performance_hashtag.all()
+
+# 소개이미지 파일 사이즈 받기
+def get_file_size(url):
+    try:
+        response = requests.get(url, stream=True)
+        
+        total_size = 0
+        
+        # chunk로 나눠진 response를 돌아 각 chunk를 총 크기에 더함 (기본 chunk 사이즈는 1024 바이트)
+        for chunk in response.iter_content(chunk_size=1024):
+            total_size += len(chunk)
+        
+        # 파일 크기 단위를 바이트에서 메가바이트로 변환
+        file_size_mb = total_size / (1024 * 1024)
+        
+        return file_size_mb
+    except requests.RequestException as e:
+        print(f"Error fetching file size for {url}: {e}")
+        return 0
+
 
 # def recommendation_bot(user_input):
 #     system_instructions = """

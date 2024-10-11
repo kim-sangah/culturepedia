@@ -3,8 +3,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from .models import Performance, Review, PerformanceLike
+from accounts.models import User
 from .serializers import ReviewSerializer
 from culturepedia import settings
 import xml.etree.ElementTree as ET
@@ -359,7 +361,13 @@ class ReviewAPIView(APIView):
 
 # OPENAI API 사용한 공연 추천
 class RecommendationAPIView(APIView):
-    def post(self, request):
+    def post(self, request, pk):
+        permission_classes = [IsAuthenticated]
+        user = get_object_or_404(User, id=pk)
+
+        if request.user != user:
+            raise PermissionDenied(status=status.HTTP_400_BAD_REQUEST)
+        
         # 요청을 보낸 사용자가 별점 4점 이상으로 평가하거나 찜한 공연 받아오기
         user_preferences = self.get_user_preferences(request.user)
 
@@ -390,6 +398,8 @@ class RecommendationAPIView(APIView):
                     generate_hashtags_for_performance(performance)
                     
             recommendations = generate_recommendations(user_preferences, input_tags)
+        elif not user_preferences and not input_tags: # 요청을 보낸 사용자가 리뷰하거나 찜한 공연이 없고 입력한 태그도 없을 때
+            return Response({"error": "입력된 태그, 리뷰하거나 찜한 공연이 없습니다. 관심 태그를 입력해주세요"}, status=status.HTTP_400_BAD_REQUEST)
         else: # 요청을 보낸 사용자가 리뷰하거나 찜한 공연이 없을 때
             recommendations = generate_recommendations_with_tags(input_tags)
 

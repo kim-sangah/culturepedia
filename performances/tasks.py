@@ -1,4 +1,4 @@
-from django_apscheduler import jobstores
+# from django_apscheduler import jobstores
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import os
@@ -69,13 +69,13 @@ def start_scheduler():
     # scheduler의 실행중이지 않다면
     if not hasattr(start_scheduler, 'scheduler_running'):
         scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
-        scheduler.add_jobstore(jobstores.DjangoJobStore(),
-                               "default")  # Django DB에 저장
+        # scheduler.add_jobstore(jobstores.DjangoJobStore(),
+        #                        "default")  # Django DB에 저장
 
     # 매일 자정에 procees_scripts 실행
     scheduler.add_job(
         process_scripts,
-        trigger=CronTrigger(hour=20, minute=37),
+        trigger=CronTrigger(hour=16, minute=00),
         id='process_scripts',
         max_instances=1,
         replace_existing=True,

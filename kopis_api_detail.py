@@ -16,10 +16,9 @@ api_key = config.API_KEY
 performancedetail_res = []
 existing_ids = set()
 performance_ids = list(Performlist.objects.values_list('kopis_id', flat=True))
-images = []
+
 
 def download_images(img_list):
-   
     img_folder = './static'
     if not os.path.exists(img_folder):
         os.makedirs(img_folder)
@@ -73,7 +72,16 @@ for performance_code in performance_ids:
                 musicalcreate = db_data['musicalcreate']
                 dtguidance = db_data.get('dtguidance', 'N/A')
                 poster = db_data.get('poster', 'N/A')
-                styurls = db_data.get('styurls', 'N/A')                
+                styurl = db_data.get('styurls', 'N/A')
+                
+                images = []
+                
+                if poster:
+                    images.append(poster)
+                if styurl:
+                    images.extend(styurl)
+                if images:
+                    download_images(images)           
 
                 try:
                     performance = Performance.objects.get(kopis_id=mt20id)
@@ -102,7 +110,7 @@ for performance_code in performance_ids:
                         "musicalcreate": musicalcreate,
                         "dtguidance": dtguidance,
                         "poster": poster,
-                        "styurls": styurls,
+                        "styurl": styurl,
                     }
 
                     updated = False
@@ -162,11 +170,3 @@ file_path = os.path.join(folder_path, 'performances_detail.json')
 
 with open(file_path, "w", encoding='utf-8') as f:
     json.dump(performancedetail_res, f, ensure_ascii=False, indent=4)
-    
-
-if poster:
-    images.append()
-if styurls:
-    images.extend()
-if images:
-    download_images(images)

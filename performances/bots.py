@@ -7,9 +7,12 @@ from PIL import Image
 import pytesseract
 import requests
 from io import BytesIO
+import base64
+
 CLIENT = OpenAI(api_key=settings.OPENAI_API_KEY,)
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+
 
 # 사용자가 리뷰하거나 찜한 공연들의 해시태그와 입력받은 해시태그를 바탕으로 공연 추천
 def generate_recommendations(user_preferences, input_tags):
@@ -47,6 +50,7 @@ def generate_recommendations(user_preferences, input_tags):
 
     return response.choices[0].text.strip()
 
+
 # 데이터가 없는(리뷰를 작성하거나 찜한 공연이 없는) 사용자로부터 입력받은 해시태그로만 공연 추천
 def generate_recommendations_with_tags(input_tags):
     context = f"These are the tags the user has selected: {', '.join(input_tags)}\n"
@@ -73,107 +77,130 @@ def generate_recommendations_with_tags(input_tags):
     return response.choices[0].text.strip()
 
 # 줄거리 생성
-def generate_synopsis(performance):
-    # 줄거리가 없는 공연의 소개이미지나 포스터에 있는 글 추출해 줄거리(공연 설명) 생성
-    styurls_text = ""
 
-    if performance.styurls and not performance.synopsis: # 소개이미지가 있는 경우
-        for styurl in performance.styurls:
-            try:
-                response = requests.get(styurl)
-                response.raise_for_status()
 
-                image = Image.open(BytesIO(response.content))
+# def generate_synopsis(performance):
+#     # 줄거리가 없는 공연의 소개이미지나 포스터에 있는 글 추출해 줄거리(공연 설명) 생성
+#     styurls_text = ""
 
-                text = pytesseract.image_to_string(image, lang='kor+eng', timeout=3)
-                if text.strip(): # 추출된 텍스트가 비어있지 않은지 체크
-                    styurls_text += text
-                else:
-                    return "소개이미지에서 텍스트를 추출할 수 없습니다."
-            except RuntimeError as TimeoutError:
-                print(f"Error occurred while processing image: {TimeoutError}")
-                continue
-            except FileNotFoundError:
-                print(f"File not found: {styurl}")
-                continue
-            except Exception as e:
-                print(f"An unexpected error occurred: {e}")
-                continue
+#     if performance.styurls and not performance.synopsis:  # 소개이미지가 있는 경우
+#         for styurl in performance.styurls:
+#             try:
+#                 response = requests.get(styurl)
+#                 response.raise_for_status()
 
-        context = f"This is the Korean text embedded in a descriptive image of a performance: {styurls_text}\n"
-        prompt = context + \
-            "Based on the text, generate a concise synopsis or a description of the performance in Korean."
+#                 image = Image.open(BytesIO(response.content))
 
-        response = openai.Completion.create(
-            engine="gpt-4o-mini",
-            prompt=prompt,
-            max_tokens=150,  # 응답의 token 수 제한 (한 문장은 보통 토큰 10~20개)
-            temperature=0.7,  # 모델 응답의 '창의성' 조절
-            n=1,  # 응답 개수
-            stop=None  # max_token 제한 도달할 때까지 토큰 생성
-        )
-        performance.synopsis = response.choices[0].text.strip()  # 생성된 synopsis를 string으로 저장
-    elif performance.poster and not performance.synopsis: # 소개이미지는 없고 포스터는 있는 경우
-        try:
-            poster_text = pytesseract.image_to_string(Image.open(performance.poster), lang='kor+eng', timeout=3)
-            if poster_text.strip():  # 추출된 텍스트가 비어있지 않은지 체크
-                context = f"This is the Korean text embedded in a performance's poster: {poster_text}\n"
-                prompt = context + \
-                "Based on the text, generate a concise synopsis or a description of the performance in Korean."
+#                 text = pytesseract.image_to_string(
+#                     image, lang='kor+eng', timeout=3)
+#                 if text.strip():  # 추출된 텍스트가 비어있지 않은지 체크
+#                     styurls_text += text
+#                 else:
+#                     return "소개이미지에서 텍스트를 추출할 수 없습니다."
+#             except RuntimeError as TimeoutError:
+#                 print(f"Error occurred while processing image: {TimeoutError}")
+#                 continue
+#             except FileNotFoundError:
+#                 print(f"File not found: {styurl}")
+#                 continue
+#             except Exception as e:
+#                 print(f"An unexpected error occurred: {e}")
+#                 continue
 
-                response = openai.Completion.create(
-                    engine="gpt-4o-mini",
-                    prompt=prompt,
-                    max_tokens=150,  # 응답의 token 수 제한 (한 문장은 보통 토큰 10~20개)
-                    temperature=0.7,  # 모델 응답의 '창의성' 조절
-                    n=1,  # 응답 개수
-                    stop=None  # max_token 제한 도달할 때까지 토큰 생성
-                )
-                performance.synopsis = response.choices[0].text.strip()  # 생성된 synopsis를 string으로 저장
-            else:
-                return "포스터에서 텍스트를 추출할 수 없습니다."
-        except RuntimeError as TimeoutError:
-            print(f"Error occurred while processing poster: {TimeoutError}")
-    else: # 소개 이미지도 없고 포스터도 없는 경우
-        return "줄거리를 생성할 수 없습니다."
+#         context = f"This is the Korean text embedded in a descriptive image of a performance: {styurls_text}\n"
+#         prompt = context + \
+#             "Based on the text, generate a concise synopsis or a description of the performance in Korean."
+
+#         response = openai.Completion.create(
+#             engine="gpt-4o-mini",
+#             prompt=prompt,
+#             max_tokens=150,  # 응답의 token 수 제한 (한 문장은 보통 토큰 10~20개)
+#             temperature=0.7,  # 모델 응답의 '창의성' 조절
+#             n=1,  # 응답 개수
+#             stop=None  # max_token 제한 도달할 때까지 토큰 생성
+#         )
+#         # 생성된 synopsis를 string으로 저장
+#         performance.synopsis = response.choices[0].text.strip()
+#     elif performance.poster and not performance.synopsis:  # 소개이미지는 없고 포스터는 있는 경우
+#         try:
+#             poster_text = pytesseract.image_to_string(
+#                 Image.open(performance.poster), lang='kor+eng', timeout=3)
+#             if poster_text.strip():  # 추출된 텍스트가 비어있지 않은지 체크
+#                 context = f"This is the Korean text embedded in a performance's poster: {poster_text}\n"
+#                 prompt = context + \
+#                     "Based on the text, generate a concise synopsis or a description of the performance in Korean."
+
+#                 response = openai.Completion.create(
+#                     engine="gpt-4o-mini",
+#                     prompt=prompt,
+#                     max_tokens=150,  # 응답의 token 수 제한 (한 문장은 보통 토큰 10~20개)
+#                     temperature=0.7,  # 모델 응답의 '창의성' 조절
+#                     n=1,  # 응답 개수
+#                     stop=None  # max_token 제한 도달할 때까지 토큰 생성
+#                 )
+#                 # 생성된 synopsis를 string으로 저장
+#                 performance.synopsis = response.choices[0].text.strip()
+#             else:
+#                 return "포스터에서 텍스트를 추출할 수 없습니다."
+#         except RuntimeError as TimeoutError:
+#             print(f"Error occurred while processing poster: {TimeoutError}")
+#     else:  # 소개 이미지도 없고 포스터도 없는 경우
+#         return "줄거리를 생성할 수 없습니다."
+
 
 # 해시태그 생성
 def generate_hashtags_for_performance(performance):
-    question = ''
-    images = []
-    hashtag_list = ''
+    information = ''
+    images_url = []
+    hashtag_list = '#극적인, #내한공연,  #시각예술, #감동적, #라이브음악, #실험적, #웅장한, #가족친화적, #이머시브, #화려한, #전통적, #컴팩트한공연장, #트렌디한, #로맨틱, #창의적, #코믹한, #미스터리, #어두운, #힐링, #신나는'
     # 공연의 필드 일부를 정보로 주고 이를 바탕으로 해시태그를 생성하게 함
     if performance.title:
-        question += f'title: {performance.title},'
+        information += f'title: {performance.title},'
     if performance.type:
-        question += f'type: {performance.type},'
+        information += f'type: {performance.type},'
     if performance.synopsis:
-        question += f'synopsis: {performance.synopsis}'
+        information += f'synopsis: {performance.synopsis}'
     if performance.poster:
-        images.append({performance.poster})
+        images_path.append({performance.poster})
     if performance.styurls:
-        images.append({performance.styurls})
-        
-    context = f"These are available informations of a performance in Korean: {question}"
+        images_path.extend({performance.styurls})
 
+    # 이미지 경로
+    images_path = []
+
+    for url in images_url:
+        file_name = url.split('/')[-1]
+        file_path = f"./static/{file_name}"
+        images_path.append(file_path)
+
+    # 이미지 데이터를 Base64로 인코딩
+    base64_images = []
+    for image_path in images_path:
+        # 파일 확장자에 따라 MIME 타입 설정
+        if image_path.endswith(".gif"):
+            mime_type = "image/gif"
+        elif image_path.endswith(".jpg") or image_path.endswith(".jpeg"):
+            mime_type = "image/jpeg"
+        elif image_path.endwith(".png"):
+            mime_type = "image/png"
+
+        with open(image_path, "rb") as image_file:
+            base64_encoded_image = base64.b64encode(
+                image_file.read()).decode('utf-8')
+            base64_images.append(
+                f"data:{mime_type};base64,{base64_encoded_image}")
+
+    hashtag_list = 'Horror, Commedy, Action, Romance'
+    # OpenAI API 요청
     response = CLIENT.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         messages=[
             {
                 "role": "system",
                 "content": [
                     {
                         "type": "text",
-                        "text": "This is a helper that helps you choose appropriate hashtags."
-                    }
-                ]
-            },
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"Please select the appropriate hashtag among {hashtag_list} based on the images and information provided: {context}"
+                        "text": f"Please select the appropriate hashtag among ({hashtag_list}) based on the images and information provided: {information}. Please provide hashtags."
                     }
                 ]
             },
@@ -181,21 +208,29 @@ def generate_hashtags_for_performance(performance):
                 "role": "user",
                 "content": [
                     {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": images
+                        "type": "text",
+                        "text": "Please check the following image and select the appropriate tag."
+                    },
+                    *[
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": base64_images[i]
+                            }
                         }
-                    }
+                        for i in range(len(base64_images))
+                    ],
                 ]
             },
         ],
-        max_tokens=150,  # 응답의 token 수 제한 (한 문장은 보통 토큰 10~20개)
+        max_tokens=150,  # 응답의 token 수 제한
         temperature=0.7,  # 모델 응답의 '창의성' 조절
         n=1,  # 응답 개수
     )
+
     hashtags = response.choices[0].text.strip().split()[:3]
     for tag in hashtags:
-        performance.performance_hashtag = tag # 수정 필요
+        performance.performance_hashtag = tag  # 수정 필요
     performance.save()
     return performance.performance_hashtag.all()
 

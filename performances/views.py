@@ -334,21 +334,7 @@ class RecommendationAPIView(APIView):
 
         if user_preferences:
             for performance in user_preferences:
-                # synopsis가 없는 공연의 synopsis를 OpenAI API로 생성
-                # if performance.synopsis:
-                #     # synopsis가 있지만 공연에 대한 hashtag가 없다면 OpenAI API로 생성
-                #     if performance.performance_hashtag:
-                #         continue
-                #     else:
-                #         generate_hashtags_for_performance(performance)
-                # else:
-                #     generate_synopsis(performance)
-                #     # 공연에 대한 hashtag가 없다면 OpenAI API로 생성
-                #     if performance.performance_hashtag:
-                #         continue
-                #     else:
-                #         generate_hashtags_for_performance(performance)
-                
+
                 # 공연에 대한 hashtag가 없다면 OpenAI API로 생성
                 if performance.performance_hashtag:
                     continue

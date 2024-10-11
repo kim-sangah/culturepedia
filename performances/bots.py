@@ -77,9 +77,8 @@ def generate_recommendations_with_tags(input_tags):
 
     return response.choices[0].text.strip()
 
+
 # 줄거리 생성
-
-
 # def generate_synopsis(performance):
 #     # 줄거리가 없는 공연의 소개이미지나 포스터에 있는 글 추출해 줄거리(공연 설명) 생성
 #     styurls_text = ""
@@ -153,7 +152,7 @@ def generate_recommendations_with_tags(input_tags):
 def generate_hashtags_for_performance(performance):
     information = ''
     images_url = []
-    hashtag_list = '#극적인, #내한공연,  #시각예술, #감동적, #라이브음악, #실험적, #웅장한, #가족친화적, #이머시브, #화려한, #전통적, #컴팩트한공연장, #트렌디한, #로맨틱, #창의적, #코믹한, #미스터리, #어두운, #힐링, #신나는'
+    hashtag_list = '#극적인, #내한공연, #시각예술, #감동적, #라이브음악, #실험적, #웅장한, #가족친화적, #이머시브, #화려한, #전통적, #컴팩트한공연장, #트렌디한, #로맨틱, #창의적, #코믹한, #미스터리, #어두운, #힐링, #신나는'
     # 공연의 필드 일부를 정보로 주고 이를 바탕으로 해시태그를 생성하게 함
     if performance.title:
         information += f'title: {performance.title},'
@@ -192,15 +191,13 @@ def generate_hashtags_for_performance(performance):
                 f"data:{mime_type};base64,{base64_encoded_image}")
 
     # OpenAI API 요청
-        for styurl in performance.styurls:
-            file_size_mb = get_file_size(styurl)
-            if file_size_mb <= MAX_FILE_SIZE_MB:  # 10 MB보다 작거나 같은 크기의 이미지만 append
-                images.append({styurl})
-            else:
-                print(f"Image {styurl} is larger than {MAX_FILE_SIZE_MB} MB and has been excluded.")
+        # for styurl in performance.styurls:
+        #     file_size_mb = get_file_size(styurl)
+        #     if file_size_mb <= MAX_FILE_SIZE_MB:  # 10 MB보다 작거나 같은 크기의 이미지만 append
+        #         images_path.append({styurl})
+        #     else:
+        #         print(f"Image {styurl} is larger than {MAX_FILE_SIZE_MB} MB and has been excluded.")
         
-    context = f"These are available informations of a performance in Korean: {question}"
-
     response = CLIENT.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -244,25 +241,24 @@ def generate_hashtags_for_performance(performance):
     return performance.performance_hashtag.all()
 
 # 소개이미지 파일 사이즈 받기
-def get_file_size(url):
-    try:
-        response = requests.get(url, stream=True)
+# def get_file_size(url):
+#     try:
+#         response = requests.get(url, stream=True)
         
-        total_size = 0
+#         total_size = 0
         
-        # chunk로 나눠진 response를 돌아 각 chunk를 총 크기에 더함 (기본 chunk 사이즈는 1024 바이트)
-        for chunk in response.iter_content(chunk_size=1024):
-            total_size += len(chunk)
+#         # chunk로 나눠진 response를 돌아 각 chunk를 총 크기에 더함 (기본 chunk 사이즈는 1024 바이트)
+#         for chunk in response.iter_content(chunk_size=1024):
+#             total_size += len(chunk)
         
-        # 파일 크기 단위를 바이트에서 메가바이트로 변환
-        file_size_mb = total_size / (1024 * 1024)
+#         # 파일 크기 단위를 바이트에서 메가바이트로 변환
+#         file_size_mb = total_size / (1024 * 1024)
         
-        return file_size_mb
-    except requests.RequestException as e:
-        print(f"Error fetching file size for {url}: {e}")
-        return 0
-
-
+#         return file_size_mb
+#     except requests.RequestException as e:
+#         print(f"Error fetching file size for {url}: {e}")
+#         return 0
+    
 # def recommendation_bot(user_input):
 #     system_instructions = """
 #     You are a helpful assistant.

@@ -3,14 +3,14 @@ import xmltodict
 import json
 import os
 import django
-from culturepedia import config
+from culturepedia import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')
 django.setup()
 
 from performances.models import Performlist, Performance
 
-api_key = config.API_KEY
+api_key = settings.API_KEY
 
 performancedetail_res = []
 existing_ids = set()

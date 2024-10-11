@@ -3,7 +3,7 @@ import xmltodict
 import json
 import os
 import django
-from culturepedia import config
+from culturepedia import settings
 from datetime import datetime, timedelta
 
 
@@ -12,7 +12,7 @@ django.setup()
 
 from performances.models import Performlist
 
-api_key = config.API_KEY
+api_key = settings.API_KEY
 
 performance_res = []
 existing_ids = set()  #중복확인 set

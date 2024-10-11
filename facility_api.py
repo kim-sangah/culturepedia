@@ -3,7 +3,7 @@ import xmltodict
 import json
 import os
 import django
-from culturepedia import config
+from culturepedia import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')
 django.setup()
@@ -13,7 +13,7 @@ from performances.models import Facility
 with open('performances/fixtures/performances_detail.json', 'r', encoding='utf-8') as f:  # 경로내 해당 파일, read 읽기, 문자 인코딩
     performances_detail = json.load(f)
 
-api_key = config.API_KEY
+api_key = settings.API_KEY
 facility_ids = [performance['fields']['facility_kopis_id'] for performance in performances_detail]  # 공연 상세 json 파일 > 공연장 kopis_id 리스트
 
 facility_res = []

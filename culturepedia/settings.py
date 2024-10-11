@@ -28,7 +28,7 @@ API_KEY = config.API_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.Debug
 
-ALLOWED_HOSTS = ["54.180.125.97", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["3.38.115.15", "127.0.0.1", "localhost"]
 
 # Application definition
 

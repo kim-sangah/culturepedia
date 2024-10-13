@@ -5,6 +5,8 @@ import django
 import xmltodict
 from culturepedia import config
 from urllib.request import urlretrieve
+from PIL import Image
+from io import BytesIO
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')
 django.setup()
@@ -18,20 +20,48 @@ existing_ids = set()
 performance_ids = list(Performlist.objects.values_list('kopis_id', flat=True))
 
 
-def download_images(img_list):
+# def download_images(img_list):
+#     img_folder = './static'
+#     if not os.path.exists(img_folder):
+#         os.makedirs(img_folder)
+        
+#     for url in img_list:
+#         file_name = url.split('/')[-1]
+#         file_path = os.path.join(img_folder, file_name)
+        
+#         if not os.path.exists(file_path):
+#             urlretrieve(url, file_path)
+#         else:
+#             pass
+
+# 이미지 리사이즈
+def resizing_images(url_list, quality=85):      # quaility: 70 ~ 90사이  기본값 85
     img_folder = './static'
     if not os.path.exists(img_folder):
-        os.makedirs(img_folder)
-        
-    for url in img_list:
-        file_name = url.split('/')[-1]
-        file_path = os.path.join(img_folder, file_name)
-        
-        if not os.path.exists(file_path):
-            urlretrieve(url, file_path)
-        else:
+        os.mkdir(img_folder)
+    
+    for url in url_list:
+        try:
+            # URL에서 이미지 다운로드
+            response = requests.get(url)
+            response.raise_for_status()  # HTTP 요청 에러 체크
+
+            # 이미지 파일 이름 추출
+            filename = os.path.basename(url)
+
+            # 공연별 폴더 만들기
+            folder_name = f"{img_folder}/{filename.split('_')[1]}"
+            if not os.path.exists(folder_name):
+                os.mkdir(folder_name)
+
+            # 이미지를 메모리에서 열기
+            im = Image.open(BytesIO(response.content))
+            
+            # 이미지 저장
+            im.save(os.path.join(folder_name, filename), quality=quality)
+            
+        except Exception as e:
             pass
-        
 
 for performance_code in performance_ids:
     try:
@@ -79,9 +109,13 @@ for performance_code in performance_ids:
                 if poster:
                     images.append(poster)
                 if styurls:
-                    images.extend(styurls)
+                    if isinstance(styurls["styurl"], list):
+                        images.extend(styurls["styurl"])
+                    else:
+                        images.append(styurls["styurl"])
                 if images:
-                    download_images(images)           
+                    # download_images(images) 
+                    resizing_images(images)        
 
                 try:
                     performance = Performance.objects.get(kopis_id=mt20id)

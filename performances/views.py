@@ -327,8 +327,9 @@ class ReviewAPIView(APIView):
 
 # OPENAI API 사용한 공연 추천
 class RecommendationAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request, pk):
-        permission_classes = [IsAuthenticated]
         user = get_object_or_404(User, id=pk)
 
         if request.user != user:
@@ -338,8 +339,8 @@ class RecommendationAPIView(APIView):
         user_preferences = self.get_user_preferences(request.user)
 
         # 유저가 입력한 태그 받아오기
-        #input_tags = request.data.get('input_tags')
-        input_tags = ['전통적']
+        input_tags = request.data.get('input_tags')
+        # input_tags = ['신나는', '화려한']
 
 
         if user_preferences:

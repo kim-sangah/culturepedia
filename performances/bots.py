@@ -127,17 +127,18 @@ def generate_recommendations_with_tags(input_tags):
 
     # performance_list에 있는 공연의 해시태그들 중 2개 이상이 input_tags_set에 있는 해시태그들과 일치하는지 체크
     for performance in performance_list:
-        performance_hashtags = set(performance.performance_hashtag.values_list('name', flat=True))
+        performance_hashtags = set(
+            performance.performance_hashtag.values_list('name', flat=True))
         common_hashtags = input_tags_set.intersection(performance_hashtags)
 
-        if len(common_hashtags) >= 1:
+        if len(common_hashtags) >= 2:
             recommended_performances.append({
-                "kopis_id": performance['kopis_id'],
-                "title": performance['title'],
-                "state": performance['state'],
-                "type": performance['type'],
-                "poster": performance['poster'],
-                "hashtags": performance['performance_hashtag'],
+                "kopis_id": performance.kopis_id,
+                "title": performance.title,
+                "state": performance.state,
+                "type": performance.type,
+                "poster": performance.poster,
+                "hashtags": performance.performance_hashtag.values_list('name', flat=True),
             })
 
     return recommended_performances

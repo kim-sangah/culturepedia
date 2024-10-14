@@ -72,7 +72,8 @@ def generate_recommendations(user_preferences, input_tags):
 
     # performance_list에 있는 공연의 해시태그들 중 2개 이상이 preferred_hashtags에 있는 해시태그들과 일치하는지 체크
     for performance in performance_list:
-        performance_hashtags = set(performance.performance_hashtags)
+        performance_hashtags = set(
+            performance.performance_hashtag.values_list('name', flat=True))
         common_hashtags = preferred_hashtags.intersection(performance_hashtags)
 
         if len(common_hashtags) >= 2:

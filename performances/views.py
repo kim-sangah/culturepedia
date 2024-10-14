@@ -10,6 +10,7 @@ from .models import Performance, Review, PerformanceLike
 from .serializers import PerformanceListSerializer, PerformanceDetailSerializer, ReviewSerializer
 from culturepedia import settings
 import xml.etree.ElementTree as ET
+from datetime import datetime
 
 API_KEY = settings.API_KEY
 
@@ -30,7 +31,7 @@ class OPENAPIViews(APIView):
         params = {
             'service': API_KEY,  # 필수
             'ststype': 'week',  # 필수
-            'date': '20240830',  # 필수
+            'date': datetime.now().strftime('%Y%m%d'),  # 필수
             'catecode': 'GGGA',
         }
         response = requests.get(url, params=params)

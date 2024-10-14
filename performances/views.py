@@ -338,14 +338,16 @@ class RecommendationAPIView(APIView):
         user_preferences = self.get_user_preferences(request.user)
 
         # 유저가 입력한 태그 받아오기
-        input_tags = request.data.get('input_tags')
+        #input_tags = request.data.get('input_tags')
+        input_tags = ['전통적']
+
 
         if user_preferences:
             recommendations = generate_recommendations(user_preferences, input_tags)
-        elif not user_preferences and not input_tags: # 요청을 보낸 사용자가 리뷰하거나 찜한 공연이 없고 입력한 태그도 없을 때
-            return Response({"error": "입력된 태그, 리뷰하거나 찜한 공연이 없습니다. 관심 태그를 입력해주세요"}, status=status.HTTP_400_BAD_REQUEST)
-        else: # 요청을 보낸 사용자가 리뷰하거나 찜한 공연이 없을 때
+        elif not user_preferences: # 요청을 보낸 사용자가 리뷰하거나 찜한 공연이 없을 때
             recommendations = generate_recommendations_with_tags(input_tags)
+        else:   # 요청을 보낸 사용자가 리뷰하거나 찜한 공연이 없고 입력한 태그도 없을 때
+            return Response({"error": "입력된 태그, 리뷰하거나 찜한 공연이 없습니다. 관심 태그를 입력해주세요"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"recommendations": recommendations}, status=200)
     

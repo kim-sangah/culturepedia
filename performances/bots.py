@@ -273,7 +273,7 @@ def generate_hashtags_for_performance(performance):
                 "content": [
                     {
                         "type": "text",
-                        "text": f"Select all appropriate hashtags ({hashtag_list}) based on the images and information provided: {information}. Please provide hashtags."
+                        "text": f"Select all appropriate hashtags ({hashtag_list}) based on the images and information provided: {information}. Just provide the hashtags."
                     }
                 ]
             },
@@ -304,7 +304,7 @@ def generate_hashtags_for_performance(performance):
     hashtags = response.choices[0].message.content.strip().split()
     print(hashtags)
     for tag in hashtags:
-        tag = tag.strip('# ,')
+        tag = tag.strip('#')
         Hashtag(performance_api_id=performance, name=tag).save()
     return performance.performance_hashtag.all()
 

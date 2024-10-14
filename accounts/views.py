@@ -114,4 +114,4 @@ class UserProfileView(APIView):
             return Response({"message": "비밀번호가 일치하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
         user.delete()
-        return Response({"message": "회원탈퇴가 완료되었습니다."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "회원탈퇴가 완료되었습니다."}, status=status.HTTP_200_OK)

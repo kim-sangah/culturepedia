@@ -171,4 +171,4 @@ class ReviewAPIView(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         review.delete()
-        return Response({"message": "리뷰가 삭제되었습니다."},status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "리뷰가 삭제되었습니다."},status=status.HTTP_200_OK)

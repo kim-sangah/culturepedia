@@ -342,7 +342,6 @@ class RecommendationAPIView(APIView):
 
         if user_preferences:
             for performance in user_preferences:
-
                 # 공연에 대한 hashtag가 없다면 OpenAI API로 생성
                 if performance.performance_hashtag:
                     continue

@@ -70,8 +70,7 @@ def start_scheduler():
     # scheduler 실행 중이 아닌 경우
     if not hasattr(start_scheduler, 'scheduler_running'):
         scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
-        # scheduler.add_jobstore(jobstores.DjangoJobStore(),
-        #                     "default")  # Django DB에 저장
+        # scheduler.add_jobstore(jobstores.DjangoJobStore(), "default")  # Django DB에 저장
 
     # 매일 자정 procees_scripts 실행
     scheduler.add_job(

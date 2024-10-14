@@ -1,7 +1,7 @@
 from django.conf import settings
 from openai import OpenAI
 import openai
-from .models import Performance
+from .models import Performance, Hashtag
 from django.db.models import Q
 from PIL import Image
 import pytesseract
@@ -10,7 +10,7 @@ from io import BytesIO
 import base64
 
 CLIENT = OpenAI(api_key=settings.OPENAI_API_KEY,)
-MAX_FILE_SIZE_MB = 10 
+MAX_FILE_SIZE_MB = 10
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
@@ -151,7 +151,7 @@ def generate_recommendations_with_tags(input_tags):
 # 해시태그 생성
 def generate_hashtags_for_performance(performance):
     information = ''
-    images_url = []
+    images_url = []        # 이미지 경로
     hashtag_list = '#극적인, #내한공연, #시각예술, #감동적, #라이브음악, #실험적, #웅장한, #가족친화적, #이머시브, #화려한, #전통적, #컴팩트한공연장, #트렌디한, #로맨틱, #창의적, #코믹한, #미스터리, #어두운, #힐링, #신나는'
     # 공연의 필드 일부를 정보로 주고 이를 바탕으로 해시태그를 생성하게 함
     if performance.title:
@@ -161,16 +161,18 @@ def generate_hashtags_for_performance(performance):
     if performance.synopsis:
         information += f'synopsis: {performance.synopsis}'
     if performance.poster:
-        images_path.append({performance.poster})
+        images_url.append(performance.poster)
     if performance.styurls:
-        images_path.extend({performance.styurls})
+        if isinstance(performance.styurls["styurl"], list):
+            images_url.extend(performance.styurls["styurl"])
+        else:
+            images_url.append(performance.styurls["styurl"])
 
-    # 이미지 경로
     images_path = []
 
     for url in images_url:
         file_name = url.split('/')[-1]
-        file_path = f"./static/{file_name}"
+        file_path = f"./static/{performance.kopis_id}/{file_name}"
         images_path.append(file_path)
 
     # 이미지 데이터를 Base64로 인코딩
@@ -197,16 +199,16 @@ def generate_hashtags_for_performance(performance):
         #         images_path.append({styurl})
         #     else:
         #         print(f"Image {styurl} is larger than {MAX_FILE_SIZE_MB} MB and has been excluded.")
-        
+
     response = CLIENT.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {
                 "role": "system",
                 "content": [
                     {
                         "type": "text",
-                        "text": f"Please select the appropriate hashtag among ({hashtag_list}) based on the images and information provided: {information}. Please provide hashtags."
+                        "text": f"Select all appropriate hashtags ({hashtag_list}) based on the images and information provided: {information}. Please provide hashtags."
                     }
                 ]
             },
@@ -215,7 +217,7 @@ def generate_hashtags_for_performance(performance):
                 "content": [
                     {
                         "type": "text",
-                        "text": "Please check the following image and select the appropriate tag."
+                        "text": "Please check the following image and select all appropriate tags."
                     },
                     *[
                         {
@@ -234,31 +236,32 @@ def generate_hashtags_for_performance(performance):
         n=1,  # 응답 개수
     )
 
-    hashtags = response.choices[0].text.strip().split()[:3]
+    hashtags = response.choices[0].message.content.strip().split()
+    print(hashtags)
     for tag in hashtags:
-        performance.performance_hashtag = tag  # 수정 필요
-    performance.save()
+        tag = tag.strip('# ,')
+        Hashtag(performance_api_id=performance, name=tag).save()
     return performance.performance_hashtag.all()
 
 # 소개이미지 파일 사이즈 받기
 # def get_file_size(url):
 #     try:
 #         response = requests.get(url, stream=True)
-        
+
 #         total_size = 0
-        
+
 #         # chunk로 나눠진 response를 돌아 각 chunk를 총 크기에 더함 (기본 chunk 사이즈는 1024 바이트)
 #         for chunk in response.iter_content(chunk_size=1024):
 #             total_size += len(chunk)
-        
+
 #         # 파일 크기 단위를 바이트에서 메가바이트로 변환
 #         file_size_mb = total_size / (1024 * 1024)
-        
+
 #         return file_size_mb
 #     except requests.RequestException as e:
 #         print(f"Error fetching file size for {url}: {e}")
 #         return 0
-    
+
 # def recommendation_bot(user_input):
 #     system_instructions = """
 #     You are a helpful assistant.

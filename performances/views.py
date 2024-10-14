@@ -341,14 +341,6 @@ class RecommendationAPIView(APIView):
         input_tags = request.data.get('input_tags')
 
         if user_preferences:
-            for performance in user_preferences:
-
-                # 공연에 대한 hashtag가 없다면 OpenAI API로 생성
-                if performance.performance_hashtag:
-                    continue
-                else:
-                    generate_hashtags_for_performance(performance)
-                    
             recommendations = generate_recommendations(user_preferences, input_tags)
         elif not user_preferences and not input_tags: # 요청을 보낸 사용자가 리뷰하거나 찜한 공연이 없고 입력한 태그도 없을 때
             return Response({"error": "입력된 태그, 리뷰하거나 찜한 공연이 없습니다. 관심 태그를 입력해주세요"}, status=status.HTTP_400_BAD_REQUEST)
@@ -370,3 +362,17 @@ class RecommendationAPIView(APIView):
 
         return user_preferences
     
+    
+class hashtagcreateAPIView(APIView):
+    
+    def post(self, request, *args, **kwargs):
+        performances = Performance.objects.all()
+
+        for performance in performances:
+            if performance.performance_hashtag.exists():
+                continue
+            else:
+                print(f"{performance.kopis_id} 해시태그 생성중")
+                generate_hashtags_for_performance(performance)
+                
+        return Response({"message": "Hashtags generated successfully"}, status=status.HTTP_201_CREATED)

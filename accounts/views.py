@@ -14,18 +14,18 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # 회원가입
 class UserSignupView(APIView):
     def post(self, request):
-        
+
         errors = validate_user_data(request.data)
-        
+
         if errors is not None:
             return Response({"message": errors}, status=status.HTTP_404_NOT_FOUND)
-        
+
         user = User.objects.create_user(
-            email = request.data.get("email"),
-            password = request.data.get("password"),
-            username = request.data.get("username"),
-            gender = request.data.get("gender"),
-            birthday= request.data.get("birthday"),
+            email=request.data.get("email"),
+            password=request.data.get("password"),
+            username=request.data.get("username"),
+            gender=request.data.get("gender"),
+            birthday=request.data.get("birthday"),
         )
 
         refresh = RefreshToken.for_user(user)
@@ -41,6 +41,8 @@ class UserSigninView(APIView):
         email = request.data.get("email")
         password = request.data.get("password")
 
+
+        # 이메일 또는 비밀번호가 비어 있는지 확인
         if not email or not password:
             return Response({"message": "이메일과 비밀번호를 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -64,7 +66,7 @@ class UserSignoutView(APIView):
         refresh_token = request.data.get('refresh')
 
         if not refresh_token:
-            return Response({"message": "비밀번호가 틀렸습니다."},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "비밀번호가 틀렸습니다."}, status=status.HTTP_400_BAD_REQUEST)
         token = RefreshToken(refresh_token)
         token.blacklist()
         return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_205_RESET_CONTENT)
@@ -79,7 +81,7 @@ class UserProfileView(APIView):
         user = get_object_or_404(User, id=pk)
         if request.user != user:
             raise PermissionDenied(status=status.HTTP_400_BAD_REQUEST)
-        
+
         serializer = UserSerializer(user)
         return Response(serializer.data)
     
@@ -88,12 +90,13 @@ class UserProfileView(APIView):
         user = get_object_or_404(User, id=pk)
         if request.user != user:
             raise PermissionDenied(status=status.HTTP_400_BAD_REQUEST)
-        
-        serializer = UserModifySerializer(user, data=request.data, partial=True)
+
+        serializer = UserModifySerializer(
+            user, data=request.data, partial=True)
 
         if serializer.is_valid(raise_exception=True):
             password = request.data.pop('password', None)
-            if password is not None: 
+            if password is not None:
                 serializer.save()
                 user.set_password(password)
                 user.save()
@@ -101,12 +104,12 @@ class UserProfileView(APIView):
                 serializer.save()
             return Response({"message": "회원정보수정이 완료되었습니다."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # 회원탈퇴
     def delete(self, request, pk):
         user = request.user
         password = request.data.get("password")
-        
+
         if not password:
             return Response({"message": "비밀번호를 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -21,8 +21,9 @@ page_num = 1
 
 while True:
 
-    start_date = (datetime.now() - timedelta(days=5)).strftime('%Y%m%d')
-    end_date = datetime.now().strftime('%Y%m%d')
+    start_date = datetime.now().strftime('%Y%m%d')
+    end_date = (datetime.now() + timedelta(days=60)).strftime('%Y%m%d')
+
 
     url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate={start_date}&eddate={end_date}&rows=100&cpage={page_num}'
     response = requests.get(url)
@@ -88,7 +89,7 @@ while True:
 
         except Exception as e:
             print(f"Error occurred: {e}")  # 오류 출력
-    
+
     page_num += 1  # while True 시 페이지 증가
 
 # 경로 설정

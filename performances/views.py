@@ -238,4 +238,3 @@ class HashtagcreateAPIView(APIView):
                 generate_hashtags_for_performance(performance)
 
         return Response({"message": "Hashtags generated successfully"}, status=status.HTTP_201_CREATED)
-

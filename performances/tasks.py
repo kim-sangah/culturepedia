@@ -7,7 +7,7 @@ import subprocess
 from django.conf import settings
 
 
-# JSON 파일을 생성하는 함수
+# JSON 파일을 생성 함수
 def run_script(script_name):
     venv_python = sys.executable
     script_path = os.path.join(os.path.dirname(__file__), '..', script_name)
@@ -26,7 +26,7 @@ def run_script(script_name):
         return False
 
 
-# JSON 데이터를 DB에 저장하는 함수
+# JSON 데이터 > DB 저장 함수
 def run_loaddata(fixture_name):
     venv_python = sys.executable
     manage_py_path = os.path.join(os.path.dirname(__file__), '..', 'manage.py')
@@ -44,11 +44,11 @@ def run_loaddata(fixture_name):
         print(f"Error running loaddata for {fixture_name}: {e}")
 
 
-# 순차적으로 실행(공연전체 -> 공연장 -> 공연상세)
+# 실행 순서 (공연목록 > 공연장 > 공연상세)
 def process_scripts():
     # 1. kopis_api.py 실행
     if run_script('kopis_api.py'):
-        run_loaddata('performances_list.json')  # kopis_api의 데이터를 로드
+        run_loaddata('performances_list.json')  # kopis_api 데이터 로드
     else:
         return
 
@@ -56,23 +56,22 @@ def process_scripts():
     if run_script('kopis_api_detail.py'):
         # 3. facility_api.py 실행
         if run_script('facility_api.py'):
-            run_loaddata('facility.json')  # facility_api의 데이터를 로드
-            # kopis_api_detail의 데이터를 로드
+            run_loaddata('facility.json')  # facility_api 데이터 로드
+            # kopis_api_detail 데이터 로드
             run_loaddata('performances_detail.json')
     else:
         return
 
-# BackgroundScheduler를 시작하고 작업을 등록하는 함수
 
+# BackgroundScheduler 실행 및 작업 등록 함수
 
 def start_scheduler():
-    # scheduler의 실행중이지 않다면
+    # scheduler 실행 중이 아닌 경우
     if not hasattr(start_scheduler, 'scheduler_running'):
         scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
-        # scheduler.add_jobstore(jobstores.DjangoJobStore(),
-        #                        "default")  # Django DB에 저장
+        # scheduler.add_jobstore(jobstores.DjangoJobStore(), "default")  # Django DB에 저장
 
-    # 매일 자정에 procees_scripts 실행
+    # 매일 자정 procees_scripts 실행
     scheduler.add_job(
         process_scripts,
         trigger=CronTrigger(hour=00, minute=00),
@@ -81,7 +80,7 @@ def start_scheduler():
         replace_existing=True,
     )
 
-    # 스케줄러 시작
+    # 스케줄러 실행
     scheduler.start()
     start_scheduler.scheduler_running = True  # 중복 실행 방지 플래그 설정
     print("Scheduler started and job 'process_scripts' added.")

@@ -1,8 +1,13 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-
 User = get_user_model()
+
+
+class Hashtag(models.Model):
+    performance_api_id = models.ForeignKey(
+        'Performance', on_delete=models.CASCADE, related_name='performance_hashtag')
+    name = models.CharField(max_length=10)
 
 
 class Performlist(models.Model):
@@ -50,6 +55,9 @@ class Performance(models.Model):
     # styurl = models.TextField(null=True) JSONField 'styurls'로 수정. styurls 리스트 안에 여러 개의 styurl이 있는 경우 있음
     styurls = models.JSONField(null=True, blank=True)
 
+    def __str__(self):
+        return self.title
+
 
 class Facility(models.Model):
     kopis_id = models.CharField(primary_key=True, max_length=20)
@@ -61,7 +69,8 @@ class Facility(models.Model):
 
 
 class Review(models.Model):
-    performance = models.ForeignKey(Performance, on_delete=models.CASCADE)
+    performance = models.ForeignKey(
+        Performance, on_delete=models.CASCADE)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField()
@@ -70,13 +79,10 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.title
-
 
 # 찜하기 기능
 class PerformanceLike(models.Model):
-    performance = models.ForeignKey(
-        Performance, related_name='performance_likes', on_delete=models.CASCADE)  # 사용자가 찜하려고 선택한 게시글 제목
     user = models.ForeignKey(
-        User, related_name='liked_by', on_delete=models.CASCADE)  # 로그인한 사용자
+        User, related_name='liked_by', on_delete=models.CASCADE)
+    performance = models.ForeignKey(
+        Performance, related_name='performance_likes', on_delete=models.CASCADE)

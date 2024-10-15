@@ -1,23 +1,23 @@
 import requests
+import xmltodict
 import json
 import os
 import django
-import xmltodict
-from culturepedia import config
-from urllib.request import urlretrieve
 from PIL import Image
 from io import BytesIO
+from culturepedia import settings
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')
 django.setup()
 
 from performances.models import Performlist, Performance
 
-api_key = config.API_KEY
+api_key = settings.API_KEY
 
 performancedetail_res = []
 existing_ids = set()
-performance_ids = list(Performlist.objects.values_list('kopis_id', flat=True))
+performance_ids = list(Performlist.objects.values_list('kopis_id', flat=True))  # DB 저장된 공연 kopis_id 리스트
 
 
 # def download_images(img_list):
@@ -74,9 +74,9 @@ for performance_code in performance_ids:
         print(f"An error occurred: {e}")
     data = xmltodict.parse(response.content)
 
-    db_data = data.get('dbs', {}).get('db', None)
+    db_data = data.get('dbs', {}).get('db', None)  # xml dbs 안 db
 
-    if isinstance(db_data, dict):
+    if isinstance(db_data, dict):  # 조회된 페이지는 1개 공연 정보
             try:
                 mt20id = db_data['mt20id']
                 title = db_data['prfnm']

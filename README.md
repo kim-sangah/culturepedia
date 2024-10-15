@@ -51,6 +51,7 @@ It is a platform that allows you to conveniently explore cultural content contai
   - urllib3==2.2.3
   - xmltodict==0.13.0
 
+
 ## Key Features
 ### Accounts
 - Sign up
@@ -88,6 +89,7 @@ It is a platform that allows you to conveniently explore cultural content contai
   - Users can remove performances from their favorites list.
 - Performance Recommendations
   - Based on the user’s reviews (ratings of 3 stars or higher), favorites, and search tags, the system recommends personalized performances. If there’s insufficient user data, users can manually choose categories, characteristics, moods, and regions for recommendations.
+
 
 
 ## Requirements

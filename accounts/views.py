@@ -1,11 +1,11 @@
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
 from .models import User
-from .serializers import UserSerializer, UserModifySerializer
 from .validators import validate_user_data
+from .serializers import UserSerializer, UserModifySerializer
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -41,11 +41,11 @@ class UserSigninView(APIView):
         email = request.data.get("email")
         password = request.data.get("password")
 
+
         # 이메일 또는 비밀번호가 비어 있는지 확인
         if not email or not password:
             return Response({"message": "이메일과 비밀번호를 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # 이메일과 비밀번호로 사용자 인증
         user = authenticate(request, email=email, password=password)
         if user is not None:
             refresh = RefreshToken.for_user(user)
@@ -78,15 +78,13 @@ class UserProfileView(APIView):
 
     # 프로필 조회
     def get(self, request, pk):
-        # print(f"Requested user ID : {pk}")
         user = get_object_or_404(User, id=pk)
         if request.user != user:
             raise PermissionDenied(status=status.HTTP_400_BAD_REQUEST)
 
         serializer = UserSerializer(user)
-        # print(f"데이터 입력 : {serializer.data}")
         return Response(serializer.data)
-
+    
     # 회원정보 수정
     def put(self, request, pk):
         user = get_object_or_404(User, id=pk)
@@ -119,4 +117,4 @@ class UserProfileView(APIView):
             return Response({"message": "비밀번호가 일치하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
         user.delete()
-        return Response({"message": "회원탈퇴가 완료되었습니다."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "회원탈퇴가 완료되었습니다."}, status=status.HTTP_200_OK)

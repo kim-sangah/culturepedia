@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance List</title>
+</head>
+<body>
+    <ul>
+        {% for performance in performance_list %}
+        <li>{{ performance.공연명 }}</li>
+        <li>{{ performance.장르 }}</li>
+        <li>{{ performance.순위 }}</li>
+        <li>{{ performance.공연기간 }}</li>
+        <li>{{ performance.좌석수 }}</li>
+        <li>{{ performance.공연장 }}</li>
+        <li>{{ performance.포스터 }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

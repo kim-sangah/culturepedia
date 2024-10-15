@@ -57,7 +57,7 @@ def generate_recommendations(user_preferences, input_tags):
     # user_preferences에 있는 선호하는 공연들의 해시태그를 preferred_hashtags 리스트에 넣음
     preferred_hashtags = set()
     for performance in user_preferences:
-        preferred_hashtags.update(performance.performance_hashtags)
+        preferred_hashtags.update(performance.performance_hashtag.values_list('name', flat=True))
 
     # input_tags가 있을 경우, input_tags를 preferred_hashtags에 추가
     if input_tags:
@@ -75,6 +75,37 @@ def generate_recommendations(user_preferences, input_tags):
         performance_hashtags = set(
             performance.performance_hashtag.values_list('name', flat=True))
         common_hashtags = preferred_hashtags.intersection(performance_hashtags)
+
+        if len(common_hashtags) >= 2:
+            recommended_performances.append({
+                "kopis_id": performance.kopis_id,
+                "title": performance.title,
+                "state": performance.state,
+                "type": performance.type,
+                "poster": performance.poster,
+                "hashtags": performance.performance_hashtag.values_list('name', flat=True),
+            })
+
+    return recommended_performances
+
+
+# 데이터가 없는(리뷰를 작성하거나 찜한 공연이 없는) 사용자로부터 입력받은 해시태그로만 공연 추천 (openai 사용 X)
+def generate_recommendations_with_tags(input_tags):
+    # 유저에게 입력받은 태그들을 set()로 저장
+    input_tags_set = set(input_tags)
+
+    # 공연중, 공연예정인 공연들을 performance_list에 넣음
+    performance_list = Performance.objects.filter(
+        Q(state="공연중") | Q(state="공연예정")
+    )
+
+    recommended_performances = []
+
+    # performance_list에 있는 공연의 해시태그들 중 2개 이상이 input_tags_set에 있는 해시태그들과 일치하는지 체크
+    for performance in performance_list:
+        performance_hashtags = set(
+            performance.performance_hashtag.values_list('name', flat=True))
+        common_hashtags = input_tags_set.intersection(performance_hashtags)
 
         if len(common_hashtags) >= 2:
             recommended_performances.append({
@@ -115,35 +146,6 @@ def generate_recommendations(user_preferences, input_tags):
 #     return response.choices[0].text.strip()
 
 
-# 데이터가 없는(리뷰를 작성하거나 찜한 공연이 없는) 사용자로부터 입력받은 해시태그로만 공연 추천 (openai 사용 X)
-def generate_recommendations_with_tags(input_tags):
-    # 유저에게 입력받은 태그들을 set()로 저장
-    input_tags_set = set(input_tags)
-
-    # 공연중, 공연예정인 공연들을 performance_list에 넣음
-    performance_list = Performance.objects.filter(
-        Q(state="공연중") | Q(state="공연예정")
-    )
-
-    recommended_performances = []
-
-    # performance_list에 있는 공연의 해시태그들 중 2개 이상이 input_tags_set에 있는 해시태그들과 일치하는지 체크
-    for performance in performance_list:
-        performance_hashtags = set(
-            performance.performance_hashtag.values_list('name', flat=True))
-        common_hashtags = input_tags_set.intersection(performance_hashtags)
-
-        if len(common_hashtags) >= 2:
-            recommended_performances.append({
-                "kopis_id": performance.kopis_id,
-                "title": performance.title,
-                "state": performance.state,
-                "type": performance.type,
-                "poster": performance.poster,
-                "hashtags": performance.performance_hashtag.values_list('name', flat=True),
-            })
-
-    return recommended_performances
 
 # 줄거리 생성
 # def generate_synopsis(performance):
@@ -275,7 +277,7 @@ def generate_hashtags_for_performance(performance):
                 "content": [
                     {
                         "type": "text",
-                        "text": f"Select all appropriate hashtags ({hashtag_list}) based on the images and information provided: {information}. Please provide hashtags."
+                        "text": f"Select all appropriate hashtags ({hashtag_list}) based on the images and information provided: {information}. Just provide the hashtags."
                     }
                 ]
             },

@@ -15,17 +15,21 @@ from openai import OpenAI
 from django.conf import settings
 from django.db.models import Q
 from .bots import generate_hashtags_for_performance, generate_recommendations, generate_recommendations_with_tags
-
+from rest_framework.renderers import TemplateHTMLRenderer
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
 
 
 class OPENAPIViews(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'performances/performance_list.html'
+
+
     def get(self, request, *args, **kwarg):
         # 공연 목록 조회
         performance_list = self.get_ticket_sales()
         if performance_list is not None:
-            return Response(performance_list, status=status.HTTP_200_OK)
+            return Response({'performance_list': performance_list})
         else:
             return Response({'error': '공연 목록을 불러오지 못했습니다.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

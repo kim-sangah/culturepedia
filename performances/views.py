@@ -23,7 +23,7 @@ API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
 
 class OPENAPIViews(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'performances/index.html'
+    template_name = 'performances/performances_list.html'
 
     def get(self, request, *args, **kwarg):
         # 공연 목록 조회
@@ -70,7 +70,9 @@ class OPENAPIViews(APIView):
 
 
 class OPENAPIDetailViews(APIView):
-
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'performances/performances_detail.html'
+    
     def get(self, request, *args, **kwargs):
         performance_id = kwargs.get('pk')
         if performance_id:
@@ -85,7 +87,8 @@ class OPENAPIDetailViews(APIView):
                         performance_data['공연장소정보'] = facility_data
                     else:
                         return Response({'error': '공연 장소 상세 정보를 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
-                return Response(performance_data, status=status.HTTP_200_OK)
+                # return Response(performance_data, status=status.HTTP_200_OK)
+                return Response({'performance_data': performance_data})
             else:
                 return Response({'error': '공연 상세 정보를 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
         else:

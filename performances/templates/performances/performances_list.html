@@ -23,7 +23,7 @@
             {% for performance in performances %}
             <tr>
                 <td>{{ performance.순위 }}</td>
-                <td><a href="#{{ performance.공연ID }}">{{ performance.공연명 }}</a></td>
+                <td><a href="detail/{{ performance.공연ID }}">{{ performance.공연명 }}</a></td>
                 <td>{{ performance.장르 }}</td>
                 <td>{{ performance.공연기간 }}</td>
                 <td>{{ performance.공연장 }}</td>

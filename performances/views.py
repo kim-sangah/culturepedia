@@ -71,21 +71,23 @@ class OPENAPIViews(APIView):
                 return Response({'error': 'Failed to parse XML data'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #공연 찜
-class PerformanceLikeAPIView(APIView):
+class PerformanceLikeView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     #공연 찜하기
-    def post(self, request, pk):
+    def post(self,request,pk):
         performance = get_object_or_404(Performance, pk=pk)
         user = request.user
         
+        #이미 찜했는지 확인하기
         if PerformanceLike.objects.filter(user=user, performance=performance).exists():
-            return Response({"message": "이미 찜한 공연입니다."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "이미 찜한 공연입니다."},status=status.HTTP_400_BAD_REQUEST)
         
+        #찜하기 및 카운트 증가
         PerformanceLike.objects.create(user=user, performance=performance)
-        return Response({"message": "찜한 공연목록에 추가 되었습니다 "}, status=status.HTTP_201_CREATED)
+        return Response({"message": "찜한 공연목록에 추가 되었습니다 "},status=status.HTTP_201_CREATED)
 
-    #공연 찜취소
+    #공연 찜 취소
     def delete(self, request, pk):
         performance = get_object_or_404(Performance, pk=pk)
         user =request.user

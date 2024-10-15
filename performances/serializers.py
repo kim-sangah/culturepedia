@@ -1,4 +1,4 @@
-from .models import PerformanceLike, Review
+from .models import Performance, Review
 from rest_framework import serializers
 
 

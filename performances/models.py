@@ -4,12 +4,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class Hashtag(models.Model):
-    performance_api_id = models.ForeignKey(
-        'Performance', on_delete=models.CASCADE, related_name='performance_hashtag')
-    name = models.CharField(max_length=10)
-
-
 class Performlist(models.Model):
     kopis_id = models.CharField(primary_key=True, max_length=10)
     facility_name = models.CharField(max_length=100)

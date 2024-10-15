@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공연 목록</title>
+    <title>CULTUREPEDIA</title>
 </head>
 <body>
-    <h1>공연 목록</h1>
+    <h1>금주 TOP</h1>
     <table border="1">
         <thead>
             <tr>
@@ -23,14 +23,14 @@
             {% for performance in performances %}
             <tr>
                 <td>{{ performance.순위 }}</td>
-                <td>{{ performance.공연명 }}</td>
+                <td><a href="#{{ performance.공연ID }}">{{ performance.공연명 }}</a></td>
                 <td>{{ performance.장르 }}</td>
                 <td>{{ performance.공연기간 }}</td>
                 <td>{{ performance.공연장 }}</td>
                 <td>{{ performance.좌석수 }}</td>
                 <td>
                     {% if performance.포스터 %}
-                    <img src="{{ performance.포스터 }}" alt="{{ performance.공연명 }}" width="100">
+                    <img src="http://www.kopis.or.kr/{{ performance.포스터 }}" alt="{{ performance.공연명 }}" width="100">
                     {% else %}
                     이미지 없음
                     {% endif %}

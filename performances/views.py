@@ -15,25 +15,26 @@ from openai import OpenAI
 from django.conf import settings
 from django.db.models import Q
 from .bots import generate_hashtags_for_performance, generate_recommendations, generate_recommendations_with_tags
-
-from django.http import HttpResponseServerError
-from django.views import View
-from django.shortcuts import render
+from rest_framework.renderers import TemplateHTMLRenderer
 
 
 API_KEY = settings.API_KEY  # settings에서 API_KEY 불러오기
 
 
-class OPENAPIViews(View):
+class OPENAPIViews(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'performances/index.html'
+
     def get(self, request, *args, **kwarg):
         # 공연 목록 조회
         performance_list = self.get_ticket_sales()
         if performance_list is not None:
             # return Response(performance_list, status=status.HTTP_200_OK)
-            return render(request, 'performances/index.html', {'performances': performance_list})
+            return Response({'performances': performance_list})
+            # return render(request, 'performances/index.html', {'performances': performance_list})
         else:
-            # return Response({'error': '공연 목록을 불러오지 못했습니다.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            return HttpResponseServerError('공연 목록을 불러오지 못했습니다.')
+            return Response({'error': '공연 목록을 불러오지 못했습니다.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # return HttpResponseServerError('공연 목록을 불러오지 못했습니다.')
 
     def get_ticket_sales(self):
         # 예매상황판 (유료 공연 티켓 판매율 기준으로 집계됨) 조회
@@ -59,6 +60,7 @@ class OPENAPIViews(View):
                         '공연장': item.find('prfplcnm').text if item.find('prfplcnm') is not None else None,
                         '좌석수': item.find('seatcnt').text if item.find('seatcnt') is not None else None,
                         '포스터': item.find('poster').text if item.find('poster') is not None else None,
+                        '공연ID': item.find('mt20id').text if item.find('mt20id') is not None else None,
                     }
                     sales_data.append(data)
                 sales_data = sorted(sales_data, key=lambda x: x['순위'])

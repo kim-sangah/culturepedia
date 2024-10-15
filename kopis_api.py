@@ -6,7 +6,6 @@ import django
 from culturepedia import settings
 from datetime import datetime, timedelta
 
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'culturepedia.settings')  #Django 환경 설정 로드, 프로젝트 이름 지정
 django.setup()
 
@@ -22,7 +21,7 @@ page_num = 1
 while True:
 
     start_date = datetime.now().strftime('%Y%m%d')
-    end_date = (datetime.now() + timedelta(days=60)).strftime('%Y%m%d')
+    end_date = (datetime.now() + timedelta(days=5)).strftime('%Y%m%d')
 
 
     url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate={start_date}&eddate={end_date}&rows=100&cpage={page_num}'

@@ -28,7 +28,7 @@ API_KEY = config.API_KEY
 OPENAI_API_KEY = config.OPENAI_API_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = config.Debug
+DEBUG = config.Debug
 
 ALLOWED_HOSTS = ['3.38.115.15', '127.0.0.1', 'localhost']
 
@@ -70,7 +70,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',
     'http://localhost:8000',
 ]
-
 
 ROOT_URLCONF = 'culturepedia.urls'
 
@@ -144,12 +143,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
-
 }
 
 APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
@@ -172,8 +169,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "static"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = "/static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

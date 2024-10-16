@@ -71,7 +71,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
 ]
 
-
 ROOT_URLCONF = 'culturepedia.urls'
 
 TEMPLATES = [
@@ -144,12 +143,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
-
 }
 
 APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'

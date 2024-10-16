@@ -237,7 +237,7 @@ def generate_hashtags_for_performance(performance):
 
     for url in images_url:
         file_name = url.split('/')[-1]
-        file_path = f"./static/{performance.kopis_id}/{file_name}"
+        file_path = f"./static/img/{performance.kopis_id}/{file_name}"
         images_path.append(file_path)
 
     # 이미지 데이터를 Base64로 인코딩
@@ -248,7 +248,7 @@ def generate_hashtags_for_performance(performance):
             mime_type = "image/gif"
         elif image_path.endswith(".jpg") or image_path.endswith(".jpeg"):
             mime_type = "image/jpeg"
-        elif image_path.endwith(".png"):
+        elif image_path.endswith(".png"):
             mime_type = "image/png"
 
         with open(image_path, "rb") as image_file:

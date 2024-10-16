@@ -4,6 +4,7 @@ from apscheduler.triggers.cron import CronTrigger
 import os
 import sys
 import subprocess
+import requests
 from django.conf import settings
 
 
@@ -44,7 +45,21 @@ def run_loaddata(fixture_name):
         print(f"Error running loaddata for {fixture_name}: {e}")
 
 
+# hashtag 생성 실행
+def endpoint_script(url):
+    try:
+        response = requests.post(
+            f'http://127.0.0.1:8000/api/performances/{url}/')
+        if response.status_code == 200:
+            print("Successfully called the API endpoint.")
+        else:
+            print(f"Error calling API: {response.status_code}")
+    except Exception as e:
+        print(f"Exception occurred: {e}")
+
 # 실행 순서 (공연목록 > 공연장 > 공연상세)
+
+
 def process_scripts():
     # 1. kopis_api.py 실행
     if run_script('kopis_api.py'):
@@ -59,28 +74,29 @@ def process_scripts():
             run_loaddata('facility.json')  # facility_api 데이터 로드
             # kopis_api_detail 데이터 로드
             run_loaddata('performances_detail.json')
+            # 4. hashtag endpoint 실행
+            endpoint_script('hashtag')
     else:
         return
 
 
 # BackgroundScheduler 실행 및 작업 등록 함수
-
 def start_scheduler():
-    # scheduler 실행 중이 아닌 경우
     if not hasattr(start_scheduler, 'scheduler_running'):
         scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
         # scheduler.add_jobstore(jobstores.DjangoJobStore(), "default")  # Django DB에 저장
 
-    # 매일 자정 procees_scripts 실행
-    scheduler.add_job(
-        process_scripts,
-        trigger=CronTrigger(hour=16, minute=27),
-        id='process_scripts',
-        max_instances=1,
-        replace_existing=True,
-    )
+        # 매일 자정 procees_scripts 실행
+        scheduler.add_job(
+            process_scripts,
+            trigger=CronTrigger(hour=20, minute=8),
+            id='process_scripts',
+            max_instances=1,
+            replace_existing=True,
+        )
 
-    # 스케줄러 실행
-    scheduler.start()
-    start_scheduler.scheduler_running = True  # 중복 실행 방지 플래그 설정
-    print("Scheduler started and job 'process_scripts' added.")
+        # 스케줄러 실행
+        scheduler.start()
+        print("Scheduler started and job 'process_scripts' added.")
+    else:
+        print("Scheduler is already running.")

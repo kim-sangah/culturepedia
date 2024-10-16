@@ -37,7 +37,7 @@ performance_ids = list(Performlist.objects.values_list('kopis_id', flat=True))  
 # 이미지 리사이즈
 def resizing_images(url_list, quality=85):      # quaility: 70 ~ 90사이  기본값 85
     
-    img_folder = settings.STATIC_ROOT / "img"
+    img_folder = os.path.join(settings.STATIC_ROOT, "img")
     if not os.path.exists(img_folder):
         os.makedirs(img_folder)
     

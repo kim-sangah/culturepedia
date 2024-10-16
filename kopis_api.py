@@ -18,13 +18,13 @@ existing_ids = set()  #중복확인 set
 
 page_num = 1
 
-while True:
+while page_num < 2:
 
     start_date = datetime.now().strftime('%Y%m%d')
-    end_date = (datetime.now() + timedelta(days=2)).strftime('%Y%m%d')
+    end_date = (datetime.now() + timedelta(days=60)).strftime('%Y%m%d')
 
 
-    url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate={start_date}&eddate={end_date}&rows=100&cpage={page_num}'
+    url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate={start_date}&eddate={end_date}&rows=5&cpage={page_num}'
     response = requests.get(url)
     data = xmltodict.parse(response.content)  # xml 파싱
 

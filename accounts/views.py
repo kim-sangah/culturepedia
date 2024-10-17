@@ -49,11 +49,15 @@ class UserSigninView(APIView):
         user = authenticate(request, email=email, password=password)
         if user is not None:
             refresh = RefreshToken.for_user(user)
-            return Response({
-                "username": (user.username),
-                "access": str(refresh.access_token),
+            access = refresh.access_token
+            response = Response({
+                "username": user.username,
+                "access": str(access),
                 "refresh": str(refresh),
-            }, status=status.HTTP_200_OK)
+                "user_id": user.id,
+            }, status=status.HTTP_200_OK) 
+            response.set_cookie('access_token', access)   
+            return response  # 로그인 성공
         else:
             return Response({"message": "이메일 또는 비밀번호가 올바르지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
 

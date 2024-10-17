@@ -57,6 +57,7 @@ def endpoint_script(url):
     except Exception as e:
         print(f"Exception occurred: {e}")
 
+
 # 실행 순서 (공연목록 > 공연장 > 공연상세)
 
 
@@ -75,7 +76,7 @@ def process_scripts():
             # kopis_api_detail 데이터 로드
             run_loaddata('performances_detail.json')
             # 4. hashtag endpoint 실행
-            endpoint_script('hashtag')
+            # endpoint_script('hashtag')
     else:
         return
 

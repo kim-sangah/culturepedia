@@ -33,7 +33,6 @@ DEBUG = config.Debug
 ALLOWED_HOSTS = ['3.38.115.15', '127.0.0.1', 'localhost']
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -63,7 +62,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 CORS_ALLOWED_ORIGINS = [
     'http://3.38.115.15',

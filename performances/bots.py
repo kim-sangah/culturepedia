@@ -57,7 +57,8 @@ def generate_recommendations(user_preferences, input_tags):
     # user_preferences에 있는 선호하는 공연들의 해시태그를 preferred_hashtags 리스트에 넣음
     preferred_hashtags = set()
     for performance in user_preferences:
-        preferred_hashtags.update(performance.performance_hashtags)
+        hashtags = performance.performance_hashtag.all()
+        preferred_hashtags.update([hashtag.name for hashtag in hashtags])
 
     # input_tags가 있을 경우, input_tags를 preferred_hashtags에 추가
     if input_tags:
@@ -72,7 +73,8 @@ def generate_recommendations(user_preferences, input_tags):
 
     # performance_list에 있는 공연의 해시태그들 중 2개 이상이 preferred_hashtags에 있는 해시태그들과 일치하는지 체크
     for performance in performance_list:
-        performance_hashtags = set(performance.performance_hashtags)
+        hashtags = performance.performance_hashtag.all()
+        performance_hashtags = set([hashtag.name for hashtag in hashtags])
         common_hashtags = preferred_hashtags.intersection(performance_hashtags)
 
         if len(common_hashtags) >= 2:

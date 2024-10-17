@@ -22,17 +22,19 @@
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
             <ul class="navbar-nav mr-auto">
+                <!-- 로그인하지 않은 유저에게 보이는 링크 (금주 TOP, 카테고리별 랭킹)-->     
                 <li class="nav-item active">
                     <a class="nav-link" href="#">금주 TOP <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">카테고리별 랭킹</a>
+                </li>           
+                <!-- 로그인한 유저에게만 보이는 링크 (추천 공연)-->     
+                <li class="nav-item" id="nav-recommendations-btn">
+                    <a class="nav-link" href="#">추천 공연</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">추천 공연</a>
-                </li>
-    
-                <!-- 로그인하지 않은 유저에게 보이는 버튼 -->
+
+                <!-- 로그인하지 않은 유저에게 보이는 회원 기능 버튼 (Signin, Signup) -->
                 <li class="nav-item" id="signin-btn">
                     <a class="btn btn-primary" href="#">Signin</a>
                 </li>
@@ -40,7 +42,7 @@
                     <a class="btn btn-primary" href="#">Signup</a>
                 </li>
                 
-                <!-- 로그인한 유저에게 보이는 버튼 -->
+                <!-- 로그인한 유저에게 보이는 회원 기능 버튼 (Signout, Profile) -->
                 <li class="nav-item" id="signout-btn" style="display:none;">
                     <a class="btn btn-primary" href="#">Signout</a>
                 </li>
@@ -49,17 +51,21 @@
                 </li>
             </ul>
         </div>
-    </nav>
+    </nav>  
     <div class="container">
         <h1>로그인</h1>
-        <form action="" id="signin-form" method="post">
+        <form>
             <label for="email">Email</label>
             <input type="text" id="email" name="email" required>
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
-            <button type="button" id="signin-btn">Submit</button>
+            <button type="submit" id="signin-btn">Submit</button>
         </form>
-        <div id="response"></div>
+        <div class="result" id="result">
+            
+        </div>
+        <div id="response">
+        </div>
     </div>
     <script src='js/signin.js'></script>    
 </body>

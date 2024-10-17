@@ -8,6 +8,7 @@ window.onload = function() {
     const signupBtn = document.getElementById('signup-btn');
     const signoutBtn = document.getElementById('signout-btn');
     const profileBtn = document.getElementById('profile-btn');
+    const recommendationsBtn = document.getElementById('nav-recommendations-btn');
 
     if (isLoggedIn()) {
         // If the user is logged in, show signout and profile buttons
@@ -15,15 +16,16 @@ window.onload = function() {
         signupBtn.style.display = 'none';
         signoutBtn.style.display = 'block';
         profileBtn.style.display = 'block';
+        recommendationsBtn.style.display = 'block';
     } else {
         // If the user is not logged in, show signin and signup buttons
         signinBtn.style.display = 'block';
         signupBtn.style.display = 'block';
         signoutBtn.style.display = 'none';
         profileBtn.style.display = 'none';
+        recommendationsBtn.style.display = 'none';
     }
 };
-
 
 document.addEventListener("DOMContentLoaded", () => {
     const signinBtn = document.getElementById('signin-btn');
@@ -54,9 +56,17 @@ document.addEventListener("DOMContentLoaded", () => {
             return response.json();
         })
         .then(data => {
+            console.log(data);
             // 로그인 성공 시 쿠키에 유저 아이디 저장
-            document.cookie = `user_id=${data.user_id}`;
+            var result = document.getElementById('result');
+            result.innerHTML = '';
+            document.cookie = `user_id=${data.user_id}; path=/`;
+            result.innerHTML = `<div>${data.refresh}</div>`
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            var result = document.getElementById('result');
+            result.innerHTML = `<div style="color:red;">Login failed. Please check your credentials.</div>`;
+        });
     });
 });

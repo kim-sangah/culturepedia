@@ -7,6 +7,7 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/35050ac00b.js" crossorigin="anonymous"></script>
     <title>CULTUREPEDIA</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -21,17 +22,19 @@
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
             <ul class="navbar-nav mr-auto">
+                <!-- 로그인하지 않은 유저에게 보이는 링크 (금주 TOP, 카테고리별 랭킹)-->     
                 <li class="nav-item active">
                     <a class="nav-link" href="#">금주 TOP <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">카테고리별 랭킹</a>
+                </li>           
+                <!-- 로그인한 유저에게만 보이는 링크 (추천 공연)-->     
+                <li class="nav-item" id="nav-recommendations-btn">
+                    <a class="nav-link" href="#">추천 공연</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">추천 공연</a>
-                </li>
-    
-                <!-- 로그인하지 않은 유저에게 보이는 버튼 -->
+
+                <!-- 로그인하지 않은 유저에게 보이는 회원 기능 버튼 (Signin, Signup) -->
                 <li class="nav-item" id="signin-btn">
                     <a class="btn btn-primary" href="#">Signin</a>
                 </li>
@@ -39,7 +42,7 @@
                     <a class="btn btn-primary" href="#">Signup</a>
                 </li>
                 
-                <!-- 로그인한 유저에게 보이는 버튼 -->
+                <!-- 로그인한 유저에게 보이는 회원 기능 버튼 (Signout, Profile) -->
                 <li class="nav-item" id="signout-btn" style="display:none;">
                     <a class="btn btn-primary" href="#">Signout</a>
                 </li>
@@ -54,86 +57,66 @@
         <h4>공연 리뷰, 찜한 공연을 바탕으로 만들어진 추천 공연 리스트</h4>
         <div class="input-group mb-3">
             <div class="input-group-prepend" id="input_tag_checkboxes">
-                <div class="input-group-text">
-                    <input type="checkbox" id="theatric" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="theatric">#극적인</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="world-tour" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="world-tour">#내한공연</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="visual-artistry" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="visual-artistry">#시각예술</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="moving" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="moving">#감동적</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="live-music" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="live-music">#라이브음악</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="experimental" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="experimental">#실험적</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="grand" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="grand">#웅장한</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="family-friendly" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="family-friendly">#가족친화적</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="immersive" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="immersive">#이머시브</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="splendid" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="splendid">#화려한</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="traditional" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="traditional">#전통적</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="compact-venue" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="compact-venue">#컴팩트한공연장</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="trendy" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="trendy">#트렌디한</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="romantic" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="romantic">#로맨틱</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="creative" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="creative">#창의적</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="comical" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="comical">#코믹한</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="mystery" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="mystery">#미스터리</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="dark" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="dark">#어두운</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="healing" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="healing">#힐링</label>
-                </div>
-                <div class="input-group-text">
-                    <input type="checkbox" id="exciting" class="tag-checkbox" aria-label="Checkbox for following text input">
-                    <label for="exciting">#신나는</label>
-                </div>
+                                <input type="checkbox" id="theatric" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="theatric" class="checkbox-label">#극적인</label>
+
+                <input type="checkbox" id="world-tour" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="world-tour" class="checkbox-label">#내한공연</label>
+                
+                <input type="checkbox" id="visual-artistry" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="visual-artistry" class="checkbox-label">#시각예술</label>
+                
+                <input type="checkbox" id="moving" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="moving" class="checkbox-label">#감동적</label>
+                
+                <input type="checkbox" id="live-music" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="live-music" class="checkbox-label">#라이브음악</label>
+                
+                <input type="checkbox" id="experimental" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="experimental" class="checkbox-label">#실험적</label>
+                
+                <input type="checkbox" id="grand" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="grand" class="checkbox-label">#웅장한</label>
+                
+                <input type="checkbox" id="family-friendly" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="family-friendly" class="checkbox-label">#가족친화적</label>
+                
+                <input type="checkbox" id="immersive" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="immersive" class="checkbox-label">#이머시브</label>
+                
+                <input type="checkbox" id="splendid" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="splendid" class="checkbox-label">#화려한</label>
+                
+                <input type="checkbox" id="traditional" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="traditional" class="checkbox-label">#전통적</label>
+                
+                <input type="checkbox" id="compact-venue" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="compact-venue" class="checkbox-label">#컴팩트한공연장</label>
+                
+                <input type="checkbox" id="trendy" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="trendy" class="checkbox-label">#트렌디한</label>
+                
+                <input type="checkbox" id="romantic" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="romantic" class="checkbox-label">#로맨틱</label>
+                
+                <input type="checkbox" id="creative" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="creative" class="checkbox-label">#창의적</label>
+                
+                <input type="checkbox" id="comical" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="comical" class="checkbox-label">#코믹한</label>
+                
+                <input type="checkbox" id="mystery" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="mystery" class="checkbox-label">#미스터리</label>
+                
+                <input type="checkbox" id="dark" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="dark" class="checkbox-label">#어두운</label>
+                
+                <input type="checkbox" id="healing" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="healing" class="checkbox-label">#힐링</label>
+                
+                <input type="checkbox" id="exciting" class="tag-checkbox" aria-label="Checkbox for following text input">
+                <label for="exciting" class="checkbox-label">#신나는</label>
+                
                 <button type="submit" class="btn btn-primary" id="recommendation-btn">선택한 태그들로 공연 추천 받기</button>
             </div>
         </div>

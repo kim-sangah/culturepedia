@@ -75,7 +75,7 @@ def process_scripts():
             # kopis_api_detail 데이터 로드
             run_loaddata('performances_detail.json')
             # 4. hashtag endpoint 실행
-            endpoint_script('hashtag')
+            # endpoint_script('hashtag')
     else:
         return
 
@@ -89,7 +89,7 @@ def start_scheduler():
         # 매일 자정 procees_scripts 실행
         scheduler.add_job(
             process_scripts,
-            trigger=CronTrigger(hour=20, minute=8),
+            trigger=CronTrigger(hour=10, minute=7),
             id='process_scripts',
             max_instances=1,
             replace_existing=True,

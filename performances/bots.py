@@ -243,13 +243,28 @@ def generate_hashtags_for_performance(performance):
     # 이미지 데이터를 Base64로 인코딩
     base64_images = []
     for image_path in images_path:
+        image_path_lower = image_path.lower()
         # 파일 확장자에 따라 MIME 타입 설정
-        if image_path.endswith(".gif"):
+        if image_path_lower.endswith(".gif"):
             mime_type = "image/gif"
-        elif image_path.endswith(".jpg") or image_path.endswith(".jpeg"):
+        elif image_path_lower.endswith(".jpg") or image_path_lower.endswith(".jpeg") or image_path_lower.endswith(".jfif"):
             mime_type = "image/jpeg"
-        elif image_path.endswith(".png"):
+        elif image_path_lower.endswith(".png"):
             mime_type = "image/png"
+        elif image_path_lower.endswith(".bmp"):
+            mime_type = "image/bmp"
+        elif image_path_lower.endswith(".webp"):
+            mime_type = "image/webp"
+        elif image_path_lower.endswith(".tiff") or image_path_lower.endswith(".tif"):
+            mime_type = "image/tiff"
+        elif image_path_lower.endswith(".svg"):
+            mime_type = "image/svg+xml"
+        elif image_path_lower.endswith(".ico"):
+            mime_type = "image/vnd.microsoft.icon"
+        elif image_path_lower.endswith(".heic") or image_path_lower.endswith(".heif"):
+            mime_type = "image/heif"
+        else:
+            mime_type = "application/octet-stream"  # Unknown type
 
         with open(image_path, "rb") as image_file:
             base64_encoded_image = base64.b64encode(

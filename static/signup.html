@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>회원가입</h1>
+        <form id="accountsForm">
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <label for="username">Username</label>
+            <input type="username" id="username" name="username" required>
+            <label for="gender">Gender</label>
+            <input type="gender" id="gender" name="gender">
+            <label for="birthday">Birthday</label>
+            <input type="birthday" id="birthday" name="birthday">
+            <button type="submit">Submit</button>
+        </form>
+        <div id="response"></div>
+    </div>
+    <script src='js/signup.js'></script>
+</body>
+
+</html>

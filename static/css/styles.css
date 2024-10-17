@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #F4F4F4;
+    background-color: #f4f4f4;
     margin: 0px;
     padding: 0px;
 }
@@ -12,6 +12,7 @@ body {
     border-radius: 10px;
     box-shadow: 0 1px 15px rgba(0, 0, 0, 0.1);
 }
+
 h1, h4 {
     text-align: center;
     color: #333;
@@ -73,12 +74,17 @@ button {
     cursor: pointer;
     margin-top: 15px;
 }
+
 button:hover {
     background-color: #A9A9A9;
 }
 #message {
     text-align: center;
     margin-top: 20px;
+}
+
+.navbar-expand-lg .navbar-collapse {
+    justify-content: space-between;
 }
 
 
@@ -103,10 +109,5 @@ button:hover {
 .card-body {
     padding: 15px;
 }
-
-
-
-
-
 
 

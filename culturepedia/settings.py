@@ -30,7 +30,7 @@ OPENAI_API_KEY = config.OPENAI_API_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.Debug
 
-ALLOWED_HOSTS = ['3.38.115.15', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['52.78.23.40', '127.0.0.1', 'localhost']
 
 # Application definition
 INSTALLED_APPS = [
@@ -64,7 +64,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://3.38.115.15',
+    'http://52.78.23.40',
     'http://127.0.0.1:8000',
     'http://localhost:8000',
 ]

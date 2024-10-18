@@ -4,6 +4,7 @@ body {
     margin: 0px;
     padding: 0px;
 }
+
 .container {
     width: 100%;
     margin: 50px auto;
@@ -13,7 +14,8 @@ body {
     box-shadow: 0 1px 15px rgba(0, 0, 0, 0.1);
 }
 
-h1, h4 {
+h1,
+h4 {
     text-align: center;
     color: #333;
 }
@@ -44,7 +46,7 @@ h1, h4 {
 }
 
 /*checkbox가 check되었을 때 컬러 변경*/
-.tag-checkbox:checked + .checkbox-label {
+.tag-checkbox:checked+.checkbox-label {
     background-color: cornflowerblue;
     color: white;
     border-color: cornflowerblue;
@@ -56,7 +58,7 @@ label {
 }
 
 input {
-    width: 100% ;
+    width: 100%;
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
@@ -78,6 +80,7 @@ button {
 button:hover {
     background-color: #A9A9A9;
 }
+
 #message {
     text-align: center;
     margin-top: 20px;
@@ -95,7 +98,7 @@ button:hover {
 }
 
 .card {
-    width: 30%;
+    width: 100%;
     margin: 10px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

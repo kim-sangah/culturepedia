@@ -370,7 +370,7 @@ const performance_id = getQueryParameter('performance_id');
 
 window.onload = function () {
     // 공연 상세 정보 조회
-    fetch(`http://127.0.0.1:8000/api/performances/detail/${performance_id}`, {
+    fetch(`/api/performances/detail/${performance_id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

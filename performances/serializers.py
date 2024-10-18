@@ -5,7 +5,8 @@ from rest_framework import serializers
 class PerformanceListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Performance
-        fields = ('title', 'type', 'facility_name', 'poster', 'start_date', 'end_date')
+        fields = ('kopis_id', 'title', 'type', 'facility_name',
+                  'poster', 'start_date', 'end_date')
 
 
 class ReviewSerializer(serializers.ModelSerializer):

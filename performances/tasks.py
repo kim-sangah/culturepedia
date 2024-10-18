@@ -89,7 +89,7 @@ def start_scheduler():
         # 매일 자정 procees_scripts 실행
         scheduler.add_job(
             process_scripts,
-            trigger=CronTrigger(hour=10, minute=7),
+            trigger=CronTrigger(hour=00, minute=00),
             id='process_scripts',
             max_instances=1,
             replace_existing=True,

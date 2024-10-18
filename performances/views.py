@@ -126,6 +126,7 @@ class PerformancePagination(PageNumberPagination):
 class PerformanceSearchAPIView(APIView):
     def get(self, request):
         query = request.GET.get('keyword')
+        # type = request.GET.get('type')
         performances = Performance.objects.all()
 
         if query:
@@ -136,13 +137,20 @@ class PerformanceSearchAPIView(APIView):
                 Q(cast__icontains=query)  # 공연출연진
             )
 
-            if performances.exists():
-                paginator = PerformancePagination()
-                paginated_performances = paginator.paginate_queryset(
-                    performances, request)
-                serializer = PerformanceListSerializer(
-                    paginated_performances, many=True)
-                return paginator.get_paginated_response(serializer.data)
+        # if type:
+        #     performances = performances.filter(type=type)
+
+        # if not query and not type:
+        else:
+            performances = Performance.objects.all()
+
+        if performances.exists():  # 공연이 존재할 경우
+            paginator = PerformancePagination()
+            paginated_performances = paginator.paginate_queryset(
+                performances, request)
+            serializer = PerformanceListSerializer(
+                paginated_performances, many=True)
+            return paginator.get_paginated_response(serializer.data)
 
         return Response({"message": "검색된 공연이 없습니다."}, status=status.HTTP_200_OK)
 

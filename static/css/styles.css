@@ -4,7 +4,6 @@ body {
     margin: 0px;
     padding: 0px;
 }
-
 .container {
     width: 100%;
     margin: 50px auto;
@@ -14,9 +13,41 @@ body {
     box-shadow: 0 1px 15px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+h1, h4 {
     text-align: center;
     color: #333;
+}
+
+.input-group .input-group-text {
+    margin: 10px;
+    display: inline-block;
+}
+
+.input-group input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.tag-checkbox {
+    display: none;
+}
+
+.checkbox-label {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f4f4f4;
+    color: #333;
+    cursor: pointer;
+    margin: 5px;
+    display: inline-block;
+    text-align: center;
+}
+
+/*checkbox가 check되었을 때 컬러 변경*/
+.tag-checkbox:checked + .checkbox-label {
+    background-color: cornflowerblue;
+    color: white;
+    border-color: cornflowerblue;
 }
 
 label {
@@ -25,7 +56,7 @@ label {
 }
 
 input {
-    width: 100%;
+    width: 100% ;
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
@@ -47,7 +78,6 @@ button {
 button:hover {
     background-color: #A9A9A9;
 }
-
 #message {
     text-align: center;
     margin-top: 20px;
@@ -56,3 +86,28 @@ button:hover {
 .navbar-expand-lg .navbar-collapse {
     justify-content: space-between;
 }
+
+
+.card-group {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 30%;
+    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+

@@ -6,7 +6,7 @@ function getQueryParameter(param) {
 const performance_id = getQueryParameter('performance_id');
 
 window.onload = function () {
-    fetch(`http://127.0.0.1:8000/api/performances/detail/${performance_id}`, {
+    fetch(`/api/performances/detail/${performance_id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -29,10 +29,10 @@ window.onload = function () {
                         </div>
                         <div class="col-md-8 d-flex">
                             <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">${data.title}</h5>
-                                <p class="card-text">${data.facility_name}</p>
-                                <p class="card-text">${data.start_date} ~ ${data.end_date}</p>
-                                <p class="card-text">${data.runtime}</p>
+                                <h5 class="card-title">제목: ${data.title}</h5>
+                                <p class="card-text">장소: ${data.facility_name}</p>
+                                <p class="card-text">공연기간: ${data.start_date} ~ ${data.end_date}</p>
+                                <p class="card-text">공연시간: ${data.runtime}</p>
                                 <div class="d-grid mt-auto">
                                     <button class="btn btn-dark" type="button">Button</button>
                                 </div>

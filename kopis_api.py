@@ -23,7 +23,7 @@ while page_num < 2 :
     start_date = datetime.now().strftime('%Y%m%d')
     end_date = (datetime.now() + timedelta(days=5)).strftime('%Y%m%d')
 
-    url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate={start_date}&eddate={end_date}&rows=3&cpage={page_num}'
+    url = f'http://www.kopis.or.kr/openApi/restful/pblprfr?service={api_key}&stdate={start_date}&eddate={end_date}&rows=5&cpage={page_num}'
     response = requests.get(url)
     data = xmltodict.parse(response.content)  # xml 파싱
 

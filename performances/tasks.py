@@ -1,4 +1,4 @@
-#from django_apscheduler import jobstores
+from django_apscheduler import jobstores
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import os
@@ -76,7 +76,7 @@ def process_scripts():
             # kopis_api_detail 데이터 로드
             run_loaddata('performances_detail.json')
             # 4. hashtag endpoint 실행
-            # endpoint_script('hashtag')
+            endpoint_script('hashtag')
     else:
         return
 
@@ -85,12 +85,12 @@ def process_scripts():
 def start_scheduler():
     if not hasattr(start_scheduler, 'scheduler_running'):
         scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
-        # scheduler.add_jobstore(jobstores.DjangoJobStore(), "default")  # Django DB에 저장
+        scheduler.add_jobstore(jobstores.DjangoJobStore(), "default")  # Django DB에 저장
 
         # 매일 자정 procees_scripts 실행
         scheduler.add_job(
             process_scripts,
-            trigger=CronTrigger(hour=13, minute=17),
+            trigger=CronTrigger(hour=23, minute=38),
             id='process_scripts',
             max_instances=1,
             replace_existing=True,

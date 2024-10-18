@@ -21,6 +21,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 
 API_KEY = settings.API_KEY
 
+
 class UserStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -32,6 +33,8 @@ class UserStatusView(APIView):
         })
 
 # 공연 목록 조회
+
+
 class OPENAPIViews(APIView):
     # renderer_classes = [TemplateHTMLRenderer]
     # template_name = 'performances/performances_list.html'
@@ -54,7 +57,7 @@ class OPENAPIViews(APIView):
             'service': API_KEY,  # 필수
             'ststype': 'week',  # 필수
             'date': datetime.now().strftime('%Y%m%d'),  # 필수
-            'catecode': 'GGGA',
+            # 'catecode': 'GGGA',
         }
         response = requests.get(url, params=params)
 
@@ -80,6 +83,8 @@ class OPENAPIViews(APIView):
                 return Response({'error': 'Failed to parse XML data'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # 공연 찜
+
+
 class PerformanceLikeView(APIView):
     permission_classes = [IsAuthenticated]
 

@@ -5,10 +5,11 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <form class="form-inline my-2 my-lg-0" id="searchForm">
-            <input type="search" id="searchInput" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="searchButton"
-                onclick="getSearchValue()">Search</button>
+        <form class="d-flex align-items-baseline" id="searchForm">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchInput"
+                onkeypress="handleKeyPress(event)">
+            <button class="btn btn-outline-success" type="button" id="searchButton" onclick="getSearchValue()"
+                style="width:7rem;">Search</button>
         </form>
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">

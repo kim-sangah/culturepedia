@@ -1,9 +1,3 @@
-function getSearchValue() {
-    var keyword = document.getElementById('searchInput').value;
-
-    window.location.href = `category_list.html?keyword=${keyword}`;
-}
-
 function getQueryParameter(param) {
     let urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
@@ -97,7 +91,6 @@ function displayPerformaces(category) {
 }
 
 displayPerformaces('전체');
-
 
 document.querySelectorAll("#pills-tab .nav-link").forEach(tab => {
     tab.addEventListener('click', () => {

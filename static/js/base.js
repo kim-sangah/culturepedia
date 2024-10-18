@@ -1,3 +1,16 @@
+function getSearchValue() {
+    var keyword = document.getElementById('searchInput').value;
+
+    window.location.href = `category_list.html?keyword=${keyword}`;
+}
+
+function handleKeyPress(event) {
+    if (event.keyCode === 13) { // Enter key
+        event.preventDefault();
+        getSearchValue();
+    }
+}
+
 fetch('./base.html') // sample.html 파일 경로
     .then(response => {
         if (!response.ok) {

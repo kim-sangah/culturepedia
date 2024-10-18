@@ -1,72 +1,129 @@
-function isLoggedIn() {
-    return document.cookie.includes('user_id=');
+function getQueryParameter(param) {
+    let urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
 }
 
-// 로그인 상태에 따라 표시되는 버튼 바꾸기
-window.onload = function() {
+// JWT 토큰을 로컬 스토리지에서 가져오는 함수
+function getJwtToken() {
+    return localStorage.getItem('access_token'); 
+}
+
+// 서버에서 유저 아이디 받아오기
+function fetchCurrentUserId() {
+    const token = getJwtToken();
+
+    return fetch('/api/user/status/', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch user info');
+        }
+        return response.json();
+    })
+    .then(data => {
+        return data.user_id;
+    })
+    .catch(error => {
+        console.error('Error fetching user ID:', error);
+        return null;
+    });
+}
+
+// 사용자 인증 상태 확인 함수, 인증 상태에 따라 UI 업데이트
+function checkUserAuthentication() {
+    const token = getJwtToken();
+
     const signinBtn = document.getElementById('signin-btn');
     const signupBtn = document.getElementById('signup-btn');
     const signoutBtn = document.getElementById('signout-btn');
     const profileBtn = document.getElementById('profile-btn');
     const recommendationsBtn = document.getElementById('nav-recommendations-btn');
 
-    if (isLoggedIn()) {
-        // If the user is logged in, show signout and profile buttons
-        signinBtn.style.display = 'none';
-        signupBtn.style.display = 'none';
-        signoutBtn.style.display = 'block';
-        profileBtn.style.display = 'block';
-        recommendationsBtn.style.display = 'block';
-    } else {
-        // If the user is not logged in, show signin and signup buttons
+    if (!token) {
+        // 토큰이 없는 경우
         signinBtn.style.display = 'block';
         signupBtn.style.display = 'block';
         signoutBtn.style.display = 'none';
-        profileBtn.style.display = 'none';
+        profileBtn.display = 'none';
         recommendationsBtn.style.display = 'none';
+        return;
     }
-};
 
-function getCookie(cookieName) {
-    cookieName = `${cookieName}=`;
-    let cookieData = document.cookie;
-
-    let cookieValue = "";
-    let start = cookieData.indexOf(cookieName);
-
-    if (start !== -1) {
-        start += cookieName.length;
-        let end = cookieData.indexOf(";", start);
-        if (end === -1) end = cookieData.length;
-        cookieValue = cookieData.substring(start, end);
-    }
-    
-    return unescape(cookieValue);
+    // JWT 토큰을 Authorization 헤더에 추가하여 API 요청
+    fetch('/api/user/status/', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`, 
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            signinBtn.style.display = 'none';
+            signupBtn.style.display = 'none';
+            signoutBtn.style.display = 'block';
+            profileBtn.display = 'block';
+            recommendationsBtn.style.display = 'block';
+        } else {
+            signinBtn.style.display = 'block';
+            signupBtn.style.display = 'block';
+            signoutBtn.style.display = 'none';
+            profileBtn.display = 'none';
+            recommendationsBtn.style.display = 'none';
+        }
+    })
+    .catch(error => console.error('Error fetching user status:', error));
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const checkboxes = document.querySelectorAll('.tag-checkbox');
     const recommendationBtn = document.querySelector('recommendation-btn');
     const recommendationsContainer = document.getElementById('recommendations-container');
 
-    // 공연 추천 endpoint에 필요한 유저 아이디 쿠키에서 읽어오기 위해 쿠키 받아오기
-    function getCookie(name) {
-        const cookieArr = document.cookie.split(";");
-        for (let i = 0; i < cookieArr.length; i++) {
-            let cookie = cookieArr[i].trim();
-            if (cookie.startsWith(name + "=")) {
-                return cookie.substring(name.length + 1);
-            }
+    // User ID 받아오기
+    fetchCurrentUserId().then(userId => {
+        if (!userId) {
+            console.error('User ID not found.')
+            return;
         }
-        return null; // 쿠키를 찾지 못한 경우 return null 
-    }
 
-    const userId = getCookie('user_id'); // 쿠키에서 user_id 읽어오기
+        recommendationBtn.addEventListener('click', (event) => {
+            event.preventDefault();
 
-    if (!userId) {
-        console.error('User ID not found in cookies.');
-        return;
-    }
+            // 유저가 선택한 해시태그 받기
+            const selectedTags = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.labels[0].textContent);
+
+            const userData = {
+                tags: selectedTags
+            }
+
+            // 유저 아이디로 공연 추천 받기 위해 API 요청
+            fetch(`/api/performances/recommend/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer <token>'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                generateRecommendations(data.recommendations);
+            })
+            .catch(error => console.error('Error generating recommendations'));
+        });
+    });
 
     function generateRecommendations(recommendations) {
         // 추천 공연 리스트 영역 초기화
@@ -88,37 +145,5 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             recommendationsContainer.innerHTML += card;
         });
-    };
-
-    recommendationBtn.addEventListener('click', (event) => {
-        event.preventDefault();
-
-        // 유저가 선택한 해시태그 받기
-        const selectedTags = Array.from(checkboxes)
-            .filter(checkbox => checkbox.checked)
-            .map(checkbox => checkbox.labels[0].textContent);
-
-        const userData = {
-            tags: selectedTags
-        }
-
-        fetch(`/api/performances/recommend/${userId}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer <token>'
-            },
-            body: JSON.stringify(userData)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            generateRecommendations(data.recommendations);
-        })
-        .catch(error => console.error('Error:', error));
-    });
+    }
 });

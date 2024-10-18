@@ -21,6 +21,15 @@ from rest_framework.renderers import TemplateHTMLRenderer
 
 API_KEY = settings.API_KEY
 
+class UserStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'is_authenticated': True,
+            'user_id': user.id,
+        })
 
 # 공연 목록 조회
 class OPENAPIViews(APIView):
@@ -71,8 +80,6 @@ class OPENAPIViews(APIView):
                 return Response({'error': 'Failed to parse XML data'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # 공연 찜
-
-
 class PerformanceLikeView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -174,7 +181,7 @@ class ReviewCreateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# 공연 리뷰 수정 및 삭제
+# 공연 리뷰 조회, 수정 및 삭제
 class ReviewAPIView(APIView):
     permission_classes = [IsAuthenticated]
 

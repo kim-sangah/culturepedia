@@ -11,14 +11,14 @@ window.onload = function() {
     const recommendationsBtn = document.getElementById('nav-recommendations-btn');
 
     if (isLoggedIn()) {
-        // If the user is logged in, show signout and profile buttons
+        // 로그인 되어있으면 signout, profile 버튼만 보이게
         signinBtn.style.display = 'none';
         signupBtn.style.display = 'none';
         signoutBtn.style.display = 'block';
         profileBtn.style.display = 'block';
         recommendationsBtn.style.display = 'block';
     } else {
-        // If the user is not logged in, show signin and signup buttons
+        // 로그인 되어있지 않으면 signin, signup 버튼만 보이게
         signinBtn.style.display = 'block';
         signupBtn.style.display = 'block';
         signoutBtn.style.display = 'none';

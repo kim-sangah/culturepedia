@@ -64,7 +64,7 @@ class Facility(models.Model):
 
 class Review(models.Model):
     performance = models.ForeignKey(
-        Performance, on_delete=models.CASCADE)
+        Performance, on_delete=models.CASCADE, related_name='perform_reviews')
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField()

@@ -113,13 +113,15 @@ button:hover {
 
 
 .rating {
-    border: none;
-    float: left;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    direction: rtl;
 }
 
 .rating > label {
     color: #90A0A3;
-    float: right;
+    margin: 0 5px;
 }
 
 .rating > label:before {

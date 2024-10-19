@@ -1,4 +1,4 @@
-# from django_apscheduler import jobstores
+from django_apscheduler import jobstores
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import os
@@ -57,6 +57,7 @@ def endpoint_script(url):
     except Exception as e:
         print(f"Exception occurred: {e}")
 
+
 # 실행 순서 (공연목록 > 공연장 > 공연상세)
 
 
@@ -84,12 +85,12 @@ def process_scripts():
 def start_scheduler():
     if not hasattr(start_scheduler, 'scheduler_running'):
         scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
-        # scheduler.add_jobstore(jobstores.DjangoJobStore(), "default")  # Django DB에 저장
+        scheduler.add_jobstore(jobstores.DjangoJobStore(), "default")  # Django DB에 저장
 
         # 매일 자정 procees_scripts 실행
         scheduler.add_job(
             process_scripts,
-            trigger=CronTrigger(hour=22, minute=48),
+            trigger=CronTrigger(hour=23, minute=38),
             id='process_scripts',
             max_instances=1,
             replace_existing=True,

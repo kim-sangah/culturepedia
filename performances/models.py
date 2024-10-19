@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+
 User = get_user_model()
 
 
@@ -64,7 +65,7 @@ class Facility(models.Model):
 
 class Review(models.Model):
     performance = models.ForeignKey(
-        Performance, on_delete=models.CASCADE)
+        Performance, on_delete=models.CASCADE, related_name='perform_reviews')
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField()
@@ -74,7 +75,6 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-# 찜하기 기능
 class PerformanceLike(models.Model):
     user = models.ForeignKey(
         User, related_name='liked_by', on_delete=models.CASCADE)

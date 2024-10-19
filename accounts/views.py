@@ -41,7 +41,6 @@ class UserSigninView(APIView):
         email = request.data.get("email")
         password = request.data.get("password")
 
-
         # 이메일 또는 비밀번호가 비어 있는지 확인
         if not email or not password:
             return Response({"message": "이메일과 비밀번호를 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
@@ -118,3 +117,10 @@ class UserProfileView(APIView):
 
         user.delete()
         return Response({"message": "회원탈퇴가 완료되었습니다."}, status=status.HTTP_200_OK)
+
+
+class UserStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({'is_authenticated': True})

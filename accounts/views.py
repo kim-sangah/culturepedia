@@ -41,7 +41,6 @@ class UserSigninView(APIView):
         email = request.data.get("email")
         password = request.data.get("password")
 
-
         # 이메일 또는 비밀번호가 비어 있는지 확인
         if not email or not password:
             return Response({"message": "이메일과 비밀번호를 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
@@ -55,8 +54,8 @@ class UserSigninView(APIView):
                 "access": str(access),
                 "refresh": str(refresh),
                 "user_id": user.id,
-            }, status=status.HTTP_200_OK) 
-            response.set_cookie('access_token', access)   
+            }, status=status.HTTP_200_OK)
+            response.set_cookie('access_token', access)
             return response  # 로그인 성공
         else:
             return Response({"message": "이메일 또는 비밀번호가 올바르지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
@@ -88,7 +87,7 @@ class UserProfileView(APIView):
 
         serializer = UserSerializer(user)
         return Response(serializer.data)
-    
+
     # 회원정보 수정
     def put(self, request, pk):
         user = get_object_or_404(User, id=pk)

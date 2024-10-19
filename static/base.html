@@ -16,16 +16,25 @@
                 <a class="nav-link" href="main.html">금주 TOP <span class="sr-only"></span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="category_list.html">카테고리별 랭킹</a>
+                <a class="nav-link" href="category_list.html">카테고리</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link disabled" href="recommendation.html">추천 공연</a>
             </li>
-            <li class="nav-item">
+            <!-- 로그인하지 않은 유저에게 보이는 회원 기능 버튼 (Signin, Signup) -->
+            <li class="nav-item" id="signin-btn">
                 <a class="btn btn-primary" href="signin.html">로그인</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" id="signup-btn">
                 <a class="btn btn-primary" href="signup.html">회원가입</a>
+            </li>
+
+            <!-- 로그인한 유저에게 보이는 회원 기능 버튼 (Signout, Profile) -->
+            <li class="nav-item" id="signout-btn" style="display:none;">
+                <a class="btn btn-primary" href="#">로그아웃</a>
+            </li>
+            <li class="nav-item" id="profile-btn" style="display:none;">
+                <a class="btn btn-primary" href="profile.html">프로필</a>
             </li>
         </ul>
     </div>

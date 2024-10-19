@@ -5,7 +5,7 @@ function getQueryParameter(param) {
 
 // JWT 토큰을 로컬 스토리지에서 가져오는 함수
 function getJwtToken() {
-    return localStorage.getItem('access_token'); 
+    return localStorage.getItem('access_token');
 }
 
 // 서버에서 유저 아이디 받아오기
@@ -18,19 +18,19 @@ function fetchCurrentUserId() {
             'Authorization': `Bearer ${token}`
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch user info');
-        }
-        return response.json();
-    })
-    .then(data => {
-        return data.user_id;
-    })
-    .catch(error => {
-        console.error('Error fetching user ID:', error);
-        return null;
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch user info');
+            }
+            return response.json();
+        })
+        .then(data => {
+            return data.user_id;
+        })
+        .catch(error => {
+            console.error('Error fetching user ID:', error);
+            return null;
+        });
 }
 
 // 사용자 인증 상태 확인 함수, 인증 상태에 따라 UI 업데이트
@@ -61,31 +61,31 @@ function checkUserAuthentication() {
     fetch('/api/user/status/', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`, 
+            'Authorization': `Bearer ${token}`,
         }
     })
-    .then(response => {
-        if (response.ok) {
-            // 로그인된 경우 수정 및 삭제 버튼 보이기
-            signinBtn.style.display = 'none';
-            signupBtn.style.display = 'none';
-            signoutBtn.style.display = 'block';
-            profileBtn.display = 'block';
-            recommendationsBtn.style.display = 'block';
-            createReviewBtn.style.display = 'block';
-            LikeBtn.style.display = 'block';
-        } else {
-            // 로그인하지 않은 경우 버튼 숨기기
-            signinBtn.style.display = 'block';
-            signupBtn.style.display = 'block';
-            signoutBtn.style.display = 'none';
-            profileBtn.display = 'none';
-            recommendationsBtn.style.display = 'none';
-            createReviewBtn.style.display = 'none';
-            LikeBtn.style.display = 'none';
-        }
-    })
-    .catch(error => console.error('Error fetching user status:', error));
+        .then(response => {
+            if (response.ok) {
+                // 로그인된 경우 수정 및 삭제 버튼 보이기
+                signinBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                signoutBtn.style.display = 'block';
+                profileBtn.display = 'block';
+                recommendationsBtn.style.display = 'block';
+                createReviewBtn.style.display = 'block';
+                LikeBtn.style.display = 'block';
+            } else {
+                // 로그인하지 않은 경우 버튼 숨기기
+                signinBtn.style.display = 'block';
+                signupBtn.style.display = 'block';
+                signoutBtn.style.display = 'none';
+                profileBtn.display = 'none';
+                recommendationsBtn.style.display = 'none';
+                createReviewBtn.style.display = 'none';
+                LikeBtn.style.display = 'none';
+            }
+        })
+        .catch(error => console.error('Error fetching user status:', error));
 }
 
 // 공연 리뷰 받아오고 render, 인증 상태에 따라 각 리뷰 안에 수정, 삭제 버튼 추가
@@ -97,23 +97,23 @@ function fetchReviews(currentUserId) {
             'Content-Type': 'application/json',
         }
     })
-    .then(response => response.json)
-    .then(data => {
-        const reviews = data.perform_reviews;
-        const reviewContainer = document.getElementById('review');
-        reviewContainer.innerHTML = '';
+        .then(response => response.json)
+        .then(data => {
+            const reviews = data.perform_reviews;
+            const reviewContainer = document.getElementById('review');
+            reviewContainer.innerHTML = '';
 
-        reviews.forEach(review => {
-            let starRatingHtml = '';
-            for (let j = 1; j <= 5; j++) {
-                if (j <= review.rating) {
-                    starRatingHtml += `<i class="fas fa-star text-warning"></i>`;
-                } else {
-                    starRatingHtml += `<i class="far fa-star"></i>`;
+            reviews.forEach(review => {
+                let starRatingHtml = '';
+                for (let j = 1; j <= 5; j++) {
+                    if (j <= review.rating) {
+                        starRatingHtml += `<i class="fas fa-star text-warning"></i>`;
+                    } else {
+                        starRatingHtml += `<i class="far fa-star"></i>`;
+                    }
                 }
-            }
 
-            let reviewHtml = `
+                let reviewHtml = `
                 <div class="card" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title">${review.title}</h5>
@@ -121,39 +121,39 @@ function fetchReviews(currentUserId) {
                         <p class="card-text">${review.content}</p>
             `;
 
-            if (review.author_id === currentUserId) {
-                reviewHtml += `
+                if (review.author_id === currentUserId) {
+                    reviewHtml += `
                 // 버튼으로 수정
                     <button class="btn btn-primary edit-review-btn" id="edit-review-btn-${review.id}" data-review-id="${review.id}">리뷰 수정</button>
                     <button class="btn btn-danger delete-review-btn" id="delete-review-btn-${review.id}" data-review-id="${review.id}">리뷰 삭제</button>
                     </div>
                 </div>
                 `;
-            } else {
-                reviewHtml += `</div></div>`;
-            }
+                } else {
+                    reviewHtml += `</div></div>`;
+                }
 
-            reviewContainer.innerHTML += reviewHtml;
-        });
-
-        // 리뷰 렌더링 된 후 리뷰 수정/삭제 버튼에 event listener 추가하기
-        document.querySelectorAll('edit-review-btn').forEach(btn => {
-            const reviewId = btn.getAttribute('data-review-id');
-            btn.addEventListener('click', (event) => {
-                event.preventDefault();
-                handleReviewEdit(reviewId);
+                reviewContainer.innerHTML += reviewHtml;
             });
-        });
 
-        document.querySelectorAll('delete-review-btn').forEach(btn => {
-            const reviewId = btn.getAttribute('data-review-id');
-            btn.addEventListener('click', (event) => {
-                event.preventDefault();
-                handleReviewDelete(reviewId);
+            // 리뷰 렌더링 된 후 리뷰 수정/삭제 버튼에 event listener 추가하기
+            document.querySelectorAll('edit-review-btn').forEach(btn => {
+                const reviewId = btn.getAttribute('data-review-id');
+                btn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    handleReviewEdit(reviewId);
+                });
             });
-        });
-    })
-    .catch(error => console.error('Error fetching performance details:', error));
+
+            document.querySelectorAll('delete-review-btn').forEach(btn => {
+                const reviewId = btn.getAttribute('data-review-id');
+                btn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    handleReviewDelete(reviewId);
+                });
+            });
+        })
+        .catch(error => console.error('Error fetching performance details:', error));
 }
 
 // 리뷰 작성 버튼에 event listener추가, 리뷰 작성 폼에서 데이터 입력받기
@@ -223,17 +223,17 @@ function handleReviewSubmit(currentUserId, title, content, rating) {
         },
         body: JSON.stringify(reviewData),
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Review submission failed');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('리뷰 업로드 완료: ', data);
-        fetchReviews(currentUserId); // 업로드된 리뷰 포함해 다시 공연 리뷰 조회
-    })
-    .catch(error => console.error('Error submitting review:', error));
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Review submission failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('리뷰 업로드 완료: ', data);
+            fetchReviews(currentUserId); // 업로드된 리뷰 포함해 다시 공연 리뷰 조회
+        })
+        .catch(error => console.error('Error submitting review:', error));
 }
 
 // 리뷰 수정 기능
@@ -245,50 +245,50 @@ function handleReviewEdit(reviewId) {
             'Authorization': `Bearer ${getJwtToken()}`,
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        // 수정 전 리뷰 데이터를 modal에 넣기
-        document.getElementById('edit-review-title').value = data.title;
-        document.getElementById('edit-review-rating').value = data.rating;
-        document.getElementById('edit-review-content').value = data.content;
+        .then(response => response.json())
+        .then(data => {
+            // 수정 전 리뷰 데이터를 modal에 넣기
+            document.getElementById('edit-review-title').value = data.title;
+            document.getElementById('edit-review-rating').value = data.rating;
+            document.getElementById('edit-review-content').value = data.content;
 
-        // Bootstrap JS함수로 modal 보여주기
-        $('#editReviewModal').modal('show');
+            // Bootstrap JS함수로 modal 보여주기
+            $('#editReviewModal').modal('show');
 
-        // 수정 완료 버튼 눌렸을 때
-        const saveChangesBtn = document.getElementById('save-edit-btn');
-        saveChangesBtn.addEventListener('click', (event) => {
-            event.preventDefault();
+            // 수정 완료 버튼 눌렸을 때
+            const saveChangesBtn = document.getElementById('save-edit-btn');
+            saveChangesBtn.addEventListener('click', (event) => {
+                event.preventDefault();
 
-            // 수정된 리뷰 데이터 받기
-            const editedReviewData = {
-                title: document.getElementById('edit-review-title').value,
-                rating: document.getElementById('edit-review-rating').value,
-                content: document.getElementById('edit-review-content').value,
-            };
+                // 수정된 리뷰 데이터 받기
+                const editedReviewData = {
+                    title: document.getElementById('edit-review-title').value,
+                    rating: document.getElementById('edit-review-rating').value,
+                    content: document.getElementById('edit-review-content').value,
+                };
 
-            // put request 보내 리뷰 수정
-            fetch(`/api/performances/detail/review/${reviewId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getJwtToken()}`,
-                },
-                body: JSON.stringify(editedReviewData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Review updated: ', data);
-                // 리뷰 수정 후 다시 공연 리뷰 조회
-                fetchReviews(getJwtToken());
+                // put request 보내 리뷰 수정
+                fetch(`/api/performances/detail/review/${reviewId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getJwtToken()}`,
+                    },
+                    body: JSON.stringify(editedReviewData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Review updated: ', data);
+                        // 리뷰 수정 후 다시 공연 리뷰 조회
+                        fetchReviews(getJwtToken());
 
-                // 수정 완료 후 모달 숨기기
-                $('#editReviewModal').modal('hide');
-            })
-            .catch(error => console.error('Error updating review:', error));
-        });
-    })
-    .catch(error => console.error('Error fetching review details:', error));
+                        // 수정 완료 후 모달 숨기기
+                        $('#editReviewModal').modal('hide');
+                    })
+                    .catch(error => console.error('Error updating review:', error));
+            });
+        })
+        .catch(error => console.error('Error fetching review details:', error));
 }
 
 
@@ -301,7 +301,7 @@ function handleReviewDelete(reviewId) {
 
     const deleteReviewConfirmBtn = document.getElementById('delete-review-cofirm-btn');
     // 이전에 설정해놓은 eventListener 없애서 한 번만 eventListener 추가되게함
-    deleteReviewConfirmBtn.removeEventListener('click', handleDeleteConfirm); 
+    deleteReviewConfirmBtn.removeEventListener('click', handleDeleteConfirm);
     deleteReviewConfirmBtn.addEventListener('click', handleDeleteConfirm);
 
     function handleDeleteConfirm(event) {
@@ -315,21 +315,21 @@ function handleReviewDelete(reviewId) {
                 'Content-Type': 'application/json',
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Review deletion failed');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Review deleted: ', data);
-            // 리뷰 삭제 후 다시 공연 리뷰 조회
-            fetchReviews(getJwtToken());
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Review deletion failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Review deleted: ', data);
+                // 리뷰 삭제 후 다시 공연 리뷰 조회
+                fetchReviews(getJwtToken());
 
-            // 리뷰 삭제 후 모달 숨기기
-            $('#deleteReviewModal').modal('hide');
-        })
-        .catch(error => console.error('Error deleting review:', error));
+                // 리뷰 삭제 후 모달 숨기기
+                $('#deleteReviewModal').modal('hide');
+            })
+            .catch(error => console.error('Error deleting review:', error));
     }
 }
 
@@ -348,18 +348,18 @@ function handlePerformanceLike(currentUserId) {
             'Content-Type': 'application/json',
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('공연 찜하기 성공: ', data);
-        // 공연 찜하기 성공시 UI 업데이트
-        const performanceLikeBtn = document.getElementById('performance-like-btn');
-        heartIcon.style.color = 'red'; // 하트 아이콘 빨간색으로 변경
-    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('공연 찜하기 성공: ', data);
+            // 공연 찜하기 성공시 UI 업데이트
+            const performanceLikeBtn = document.getElementById('performance-like-btn');
+            heartIcon.style.color = 'red'; // 하트 아이콘 빨간색으로 변경
+        })
 }
 
 
@@ -376,16 +376,16 @@ window.onload = function () {
             'Content-Type': 'application/json',
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        var result = document.getElementById('result');
-        result.innerHTML = '';  // 기존 내용을 비웁니다
-        result.innerHTML += `
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var result = document.getElementById('result');
+            result.innerHTML = '';  // 기존 내용을 비웁니다
+            result.innerHTML += `
             <div class="card mb-4" style="height: 300px;">
                 <div class="row g-0">
                     <div class="col-md-4">
@@ -397,29 +397,27 @@ window.onload = function () {
                             <p class="card-text">${data.facility_name}</p>
                             <p class="card-text">${data.start_date} ~ ${data.end_date}</p>
                             <p class="card-text">${data.runtime}</p>
-                            <div class="d-grid mt-auto">
-                                <button class="btn btn-dark" type="button">Button</button>
-                            </div>
+                            <p class="card-text">${data.dtguidance}</p>
                         </div>
                     </div>
                 </div>
             </div>
             `
-        var information = document.getElementById('information');
-        var styurl = data.styurls.styurl
-        information.innerHTML = '';
-        if (Array.isArray(styurl)) {
-            for (let i = 0; i < styurl.length; i++) {
-                information.innerHTML += `
+            var information = document.getElementById('information');
+            var styurl = data.styurls.styurl
+            information.innerHTML = '';
+            if (Array.isArray(styurl)) {
+                for (let i = 0; i < styurl.length; i++) {
+                    information.innerHTML += `
                     <img src="${styurl[i]}" class="img-fluid" alt="${data.title}">
                 `;
-            }
-        } else {
-            information.innerHTML += `
+                }
+            } else {
+                information.innerHTML += `
                 <img src="${styurl}" class="img-fluid" alt="${data.title}">
             `;
-        }
-    });
+            }
+        });
 
     // 리뷰 작성 버튼에 event listener 추가
     const createReviewBtn = document.getElementById('create-review-btn');

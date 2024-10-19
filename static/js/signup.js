@@ -1,6 +1,6 @@
-document.getElementById('accountsForm').addEventListener('submit', function(event) {
+document.getElementById('accountsForm').addEventListener('submit', function (event) {
     event.preventDefault();
-    let userData = {        
+    let userData = {
         email: document.getElementById('email').value,
         username: document.getElementById('username').value,
         password: document.getElementById('password').value,
@@ -15,14 +15,15 @@ document.getElementById('accountsForm').addEventListener('submit', function(even
         },
         body: JSON.stringify(userData)
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok: ' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        document.getElementById('response').innerText = 'User created:' + data.message;
-    }) //innerHTML
-    .catch(error => console.error('Error:', error));
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // document.getElementById('response').innerText = 'User created:' + data.message;
+            window.history.back();
+        }) //innerHTML
+        .catch(error => console.error('Error:', error));
 });

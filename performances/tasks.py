@@ -49,7 +49,7 @@ def run_loaddata(fixture_name):
 def endpoint_script(url):
     try:
         response = requests.post(
-            f'http://127.0.0.1:8000/api/performances/{url}/')
+            f'http://3.36.66.92/api/performances/{url}/')
         if response.status_code == 200:
             print("Successfully called the API endpoint.")
         else:

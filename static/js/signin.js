@@ -111,6 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(data);
             // 로그인 성공 시 쿠키에 유저 아이디 저장
             document.cookie = `user_id=${data.user_id}; path=/`;
+            saveToken(data.access);
+            window.history.back();
         })
         .catch(error => {
             console.error('Error:', error);
@@ -119,3 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+function saveToken(token) {
+    localStorage.setItem('access_token', token);
+}

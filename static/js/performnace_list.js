@@ -1,3 +1,9 @@
+function getJwtToken() {
+    return localStorage.getItem('access_token'); 
+}
+
+console.log(getJwtToken());
+
 window.onload = function () {
     fetch('/api/performances/', {
         method: 'GET',

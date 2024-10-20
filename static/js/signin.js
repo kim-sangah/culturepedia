@@ -31,25 +31,25 @@ window.onload = function () {
     fetch('/api/performances/api/user/status/', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`, 
+            'Authorization': `Bearer ${token}`,
         }
     })
-    .then(response => {
-        if (response.ok) {
-            signinBtn.style.display = 'none';
-            signupBtn.style.display = 'none';
-            signoutBtn.style.display = 'block';
-            profileBtn.display = 'block';
-            recommendationsBtn.style.display = 'block';
-        } else {
-            signinBtn.style.display = 'block';
-            signupBtn.style.display = 'block';
-            signoutBtn.style.display = 'none';
-            profileBtn.display = 'none';
-            recommendationsBtn.style.display = 'none';
-        }
-    })
-    .catch(error => console.error('Error fetching user status:', error));
+        .then(response => {
+            if (response.ok) {
+                signinBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                signoutBtn.style.display = 'block';
+                profileBtn.display = 'block';
+                recommendationsBtn.style.display = 'block';
+            } else {
+                signinBtn.style.display = 'block';
+                signupBtn.style.display = 'block';
+                signoutBtn.style.display = 'none';
+                profileBtn.display = 'none';
+                recommendationsBtn.style.display = 'none';
+            }
+        })
+        .catch(error => console.error('Error fetching user status:', error));
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -87,6 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 result.innerHTML = '';
                 document.cookie = `user_id=${data.user_id}; path=/`;
                 result.innerHTML = `<div>${data.refresh}</div>`
+                saveToken(data.access)
+                window.history.back();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -95,3 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     });
 });
+
+function saveToken(token) {
+    localStorage.setItem('access_token', token);
+}

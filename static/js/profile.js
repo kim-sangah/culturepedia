@@ -77,6 +77,7 @@ function checkUserAuthentication() {
     .catch(error => console.error('Error fetching user status:', error));
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
     const UserReviewsLikesContainer = document.getElementById('user-reviews-likes-container');
     const userReviewsContainer = document.getElementById('user-reviews-container');

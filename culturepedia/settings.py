@@ -30,7 +30,7 @@ OPENAI_API_KEY = config.OPENAI_API_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.Debug
 
-ALLOWED_HOSTS = ['3.38.115.15', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['3.36.66.92', '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -66,7 +66,7 @@ MIDDLEWARE = [
 
 
 CORS_ALLOWED_ORIGINS = [
-    'http://3.38.115.15',
+    'http://3.36.66.92',
     'http://127.0.0.1:8000',
     'http://localhost:8000',
 ]
@@ -169,8 +169,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "/static/" 
-STATICFILES_DIRS = [BASE_DIR / 'static'] 
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = "/static/"
 
 # Default primary key field type

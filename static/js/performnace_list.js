@@ -5,6 +5,7 @@ function getJwtToken() {
 
 console.log(getJwtToken())
 
+
 window.onload = function () {
     fetch('/api/performances/', {
         method: 'GET',

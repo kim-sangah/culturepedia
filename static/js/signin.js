@@ -27,6 +27,7 @@ window.onload = function () {
     }
 };
 
+
 document.addEventListener("DOMContentLoaded", () => {
     const signinBtn = document.getElementById('signin-btn');
 

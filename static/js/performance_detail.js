@@ -34,6 +34,7 @@ function fetchCurrentUserId() {
 }
 
 // 사용자 인증 상태 확인 함수, 인증 상태에 따라 UI 업데이트
+
 function checkUserAuthentication() {
     const token = getJwtToken();
     const navSigninBtn = document.getElementById('nav-signin-btn');

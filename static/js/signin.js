@@ -4,26 +4,26 @@ function isLoggedIn() {
 
 // 로그인 상태에 따라 표시되는 버튼 바꾸기
 window.onload = function () {
-    const signinBtn = document.getElementById('signin-btn');
-    const signupBtn = document.getElementById('signup-btn');
-    const signoutBtn = document.getElementById('signout-btn');
-    const profileBtn = document.getElementById('profile-btn');
-    const recommendationsBtn = document.getElementById('nav-recommendations-btn');
+    const navSigninBtn = document.getElementById('nav-signin-btn');
+    const navSignupBtn = document.getElementById('nav-signup-btn');
+    const navSignoutBtn = document.getElementById('nav-signout-btn');
+    const navProfileBtn = document.getElementById('nav-profile-btn');
+    const navRecommendationsBtn = document.getElementById('nav-recommendations-btn');
 
     if (isLoggedIn()) {
         // 로그인 되어있으면 signout, profile 버튼만 보이게
-        signinBtn.style.display = 'none';
-        signupBtn.style.display = 'none';
-        signoutBtn.style.display = 'block';
-        profileBtn.style.display = 'block';
-        recommendationsBtn.style.display = 'block';
+        navSigninBtn.style.display = 'none';
+        navSignupBtn.style.display = 'none';
+        navSignoutBtn.style.display = 'block';
+        navProfileBtn.style.display = 'block';
+        navRecommendationsBtn.style.display = 'block';
     } else {
         // 로그인 되어있지 않으면 signin, signup 버튼만 보이게
-        signinBtn.style.display = 'block';
-        signupBtn.style.display = 'block';
-        signoutBtn.style.display = 'none';
-        profileBtn.style.display = 'none';
-        recommendationsBtn.style.display = 'none';
+        navSigninBtn.style.display = 'block';
+        navSignupBtn.style.display = 'block';
+        navSignoutBtn.style.display = 'none';
+        navProfileBtn.style.display = 'none';
+        navRecommendationsBtn.style.display = 'none';
     }
 };
 

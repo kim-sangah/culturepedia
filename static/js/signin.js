@@ -25,7 +25,31 @@ window.onload = function () {
         navProfileBtn.style.display = 'none';
         navRecommendationsBtn.style.display = 'none';
     }
-};
+
+    // JWT 토큰을 Authorization 헤더에 추가하여 API 요청
+    fetch('api/performances/api/user/status/', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`, 
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            signinBtn.style.display = 'none';
+            signupBtn.style.display = 'none';
+            signoutBtn.style.display = 'block';
+            profileBtn.display = 'block';
+            recommendationsBtn.style.display = 'block';
+        } else {
+            signinBtn.style.display = 'block';
+            signupBtn.style.display = 'block';
+            signoutBtn.style.display = 'none';
+            profileBtn.display = 'none';
+            recommendationsBtn.style.display = 'none';
+        }
+    })
+    .catch(error => console.error('Error fetching user status:', error));
+}
 
 
 document.addEventListener("DOMContentLoaded", () => {

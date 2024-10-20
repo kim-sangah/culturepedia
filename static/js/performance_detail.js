@@ -12,7 +12,7 @@ function getJwtToken() {
 function fetchCurrentUserId() {
     const token = getJwtToken();
 
-    return fetch('/api/performances/api/user/status/', {
+    return fetch('api/performances/api/user/status/', {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`

@@ -2,8 +2,34 @@ function isLoggedIn() {
     return document.cookie.includes('user_id=');
 }
 
-// 로그인 상태에 따라 표시되는 버튼 바꾸기
-window.onload = function () {
+// 서버에서 유저 아이디 받아오기
+function fetchCurrentUserId() {
+    const token = getJwtToken();
+
+    return fetch('api/performances/api/user/status/', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch user info');
+        }
+        return response.json();
+    })
+    .then(data => {
+        return data.user_id;
+    })
+    .catch(error => {
+        console.error('Error fetching user ID:', error);
+        return null;
+    });
+}
+
+// 사용자 인증 상태 확인 함수, 인증 상태에 따라 UI 업데이트
+function checkUserAuthentication() {
+    const token = getJwtToken();
     const signinBtn = document.getElementById('signin-btn');
     const signupBtn = document.getElementById('signup-btn');
     const signoutBtn = document.getElementById('signout-btn');
@@ -25,7 +51,31 @@ window.onload = function () {
         profileBtn.style.display = 'none';
         recommendationsBtn.style.display = 'none';
     }
-};
+
+    // JWT 토큰을 Authorization 헤더에 추가하여 API 요청
+    fetch('api/performances/api/user/status/', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`, 
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            signinBtn.style.display = 'none';
+            signupBtn.style.display = 'none';
+            signoutBtn.style.display = 'block';
+            profileBtn.display = 'block';
+            recommendationsBtn.style.display = 'block';
+        } else {
+            signinBtn.style.display = 'block';
+            signupBtn.style.display = 'block';
+            signoutBtn.style.display = 'none';
+            profileBtn.display = 'none';
+            recommendationsBtn.style.display = 'none';
+        }
+    })
+    .catch(error => console.error('Error fetching user status:', error));
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const signinBtn = document.getElementById('signin-btn');

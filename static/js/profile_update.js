@@ -6,7 +6,7 @@ function getUserId() {
     return localStorage.getItem('user_id');
 }
 
-document.getElementById('accountsupdateForm').addEventListener('submit', function(event) {
+document.getElementById('accountupdateForm').addEventListener('submit', function(event) {
     event.preventDefault();
     let userData = {        
         password: document.getElementById('password').value,

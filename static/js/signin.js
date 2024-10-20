@@ -48,7 +48,7 @@ function checkUserAuthentication() {
     }
 
     // JWT 토큰을 Authorization 헤더에 추가하여 API 요청
-    fetch('/api/user/status/', {
+    fetch('/api/performances/api/user/status/', {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`, 

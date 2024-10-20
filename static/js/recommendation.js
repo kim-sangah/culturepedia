@@ -3,10 +3,12 @@ function getQueryParameter(param) {
     return urlParams.get(param);
 }
 
+
 // JWT 토큰을 로컬 스토리지에서 가져오는 함수
 function getJwtToken() {
-    return localStorage.getItem('access_token'); 
+    return localStorage.getItem('access_token');
 }
+
 
 // 서버에서 유저 아이디 받아오기
 function fetchCurrentUserId() {
@@ -18,19 +20,19 @@ function fetchCurrentUserId() {
             'Authorization': `Bearer ${token}`
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch user info');
-        }
-        return response.json();
-    })
-    .then(data => {
-        return data.user_id;
-    })
-    .catch(error => {
-        console.error('Error fetching user ID:', error);
-        return null;
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch user info');
+            }
+            return response.json();
+        })
+        .then(data => {
+            return data.user_id;
+        })
+        .catch(error => {
+            console.error('Error fetching user ID:', error);
+            return null;
+        });
 }
 
 // 사용자 인증 상태 확인 함수, 인증 상태에 따라 UI 업데이트
@@ -57,25 +59,25 @@ function checkUserAuthentication() {
     fetch('/api/user/status/', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`, 
+            'Authorization': `Bearer ${token}`,
         }
     })
-    .then(response => {
-        if (response.ok) {
-            signinBtn.style.display = 'none';
-            signupBtn.style.display = 'none';
-            signoutBtn.style.display = 'block';
-            profileBtn.display = 'block';
-            recommendationsBtn.style.display = 'block';
-        } else {
-            signinBtn.style.display = 'block';
-            signupBtn.style.display = 'block';
-            signoutBtn.style.display = 'none';
-            profileBtn.display = 'none';
-            recommendationsBtn.style.display = 'none';
-        }
-    })
-    .catch(error => console.error('Error fetching user status:', error));
+        .then(response => {
+            if (response.ok) {
+                signinBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                signoutBtn.style.display = 'block';
+                profileBtn.display = 'block';
+                recommendationsBtn.style.display = 'block';
+            } else {
+                signinBtn.style.display = 'block';
+                signupBtn.style.display = 'block';
+                signoutBtn.style.display = 'none';
+                profileBtn.display = 'none';
+                recommendationsBtn.style.display = 'none';
+            }
+        })
+        .catch(error => console.error('Error fetching user status:', error));
 }
 
 
@@ -112,16 +114,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 body: JSON.stringify(userData)
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                generateRecommendations(data.recommendations);
-            })
-            .catch(error => console.error('Error generating recommendations'));
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    generateRecommendations(data.recommendations);
+                })
+                .catch(error => console.error('Error generating recommendations'));
         });
     });
 

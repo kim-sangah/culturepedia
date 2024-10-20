@@ -24,33 +24,8 @@ window.onload = function () {
         signoutBtn.style.display = 'none';
         profileBtn.style.display = 'none';
         recommendationsBtn.style.display = 'none';
-        return;
     }
-
-    // JWT 토큰을 Authorization 헤더에 추가하여 API 요청
-    fetch('/api/performances/api/user/status/', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        }
-    })
-        .then(response => {
-            if (response.ok) {
-                signinBtn.style.display = 'none';
-                signupBtn.style.display = 'none';
-                signoutBtn.style.display = 'block';
-                profileBtn.display = 'block';
-                recommendationsBtn.style.display = 'block';
-            } else {
-                signinBtn.style.display = 'block';
-                signupBtn.style.display = 'block';
-                signoutBtn.style.display = 'none';
-                profileBtn.display = 'none';
-                recommendationsBtn.style.display = 'none';
-            }
-        })
-        .catch(error => console.error('Error fetching user status:', error));
-}
+};
 
 document.addEventListener("DOMContentLoaded", () => {
     const signinBtn = document.getElementById('signin-btn');
@@ -86,8 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 var result = document.getElementById('result');
                 result.innerHTML = '';
                 document.cookie = `user_id=${data.user_id}; path=/`;
-                result.innerHTML = `<div>${data.refresh}</div>`
-                saveToken(data.access)
+                result.innerHTML = `<div>${data.refresh}</div>`;
+                saveToken(data.access);
                 window.history.back();
             })
             .catch(error => {

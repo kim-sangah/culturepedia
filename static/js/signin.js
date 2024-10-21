@@ -2,7 +2,6 @@ function isLoggedIn() {
     return document.cookie.includes('user_id=');
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
     const signinBtn = document.getElementById('signin-btn');
 
@@ -27,7 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    return response.json().then(response => {
+                        alert(response.message);
+                    })
                 }
                 return response.json();
             })
@@ -43,8 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(error => {
                 console.error('Error:', error);
-                var result = document.getElementById('result');
-                result.innerHTML = `<div style="color:red;">Login failed. Please check your credentials.</div>`;
+                // let result = document.getElementById('result');
+                // result.innerHTML = `<div style="color:red;">Login failed. Please check your credentials.</div>`;
             });
     });
 });

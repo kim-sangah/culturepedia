@@ -84,120 +84,120 @@ function handleAccountDelete() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const userInfoContainer = document.getElementById('user-info-container');
     const userReviewsLikesContainer = document.getElementById('user-reviews-likes-container');
     const userReviewsContainer = document.getElementById('user-reviews-container');
     const userLikesContainer = document.getElementById('user-likes-container');
 
-    fetchCurrentUserId.then((userId) => {
+    try {
+        const userId = await fetchCurrentUserId();
+
         if (!userId) {
             console.error('User ID not found.')
             return;
         }
 
-        // 유저 정보 fetch해오기
-        fetch(`/api/accounts/profile/${userId}/`, {
+        const token = getJwtToken();
+
+        const response = await fetch(`/api/accounts/profile/${userId}/`, {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer <token>',
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to get user profile')
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to get user profile');
+        }
+
+        const data = await response.json();
+
+        // 유저 기본 정보 (유저네임, 생일 etc... 표시)
+        userInfoContainer.innerHTML = '';
+        let userInfoHtml = `
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <p class="card-text">이메일: ${data.email}</p>
+                <p class="card-text">유저네임: ${data.username}</p>
+                <p class="card-text">성별: ${data.gender}</p>
+                <p class="card-text">생년월일: ${data.birthday}</p>
+                <button class="btn btn-primary" id="edit-user-info-btn">회원정보 수정</button>
+                <button class="btn btn-danger" id="delete-account-btn">회원 탈퇴</button>
+            </div>
+        </div>
+        `;
+
+        userInfoContainer.innerHTML += userInfoHtml;
+
+        // 회원정보 수정 버튼에 event listener 추가
+        const editUserInfoBtn = document.getElementById('edit-user-info-btn');
+        editUserInfoBtn.addEventListener('click', function() {
+            window.location.href = 'profile_update.html';
+        });
+
+        // 회원 탈퇴 버튼에 event listener 추가
+        const deleteAccountBtn = document.getElementById('delete-account-btn');
+        deleteAccountBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            handleAccountDelete();
+        });
+
+
+        // 유저가 작성한 리뷰 표시
+        userReviewsContainer.innerHTML = '';
+        data.reviews.forEach(review => {
+            let starRatingHtml = ''
+            for (let j = 1; j <= 5; j++) {
+                if (j <= review.rating) {
+                    starRatingHtml += `<i class="fas fa-star text-warning"></i>`;
+                } else {
+                    starRatingHtml += `<i class="far fa-star"></i>`;
+                }
             }
-            return response.json();
-        })
-        .then(data => {
-            // 유저 기본 정보 (유저네임, 생일 etc... 표시)
-            userInfoContainer.innerHTML = '';
-            let userInfoHtml = `
+
+            let reviewHtml = `
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
-                    <p class="card-text">${data.email}</p>
-                    <p class="card-text">${data.username}</p>
-                    <p class="card-text">${data.gender}</p>
-                    <p class="card-text">${data.birthday}</p>
-                    <button class="btn btn-primary" id="edit-user-info-btn">회원정보 수정</button>
-                    <button class="btn btn-danger" id="delete-account-btn">회원 탈퇴</button>
+                    <div class="reviewed-performance-poster">
+                        <img src="${review.performance.poster}">
+                    </div>
+                    <h5 class="card-title">${review.title}</h5>
+                    <div class="rating">${starRatingHtml}</div>
+                    <p class="card-text">${review.content}</p>
+                    <button class="btn btn-primary edit-review-btn" id="edit-review-btn-${review.id}" data-review-id="${review.id}">리뷰 수정</button>
+                    <button class="btn btn-danger delete-review-btn" id="delete-review-btn-${review.id}" data-review-id="${review.id}">리뷰 삭제</button>
                 </div>
             </div>
             `;
 
-            userInfoContainer.innerHTML += userInfoHtml;
+            userReviewsContainer.innerHTML += reviewHtml;
+        });
 
-            // 회원정보 수정 버튼에 event listener 추가
-            const editUserInfoBtn = document.getElementById('edit-user-info-btn');
-            editUserInfoBtn.addEventListener('click', function() {
-                window.location.href = 'profile_update.html';
-            });
-
-            // 회원 탈퇴 버튼에 event listener 추가
-            const deleteAccountBtn = document.getElementById('delete-account-btn');
-            deleteAccountBtn.addEventListener('click', (event) => {
-                event.preventDefault();
-                handleAccountDelete();
-            });
-
-
-            // 유저가 작성한 리뷰 표시
-            userReviewsContainer.innerHTML = '';
-            data.reviews.forEach(review => {
-                let starRatingHtml = ''
-                for (let j = 1; j <= 5; j++) {
-                    if (j <= review.rating) {
-                        starRatingHtml += `<i class="fas fa-star text-warning"></i>`;
-                    } else {
-                        starRatingHtml += `<i class="far fa-star"></i>`;
-                    }
-                }
-
-                let reviewHtml = `
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <div class="reviewed-performance-poster">
-                            <img src="${review.performance.poster}">
+        // 유저가 좋아요한 공연 표시
+        userLikesContainer.innerHTML = '';
+        data.likes.forEach(item => {
+            let likedPerformanceHtml = `
+                <div class="card mb-4" style="height: 300px;">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <div>${item.poster ? `<img src="${item.poster}" class="img-fluid rounded-start" alt="${item.title}" style="height: 280px">` : '이미지 없음'}</div>
                         </div>
-                        <h5 class="card-title">${review.title}</h5>
-                        <div class="rating">${starRatingHtml}</div>
-                        <p class="card-text">${review.content}</p>
-                        <button class="btn btn-primary edit-review-btn" id="edit-review-btn-${review.id}" data-review-id="${review.id}">리뷰 수정</button>
-                        <button class="btn btn-danger delete-review-btn" id="delete-review-btn-${review.id}" data-review-id="${review.id}">리뷰 삭제</button>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="http://127.0.0.1:8000/static/performance_detail.html?performance_id=${item.kopis_id}">${item.title}</a></h5>
+                                <p class="card-text">${item.start_date}~${item.end_date}</p>
+                                <p class="card-text"><small class="text-body-secondary">${item.type}</small></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                `;
+            `;
 
-                userReviewsContainer.innerHTML += reviewHtml;
-            })
-
-            // 유저가 좋아요한 공연 표시
-            userLikesContainer.innerHTML = '';
-            data.likes.forEach(item => {
-                let likedPerformanceHtml = `
-                    <div class="card mb-4" style="height: 300px;">
-                        <div class="row g-0">
-                            <div class="col-md-4">
-                                <div>${item.poster ? `<img src="${item.poster}" class="img-fluid rounded-start" alt="${item.title}" style="height: 280px">` : '이미지 없음'}</div>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <h5 class="card-title"><a href="http://127.0.0.1:8000/static/performance_detail.html?performance_id=${item.kopis_id}">${item.title}</a></h5>
-                                    <p class="card-text">${item.start_date}~${item.end_date}</p>
-                                    <p class="card-text"><small class="text-body-secondary">${item.type}</small></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                userLikesContainer.innerHTML += likedPerformanceHtml;
-            })
-
-        })
-        .catch(error => {
-            console.error('Error: ', error);
+            userLikesContainer.innerHTML += likedPerformanceHtml;
         });
-    })
-})
+    } catch (error) {
+        console.error('Error: ', error);
+    }
+});

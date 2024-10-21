@@ -33,8 +33,9 @@ def validate_user_data(user_data):
     #     return "성별은 'M' 또는 'F'만 입력할 수 있습니다."
     
     # birthday 형식 검증
-    date_pattern = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-    if birthday and not date_pattern.match(birthday):
-        return "생년월일은 YYYY-MM-DD 형식으로 입력해야 합니다."
+    if birthday:
+        date_pattern = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+        if not date_pattern.match(birthday):
+            return "생년월일은 YYYY-MM-DD 형식으로 입력해야 합니다."
 
     return None

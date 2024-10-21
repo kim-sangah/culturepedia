@@ -8,29 +8,23 @@ function getJwtToken() {
 
 document.getElementById('accountupdateForm').addEventListener('submit', function (event) {
     event.preventDefault();
-    let password = document.getElementById('password').value,
-        username = document.getElementById('username').value,
-        gender = document.getElementById('gender').value,
-        birthday= document.getElementById('birthday').value
-    if (!password){
-        password=null
-    }
-    if (!username){
-        username=null
-    }
-    if (!gender){
-        gender=null
-    }
+    let birthday= document.getElementById('birthday').value
     if (!birthday){
         birthday=null
     }
-    username
-    let userData = {
-        password: password,
-        username: username,
-        gender: gender,
-        birthday: birthday,
-    };
+    
+    let userData = {        
+            gender: document.getElementById('gender').value,
+            birthday: birthday,
+        };
+        if (document.getElementById('username').value) {
+            userData.username = document.getElementById('username').value;
+        }
+        if (document.getElementById('password').value) {
+            userData.password = document.getElementById('password').value;
+        }
+    
+    console.log(userData)
 
     const token = getJwtToken();
 

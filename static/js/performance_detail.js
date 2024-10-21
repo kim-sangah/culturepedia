@@ -134,7 +134,7 @@ function handleReviewSubmit(currentUserId, title, content, rating) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorzation': `Bearer ${getJwtToken()}`,
+            'Authorzation': `Bearer ${getJwtTokens().accessToken}`,
         },
         body: JSON.stringify(reviewData),
     })
@@ -157,7 +157,7 @@ function handleReviewEdit(reviewId) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getJwtToken()}`,
+            'Authorization': `Bearer ${getJwtTokens().accessToken}`,
         }
     })
         .then(response => response.json())
@@ -187,7 +187,7 @@ function handleReviewEdit(reviewId) {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getJwtToken()}`,
+                        'Authorization': `Bearer ${getJwtTokens().accessToken}`,
                     },
                     body: JSON.stringify(editedReviewData)
                 })
@@ -195,7 +195,7 @@ function handleReviewEdit(reviewId) {
                     .then(data => {
                         console.log('Review updated: ', data);
                         // 리뷰 수정 후 다시 공연 리뷰 조회
-                        fetchReviews(getJwtToken());
+                        fetchReviews(getJwtTokens().accessToken);
 
                         // 수정 완료 후 모달 숨기기
                         $('#editReviewModal').modal('hide');
@@ -226,7 +226,7 @@ function handleReviewDelete(reviewId) {
         fetch(`/api/performances/detail/review/${reviewId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${getJwtToken()}`,
+                'Authorization': `Bearer ${getJwtTokens().accessToken}`,
                 'Content-Type': 'application/json',
             }
         })
@@ -239,7 +239,7 @@ function handleReviewDelete(reviewId) {
             .then(data => {
                 console.log('Review deleted: ', data);
                 // 리뷰 삭제 후 다시 공연 리뷰 조회
-                fetchReviews(getJwtToken());
+                fetchReviews(getJwtTokens().accessToken);
 
                 // 리뷰 삭제 후 모달 숨기기
                 $('#deleteReviewModal').modal('hide');
@@ -259,7 +259,7 @@ function handlePerformanceLike(currentUserId) {
     fetch(`/api/performances/detail/${performance_id}/like/`, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${getJwtToken()}`,
+            'Authorization': `Bearer ${getJwtTokens().accessToken}`,
             'Content-Type': 'application/json',
         }
     })

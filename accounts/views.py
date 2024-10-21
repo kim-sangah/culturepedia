@@ -94,12 +94,17 @@ class UserProfileView(APIView):
         if request.user != user:
             raise PermissionDenied(status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = UserModifySerializer(
-            user, data=request.data, partial=True)
+        serializer = UserModifySerializer(user, data=request.data, partial=True)
 
         if serializer.is_valid(raise_exception=True):
+            new_username = request.data.get('username')
+            if new_username and User.objects.filter(username=new_username).exclude(id=user.id).exists():
+                return Response({"message": "이미 다른 사용자가 이름을 사용하고 있습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
             password = request.data.pop('password', None)
             if password is not None:
+                if len(password) < 8:
+                    return Response({"message": "비밀번호는 최소 8자리여야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
                 serializer.save()
                 user.set_password(password)
                 user.save()

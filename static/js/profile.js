@@ -3,24 +3,27 @@ function getQueryParameter(param) {
     return urlParams.get(param);
 }
 
-function getJwtToken() {
-    return localStorage.getItem('access_token');
-}
-
-function getUserId() {
-    return localStorage.getItem('user_id');
-}
-
-
 // 회원 탈퇴 기능
 function handleAccountDelete() {
     // Bootstrap JS함수로 회원 탈퇴 modal 보여주기
     $('#deleteAccountModal').modal('show');
 
-    const token = getJwtToken();
+    const closeModalBtn = document.querySelectorAll('.modal-header > .close');
+    closeModalBtn.forEach(btn => btn.addEventListener('click', () => {
+        $('#deleteAccountModal').modal('hide');
+    }));
+
+    const token = getJwtTokens();
+    const userId = token.user_id;
+
 
     const deleteAccountConfirmBtn = document.getElementById('delete-account-confirm-btn');
     deleteAccountConfirmBtn.addEventListener('click', handleAccountDeleteConfirm);
+
+    const deleteAccountCancelBtn = document.getElementById('delete-account-cancel-btn');
+    deleteAccountCancelBtn.addEventListener('click', () => {
+        $('#deleteAccountModal').modal('hide');
+    });
 
     function handleAccountDeleteConfirm(event) {
         event.preventDefault();
@@ -37,18 +40,34 @@ function handleAccountDelete() {
         event.preventDefault();
 
         const passwordInput = document.getElementById('password-check-input').value;
-
         fetch(`/api/accounts/profile/password-check/${userId}/`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token.accessToken}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 password: passwordInput,
             }),
         })
-        .then(response => response.json())
+        .then(response => {
+            const contentType = response.headers.get('Content-Type');
+            if (!response.ok) {
+                // If the response isn't OK, attempt to parse JSON error if possible
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json().then(errorData => {
+                        alert(errorData.message);
+                    });
+                } else {
+                    // If not JSON, handle it as text (likely an HTML error page)
+                    return response.text().then(errorText => {
+                        console.error('Error (non-JSON):', errorText);
+                        alert('An error occurred. Please try again.여기서 나는 에러');
+                    });
+                }
+            }
+            return response.json(); // Parse valid JSON response
+        })
         .then(data => {
             if (data.success) {
                 deleteAccount();
@@ -63,7 +82,7 @@ function handleAccountDelete() {
         fetch(`/api/accounts/profile/${userId}/`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token.accessToken}`,
                 'Content-Type': 'application/json',
             },
         })
@@ -74,7 +93,7 @@ function handleAccountDelete() {
 
                 const deleteAccountCompleteBtn = document.getElementById('delete-account-complete-btn');
                 deleteAccountCompleteBtn.addEventListener('click', function() {
-                    window.location.href = '/main.html';
+                    window.location.href = 'main.html';
                 });
             } else {
                 alert('계정 삭제에 실패했습니다.');
@@ -96,11 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 유저 정보 fetch해오기
-        fetch(`/api/accounts/profile/${userId}/`, {
+        const token = getJwtTokens();
+
+        const response = await fetch(`/api/accounts/profile/${userId}/`, {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer <token>',
+                'Authorization': `Bearer ${token.accessToken}`,
                 'Content-Type': 'application/json',
             }
         })

@@ -30,13 +30,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             try {
                 // 추천 공연 받아오기
-                const token = getJwtToken();
+                const token = getJwtTokens().accessToken;
 
                 const response = await fetch(`/api/performances/recommend/${userId}/`, {
                     method: 'POST',
                     headers: {
+                        'Authorization': `Bearer ${token.accessToken}`,
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
                     },
                     body: JSON.stringify(userData)
                 });

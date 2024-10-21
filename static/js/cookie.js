@@ -3,7 +3,7 @@ function getJwtTokens() {
     return {
         accessToken: localStorage.getItem('access_token'),
         refreshToken: localStorage.getItem('refresh_token'),
-        userId: localStorage.getItem('user_id'),
+        user_id: localStorage.getItem('user_id'),
     }
 }
 
@@ -11,12 +11,12 @@ function getJwtTokens() {
 function fetchCurrentUserId() {
     return new Promise(async (resolve, reject) => {
         try {
-            const token = getJwtToken();
+            const token = getJwtTokens();
 
             const response = await fetch('/api/performances/api/user/status/', {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token.accessToken}`,
                 }
             });
 

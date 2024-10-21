@@ -2,7 +2,8 @@
 function getJwtTokens() {
     return {
         accessToken: localStorage.getItem('access_token'),
-        refreshToken: localStorage.getItem('refresh_token')
+        refreshToken: localStorage.getItem('refresh_token'),
+        user_id: localStorage.getItem('user_id'),
     }
 }
 

@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 result.innerHTML = '';
                 document.cookie = `user_id=${data.user_id}; path=/`;
                 result.innerHTML = `<div>${data.refresh}</div>`;
-                saveToken(data.access);
+                saveToken(data.access, data.refresh);
                 window.location.href = 'main.html';
             })
             .catch(error => {
@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function saveToken(token) {
-    localStorage.setItem('access_token', token);
+function saveToken(access_token, refresh_token) {
+    localStorage.setItem('access_token', access_token);
+    localStorage.setItem('refresh_token', refresh_token);
 }

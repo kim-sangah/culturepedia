@@ -111,13 +111,24 @@ class UserProfileView(APIView):
     # 회원탈퇴
     def delete(self, request, pk):
         user = request.user
-        password = request.data.get("password")
-
-        if not password:
-            return Response({"message": "비밀번호를 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if not user.check_password(password):
-            return Response({"message": "비밀번호가 일치하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
-
         user.delete()
         return Response({"message": "회원탈퇴가 완료되었습니다."}, status=status.HTTP_200_OK)
+
+# 비밀번호 체크
+class PasswordCheckView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        user = get_object_or_404(User, id=pk)
+        if request.user != user:
+            raise PermissionDenied(status=status.HTTP_400_BAD_REQUEST)
+        
+        password = request.data.get("password")
+        if not password:
+            return Response({"message": "비밀번호를 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not user.check_password(password):
+            return Response({"message": "비밀번호가 일치하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"success": True, "message": "비밀번호가 확인되었습니다."}, status=status.HTTP_200_OK)
+

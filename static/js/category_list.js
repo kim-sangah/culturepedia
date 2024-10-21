@@ -84,6 +84,7 @@ function displayPerformaces(category) {
                     `
                 }
             });
+            checkUserAuthentication();
         })
         .catch(error => {
             console.error('Error: ', error);

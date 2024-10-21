@@ -47,7 +47,6 @@ document.getElementById('accountupdateForm').addEventListener('submit', function
             return response.json();
         })
         .then(data => {
-            document.getElementById('response').innerText = data.message;
             let myModal = new bootstrap.Modal(document.getElementById('accountupdate'));
             myModal.show();
         })

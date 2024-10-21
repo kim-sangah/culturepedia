@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 var result = document.getElementById('result');
                 result.innerHTML = '';
                 document.cookie = `user_id=${data.user_id}; path=/`;
-                result.innerHTML = `<div>${data.refresh}</div>`;
                 saveToken(data.access, data.refresh, data.user_id);
                 window.location.href = 'main.html';
             })

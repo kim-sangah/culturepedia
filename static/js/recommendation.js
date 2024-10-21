@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log(performance)
             const card = `
                 <div class="card">
-                    <a href="${performance.link}"><img class="card-img-top" src="${performance.poster}" alt="${performance.title} 포스터"></a>
+                    <img class="card-img-top" src="${performance.poster}" alt="${performance.title} 포스터">
                     <div class="card-body">
                         <h5 class="card-title"><a href="http://127.0.0.1:8000/static/performance_detail.html?performance_id=${performance.kopis_id}">${performance.title}</a></h5>
                         <p class="card-state">${performance.state}</p>

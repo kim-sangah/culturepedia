@@ -136,4 +136,3 @@ class PasswordCheckView(APIView):
             return Response({"message": "비밀번호가 일치하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
         
         return Response({"success": True, "message": "비밀번호가 확인되었습니다."}, status=status.HTTP_200_OK)
-

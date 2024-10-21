@@ -15,9 +15,9 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from openai import OpenAI
 from django.conf import settings
-from django.db.models import Q
 from .bots import generate_hashtags_for_performance, generate_recommendations, generate_recommendations_with_tags
 from rest_framework.renderers import TemplateHTMLRenderer
+
 
 API_KEY = settings.API_KEY
 
@@ -82,38 +82,8 @@ class OPENAPIViews(APIView):
             except ET.ParseError:
                 return Response({'error': 'Failed to parse XML data'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# 공연 찜
-
-
-class PerformanceLikeView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    # 공연 찜하기
-    def post(self, request, pk):
-        performance = get_object_or_404(Performance, pk=pk)
-        user = request.user
-
-        # 이미 찜했는지 확인하기
-        if PerformanceLike.objects.filter(user=user, performance=performance).exists():
-            return Response({"message": "이미 찜한 공연입니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # 찜하기 및 카운트 증가
-        PerformanceLike.objects.create(user=user, performance=performance)
-        return Response({"message": "찜한 공연목록에 추가 되었습니다 "}, status=status.HTTP_201_CREATED)
-
-    # 공연 찜 취소
-    def delete(self, request, pk):
-        performance = get_object_or_404(Performance, pk=pk)
-        user = request.user
-
-        like = get_object_or_404(
-            PerformanceLike, user=user, performance=performance)
-        like.delete()
-        return Response({"message": "찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)
 
 # 공연 목록 페이지 설정
-
-
 class PerformancePagination(PageNumberPagination):
     page_size = 100
 
@@ -125,9 +95,8 @@ class PerformancePagination(PageNumberPagination):
             '공연목록': data,
         })
 
+
 # 공연 검색
-
-
 class PerformanceSearchAPIView(APIView):
     def get(self, request):
         query = request.GET.get('keyword')
@@ -168,11 +137,34 @@ class PerformanceDetailAPIView(APIView):
         return Response(serializer.data)
 
 
+# 공연 찜
+class PerformanceLikeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        performance = get_object_or_404(Performance, pk=pk)
+        user = request.user
+
+        if PerformanceLike.objects.filter(user=user, performance=performance).exists():
+            return Response({"message": "이미 찜한 공연입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        PerformanceLike.objects.create(user=user, performance=performance)
+        return Response({"message": "찜한 공연목록에 추가 되었습니다 "}, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, pk):
+        performance = get_object_or_404(Performance, pk=pk)
+        user = request.user
+
+        like = get_object_or_404(
+            PerformanceLike, user=user, performance=performance)
+        like.delete()
+        return Response({"message": "찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)
+
+
 # 공연 리뷰 작성
 class ReviewCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    # 공연 리뷰 작성
     def post(self, request, pk):
         performance = get_object_or_404(Performance, pk=pk)
         serializer = ReviewSerializer(data=request.data)
@@ -193,7 +185,6 @@ class ReviewAPIView(APIView):
     def get_object(self, review_pk):
         return get_object_or_404(Review, pk=review_pk)
 
-    # 공연 리뷰 수정
     def put(self, request, review_pk):
         review = self.get_object(review_pk)
 
@@ -208,7 +199,6 @@ class ReviewAPIView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # 공연 리뷰 삭제
     def delete(self, request, review_pk):
         review = self.get_object(review_pk)
 

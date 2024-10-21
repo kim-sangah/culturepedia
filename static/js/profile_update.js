@@ -32,6 +32,7 @@ document.getElementById('accountupdateForm').addEventListener('submit', function
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${token.access}`,
+
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(userData)
@@ -59,4 +60,3 @@ document.getElementById('modal-confirm-btn').addEventListener('click', function 
 document.getElementById('modal-close-btn').addEventListener('click', function () {
     window.location.href = 'profile.html';
 });
-

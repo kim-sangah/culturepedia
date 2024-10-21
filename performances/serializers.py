@@ -8,6 +8,7 @@ class PerformanceListSerializer(serializers.ModelSerializer):
         fields = ('kopis_id', 'title', 'type', 'facility_name', 'poster', 'start_date', 'end_date')
 
 
+
 class ReviewSerializer(serializers.ModelSerializer):
     performance = serializers.StringRelatedField()
     author = serializers.StringRelatedField()

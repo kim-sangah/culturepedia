@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+
 User = get_user_model()
 
 
@@ -74,7 +75,6 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-# 찜하기 기능
 class PerformanceLike(models.Model):
     user = models.ForeignKey(
         User, related_name='liked_by', on_delete=models.CASCADE)

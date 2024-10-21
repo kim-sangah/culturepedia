@@ -33,7 +33,6 @@ DEBUG = config.Debug
 ALLOWED_HOSTS = ['43.201.38.42', '127.0.0.1', 'localhost']
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -63,7 +62,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 CORS_ALLOWED_ORIGINS = [
     'http://43.201.38.42',
@@ -100,14 +98,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
-    # 'default': {
-    #     'ENGINE' : config.DB_ENGINE,
-    #     'NAME' : config.DB_NAME,
-    #     'USER' : config.DB_USER,
-    #     'PASSWORD' : config.DB_PASSWORD,
-    #     'HOST' : config.DB_HOST,
-    #     'PORT' : config.DB_PORT,
-    # }
+     'default': {
+         'ENGINE' : config.DB_ENGINE,
+         'NAME' : config.DB_NAME,
+         'USER' : config.DB_USER,
+         'PASSWORD' : config.DB_PASSWORD,
+         'HOST' : config.DB_HOST,
+         'PORT' : config.DB_PORT,
+    }
 }
 
 # Password validation

@@ -11,7 +11,6 @@ import base64
 CLIENT = OpenAI(api_key=settings.OPENAI_API_KEY,)
 MAX_FILE_SIZE_MB = 10
 
-
 # 사용자가 리뷰하거나 찜한 공연들의 해시태그와 입력받은 해시태그를 바탕으로 공연 추천 (openai 사용 X)
 def generate_recommendations(user_preferences, input_tags):
     # user_preferences에 있는 선호하는 공연들의 해시태그를 preferred_hashtags 리스트에 넣음
@@ -39,10 +38,14 @@ def generate_recommendations(user_preferences, input_tags):
 
         if len(common_hashtags) >= 2:
             recommended_performances.append({
+                "kopis_id": performance.kopis_id,
                 "title": performance.title,
                 "state": performance.state,
                 "type": performance.type,
                 "poster": performance.poster,
+                "startDate": performance.start_date,
+                "endDate": performance.end_date,
+                "facility": performance.facility_name,
                 "hashtags": [performance_hashtags],
             })
 
@@ -111,7 +114,6 @@ def generate_hashtags_for_performance(performance):
     # 이미지 데이터를 Base64로 인코딩
     base64_images = []
     for image_path in images_path:
-        # 파일 확장자에 따라 MIME 타입 설정
         image_path_lower = image_path.lower()
         # 파일 확장자에 따라 MIME 타입 설정
         if image_path_lower.endswith(".gif"):

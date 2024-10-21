@@ -22,7 +22,19 @@ from rest_framework.renderers import TemplateHTMLRenderer
 API_KEY = settings.API_KEY
 
 
+class UserStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'is_authenticated': True,
+            'user_id': user.id,
+        })
+
 # 공연 목록 조회
+
+
 class OPENAPIViews(APIView):
     # renderer_classes = [TemplateHTMLRenderer]
     # template_name = 'performances/performances_list.html'
@@ -45,7 +57,7 @@ class OPENAPIViews(APIView):
             'service': API_KEY,  # 필수
             'ststype': 'week',  # 필수
             'date': datetime.now().strftime('%Y%m%d'),  # 필수
-            'catecode': 'GGGA',
+            # 'catecode': 'GGGA',
         }
         response = requests.get(url, params=params)
 
@@ -88,6 +100,7 @@ class PerformancePagination(PageNumberPagination):
 class PerformanceSearchAPIView(APIView):
     def get(self, request):
         query = request.GET.get('keyword')
+        # type = request.GET.get('type')
         performances = Performance.objects.all()
 
         if query:
@@ -98,13 +111,20 @@ class PerformanceSearchAPIView(APIView):
                 Q(cast__icontains=query)  # 공연출연진
             )
 
-            if performances.exists():
-                paginator = PerformancePagination()
-                paginated_performances = paginator.paginate_queryset(
-                    performances, request)
-                serializer = PerformanceListSerializer(
-                    paginated_performances, many=True)
-                return paginator.get_paginated_response(serializer.data)
+        # if type:
+        #     performances = performances.filter(type=type)
+
+        # if not query and not type:
+        else:
+            performances = Performance.objects.all()
+
+        if performances.exists():  # 공연이 존재할 경우
+            paginator = PerformancePagination()
+            paginated_performances = paginator.paginate_queryset(
+                performances, request)
+            serializer = PerformanceListSerializer(
+                paginated_performances, many=True)
+            return paginator.get_paginated_response(serializer.data)
 
         return Response({"message": "검색된 공연이 없습니다."}, status=status.HTTP_200_OK)
 
@@ -158,7 +178,7 @@ class ReviewCreateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# 공연 리뷰 수정 및 삭제
+# 공연 리뷰 조회, 수정 및 삭제
 class ReviewAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -246,3 +266,5 @@ class HashtagcreateAPIView(APIView):
                 generate_hashtags_for_performance(performance)
 
         return Response({"message": "Hashtags generated successfully"}, status=status.HTTP_201_CREATED)
+
+

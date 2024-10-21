@@ -1,29 +1,38 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Culturepedia</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+    <a class="navbar-brand" href="main.html">Culturepedia</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        <form class="d-flex align-items-baseline" id="searchForm">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchInput"
+                onkeypress="handleKeyPress(event)">
+            <button class="btn btn-outline-success" type="button" id="searchButton" onclick="getSearchValue()"
+                style="width:7rem;">Search</button>
         </form>
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">금주 TOP <span class="sr-only">(current)</span></a>
+                <a class="nav-link" id="nav-top-btn" href="main.html" style="display: block;">금주 TOP <span
+                        class="sr-only"></span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">카테고리별 랭킹</a>
+                <a class="nav-link" id="nav-ranking-btn" href="category_list.html" style="display: block;">카테고리</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" href="#">추천 공연</a>
+                <a class="nav-link" id="nav-recommendations-btn" href="recommendation.html" style="display: None">추천
+                    공연</a>
+            </li>
+            <!-- 로그인하지 않은 유저에게 보이는 회원 기능 버튼 (Signin, Signup) -->
+            <li class="nav-item">
+                <a class="btn btn-primary" id="nav-signin-btn" href="signin.html" style="display: block;">로그인</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="#">로그인</a>
+                <a class="btn btn-primary" id="nav-signup-btn" href="signup.html" style="display: block;">회원가입</a>
+            </li>
+            <!-- 로그인한 유저에게 보이는 회원 기능 버튼 (Signout, Profile) -->
+            <li class="nav-item">
+                <button class="btn btn-primary" id="nav-signout-btn" onclick="signout()"
+                    style="display: None; margin-top:0px">로그아웃</button>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="#">회원가입</a>
+                <a class="btn btn-primary" id="nav-profile-btn" href="profile.html" style="display: None">프로필 조회</a>
             </li>
         </ul>
     </div>

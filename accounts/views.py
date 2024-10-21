@@ -48,11 +48,15 @@ class UserSigninView(APIView):
         user = authenticate(request, email=email, password=password)
         if user is not None:
             refresh = RefreshToken.for_user(user)
-            return Response({
-                "username": (user.username),
-                "access": str(refresh.access_token),
+            access = refresh.access_token
+            response = Response({
+                "username": user.username,
+                "access": str(access),
                 "refresh": str(refresh),
+                "user_id": user.id,
             }, status=status.HTTP_200_OK)
+            response.set_cookie('access_token', access)
+            return response  # 로그인 성공
         else:
             return Response({"message": "이메일 또는 비밀번호가 올바르지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -83,19 +87,24 @@ class UserProfileView(APIView):
 
         serializer = UserSerializer(user)
         return Response(serializer.data)
-    
+
     # 회원정보 수정
     def put(self, request, pk):
         user = get_object_or_404(User, id=pk)
         if request.user != user:
             raise PermissionDenied(status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = UserModifySerializer(
-            user, data=request.data, partial=True)
+        serializer = UserModifySerializer(user, data=request.data, partial=True)
 
         if serializer.is_valid(raise_exception=True):
+            new_username = request.data.get('username')
+            if new_username and User.objects.filter(username=new_username).exclude(id=user.id).exists():
+                return Response({"message": "이미 다른 사용자가 이름을 사용하고 있습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
             password = request.data.pop('password', None)
             if password is not None:
+                if len(password) < 8:
+                    return Response({"message": "비밀번호는 최소 8자리여야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
                 serializer.save()
                 user.set_password(password)
                 user.save()
@@ -107,20 +116,23 @@ class UserProfileView(APIView):
     # 회원탈퇴
     def delete(self, request, pk):
         user = request.user
-        password = request.data.get("password")
-
-        if not password:
-            return Response({"message": "비밀번호를 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if not user.check_password(password):
-            return Response({"message": "비밀번호가 일치하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
-
         user.delete()
         return Response({"message": "회원탈퇴가 완료되었습니다."}, status=status.HTTP_200_OK)
 
-
-class UserStatusView(APIView):
+# 비밀번호 체크
+class PasswordCheckView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        return Response({'is_authenticated': True})
+    def post(self, request, pk):
+        user = get_object_or_404(User, id=pk)
+        if request.user != user:
+            raise PermissionDenied(status=status.HTTP_400_BAD_REQUEST)
+        
+        password = request.data.get("password")
+        if not password:
+            return Response({"message": "비밀번호를 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not user.check_password(password):
+            return Response({"message": "비밀번호가 일치하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"success": True, "message": "비밀번호가 확인되었습니다."}, status=status.HTTP_200_OK)

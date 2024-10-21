@@ -49,7 +49,7 @@ def run_loaddata(fixture_name):
 def endpoint_script(url):
     try:
         response = requests.post(
-            f'http://3.36.66.92/api/performances/{url}/')
+            f'http://43.201.38.42/api/performances/{url}/')
         if response.status_code == 200:
             print("Successfully called the API endpoint.")
         else:
@@ -76,7 +76,7 @@ def process_scripts():
             # kopis_api_detail 데이터 로드
             run_loaddata('performances_detail.json')
             # 4. hashtag endpoint 실행
-            endpoint_script('hashtag')
+            # endpoint_script('hashtag')
     else:
         return
 
@@ -90,7 +90,7 @@ def start_scheduler():
         # 매일 자정 procees_scripts 실행
         scheduler.add_job(
             process_scripts,
-            trigger=CronTrigger(hour=23, minute=38),
+            trigger=CronTrigger(hour=00, minute=00),
             id='process_scripts',
             max_instances=1,
             replace_existing=True,

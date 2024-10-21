@@ -52,4 +52,5 @@ document.addEventListener("DOMContentLoaded", () => {
 function saveToken(access, refresh, user_id) {
     localStorage.setItem('access_token', access);
     localStorage.setItem('refresh_token', refresh);
-    localStorage.setItem('user_id', user_id);
+    localStorage.setItem('user_id', user_id); 
+}

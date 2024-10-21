@@ -70,8 +70,8 @@ function checkUserAuthentication() {
                 navSignoutBtn.style.display = 'block';
                 navProfileBtn.style.display = 'block';
                 navRecommendationsBtn.style.display = 'block';
-                // createReviewBtn.style.display = 'block';
-                // LikeBtn.style.display = 'block';
+                createReviewBtn.style.display = 'block';
+                LikeBtn.style.display = 'block';
             } else {
                 navSigninBtn.style.display = 'block';
                 navSignupBtn.style.display = 'block';

@@ -77,6 +77,7 @@ def generate_recommendations(user_preferences, input_tags):
 
         if len(common_hashtags) >= 2:
             recommended_performances.append({
+                "kopis_id": performance.kopis_id,
                 "title": performance.title,
                 "state": performance.state,
                 "type": performance.type,

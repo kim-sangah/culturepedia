@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="card">
                     <a href="${performance.link}"><img class="card-img-top" src="${performance.poster}" alt="${performance.title} 포스터"></a>
                     <div class="card-body">
-                        <h5 class="card-title">${performance.title}</h5>
+                        <h5 class="card-title"><a href="http://127.0.0.1:8000/static/performance_detail.html?performance_id=${performance.kopis_id}">${performance.title}</a></h5>
                         <p class="card-state">${performance.state}</p>
                         <p class="card-start-date">시작일자: ${performance.startDate}</p>
                         <p class="card-end-date">종료일자: ${performance.endDate}</p>

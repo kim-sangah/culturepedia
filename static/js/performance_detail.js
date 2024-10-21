@@ -6,13 +6,18 @@ function getQueryParameter(param) {
 // 공연 리뷰 받아오고 render, 인증 상태에 따라 각 리뷰 안에 수정, 삭제 버튼 추가
 // 리뷰마다 수정/삭제 버튼에 고유 아이디 부여하고 버튼 클릭되면 리뷰 수정/리뷰 삭제 함수 호출
 function fetchReviews(currentUserId) {
-    fetch(`http://127.0.0.1:8000/api/performances/detail/${performance_id}`, {
+    fetch(`http://127.0.0.1:8000/api/performances/detail/${performance_id}/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         }
     })
-        .then(response => response.json)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             const reviews = data.perform_reviews;
             const reviewContainer = document.getElementById('review');
@@ -113,6 +118,8 @@ function handleReviewCreate() {
         const content = document.getElementById('create-review-content').value;
         const rating = document.querySelector('input[name="rating"]:checked').value;
 
+        currentUserId = getJwtTokens().user_id;
+
         if (title && content && rating) {
             handleReviewSubmit(currentUserId, title, content, rating);
         } else {
@@ -134,7 +141,7 @@ function handleReviewSubmit(currentUserId, title, content, rating) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorzation': `Bearer ${getJwtTokens().accessToken}`,
+            'Authorization': `Bearer ${getJwtTokens().accessToken}`,
         },
         body: JSON.stringify(reviewData),
     })
@@ -195,7 +202,7 @@ function handleReviewEdit(reviewId) {
                     .then(data => {
                         console.log('Review updated: ', data);
                         // 리뷰 수정 후 다시 공연 리뷰 조회
-                        fetchReviews(getJwtTokens().accessToken);
+                        fetchReviews(getJwtTokens().user_id);
 
                         // 수정 완료 후 모달 숨기기
                         $('#editReviewModal').modal('hide');
@@ -239,7 +246,7 @@ function handleReviewDelete(reviewId) {
             .then(data => {
                 console.log('Review deleted: ', data);
                 // 리뷰 삭제 후 다시 공연 리뷰 조회
-                fetchReviews(getJwtTokens().accessToken);
+                fetchReviews(getJwtTokens().user_id);
 
                 // 리뷰 삭제 후 모달 숨기기
                 $('#deleteReviewModal').modal('hide');
@@ -294,6 +301,7 @@ window.onload = function () {
             return response.json();
         })
         .then(data => {
+            checkUserAuthentication();
             var result = document.getElementById('result');
             result.innerHTML = '';  // 기존 내용을 비웁니다
             result.innerHTML += `
@@ -341,7 +349,7 @@ window.onload = function () {
     document.addEventListener("DOMContentLoaded", async () => {
         try {
             const currentUserId = await fetchCurrentUserId();
-    
+
             if (currentUserId) {
                 checkUserAuthentication();
                 fetchReviews(currentUserId);

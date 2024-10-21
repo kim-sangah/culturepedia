@@ -2,11 +2,10 @@
 function getJwtTokens() {
     return {
         accessToken: localStorage.getItem('access_token'),
-        refreshToken: localStorage.getItem('refresh_token')
+        refreshToken: localStorage.getItem('refresh_token'),
+        userId: localStorage.getItem('user_id'),
     }
 }
-
-console.log(getJwtTokens())
 
 // 서버에서 유저 아이디 받아오기
 function fetchCurrentUserId() {

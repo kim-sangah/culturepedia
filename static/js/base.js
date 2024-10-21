@@ -11,7 +11,7 @@ function handleKeyPress(event) {
     }
 }
 
-fetch('./base.html') // sample.html 파일 경로
+fetch('./base.html')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');

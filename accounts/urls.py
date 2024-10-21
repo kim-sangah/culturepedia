@@ -7,4 +7,5 @@ urlpatterns = [
     path("signin/", views.UserSigninView.as_view()),  # 로그인
     path("signout/", views.UserSignoutView.as_view()),  # 로그아웃
     path("profile/<int:pk>/", views.UserProfileView.as_view()),  # 프로필 조회, 수정, 회원탈퇴
+    path("profile/password-check/<int:pk>", views.PasswordCheckView.as_view()), # 비밀번호 확인
 ]

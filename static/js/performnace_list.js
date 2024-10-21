@@ -1,12 +1,5 @@
-// JWT 토큰을 로컬 스토리지에서 가져오는 함수
-function getJwtToken() {
-    return localStorage.getItem('access_token');
-}
-
-console.log(getJwtToken())
-
-
 window.onload = function () {
+
     fetch('/api/performances/', {
         method: 'GET',
         headers: {
@@ -42,6 +35,7 @@ window.onload = function () {
                 </div>
                 `
             });
+            checkUserAuthentication();
         })
         .catch(error => {
             console.error('Error: ', error);

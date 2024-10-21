@@ -1,16 +1,26 @@
-document.getElementById('accountsForm').addEventListener('submit', function (event) {
+function getJwtToken() {
+    return localStorage.getItem('access_token');
+}
+
+function getUserId() {
+    return localStorage.getItem('user_id');
+}
+
+document.getElementById('accountupdateForm').addEventListener('submit', function (event) {
     event.preventDefault();
     let userData = {
-        email: document.getElementById('email').value,
-        username: document.getElementById('username').value,
         password: document.getElementById('password').value,
+        username: document.getElementById('username').value,
         gender: document.getElementById('gender').value,
         birthday: document.getElementById('birthday').value,
     };
 
-    fetch('http://127.0.0.1:8000/api/accounts/', {
-        method: 'POST',
+    const token = getJwtToken();
+
+    fetch(`/api/accounts/profile/${userId}/`, {
+        method: 'PUT',
         headers: {
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(userData)
@@ -22,8 +32,7 @@ document.getElementById('accountsForm').addEventListener('submit', function (eve
             return response.json();
         })
         .then(data => {
-            // document.getElementById('response').innerText = 'User created:' + data.message;
-            window.location.href = 'signin.html';
-        }) //innerHTML
+            document.getElementById('response').innerText = data.message;
+        })
         .catch(error => console.error('Error:', error));
 });

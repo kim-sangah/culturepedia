@@ -2,31 +2,6 @@ function isLoggedIn() {
     return document.cookie.includes('user_id=');
 }
 
-// 로그인 상태에 따라 표시되는 버튼 바꾸기
-window.onload = function () {
-    const navSigninBtn = document.getElementById('nav-signin-btn');
-    const navSignupBtn = document.getElementById('nav-signup-btn');
-    const navSignoutBtn = document.getElementById('nav-signout-btn');
-    const navProfileBtn = document.getElementById('nav-profile-btn');
-    const navRecommendationsBtn = document.getElementById('nav-recommendations-btn');
-
-    if (isLoggedIn()) {
-        // 로그인 되어있으면 signout, profile 버튼만 보이게
-        navSigninBtn.style.display = 'none';
-        navSignupBtn.style.display = 'none';
-        navSignoutBtn.style.display = 'block';
-        navProfileBtn.style.display = 'block';
-        navRecommendationsBtn.style.display = 'block';
-    } else {
-        // 로그인 되어있지 않으면 signin, signup 버튼만 보이게
-        navSigninBtn.style.display = 'block';
-        navSignupBtn.style.display = 'block';
-        navSignoutBtn.style.display = 'none';
-        navProfileBtn.style.display = 'none';
-        navRecommendationsBtn.style.display = 'none';
-    }
-};
-
 
 document.addEventListener("DOMContentLoaded", () => {
     const signinBtn = document.getElementById('signin-btn');
@@ -63,8 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 result.innerHTML = '';
                 document.cookie = `user_id=${data.user_id}; path=/`;
                 result.innerHTML = `<div>${data.refresh}</div>`;
-                saveToken(data.access);
-                window.history.back();
+                saveToken(data.access, data.refresh);
+                window.location.href = 'main.html';
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -74,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function saveToken(token) {
-    localStorage.setItem('access_token', token);
+function saveToken(access_token, refresh_token) {
+    localStorage.setItem('access_token', access_token);
+    localStorage.setItem('refresh_token', refresh_token);
 }

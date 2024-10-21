@@ -30,7 +30,7 @@ OPENAI_API_KEY = config.OPENAI_API_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.Debug
 
-ALLOWED_HOSTS = ['3.36.66.92', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['43.201.38.42', '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -66,7 +66,7 @@ MIDDLEWARE = [
 
 
 CORS_ALLOWED_ORIGINS = [
-    'http://3.36.66.92',
+    'http://43.201.38.42',
     'http://127.0.0.1:8000',
     'http://localhost:8000',
 ]
@@ -96,18 +96,18 @@ WSGI_APPLICATION = 'culturepedia.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
     # 'default': {
-    #     'ENGINE' : config.DB_ENGINE,
-    #     'NAME' : config.DB_NAME,
-    #     'USER' : config.DB_USER,
-    #     'PASSWORD' : config.DB_PASSWORD,
-    #     'HOST' : config.DB_HOST,
-    #     'PORT' : config.DB_PORT,
-    # }
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # },
+    'default': {
+        'ENGINE' : config.DB_ENGINE,
+        'NAME' : config.DB_NAME,
+        'USER' : config.DB_USER,
+        'PASSWORD' : config.DB_PASSWORD,
+        'HOST' : config.DB_HOST,
+        'PORT' : config.DB_PORT,
+    }
 }
 
 # Password validation

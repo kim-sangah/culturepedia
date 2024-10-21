@@ -2,7 +2,6 @@ function isLoggedIn() {
     return document.cookie.includes('user_id=');
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
     const signinBtn = document.getElementById('signin-btn');
 
@@ -38,7 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 result.innerHTML = '';
                 document.cookie = `user_id=${data.user_id}; path=/`;
                 result.innerHTML = `<div>${data.refresh}</div>`;
-                saveToken(data.access, data.refresh);
+                saveToken(data.access, data.refresh, data.user_id);
+
                 window.location.href = 'main.html';
             })
             .catch(error => {
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function saveToken(access_token, refresh_token) {
-    localStorage.setItem('access_token', access_token);
-    localStorage.setItem('refresh_token', refresh_token);
-}
+function saveToken(access, refresh, user_id) {
+    localStorage.setItem('access_token', access);
+    localStorage.setItem('refresh_token', refresh);
+    localStorage.setItem('user_id', user_id);

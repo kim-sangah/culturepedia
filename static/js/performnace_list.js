@@ -50,6 +50,7 @@ function checkUserAuthentication() {
         .catch(error => console.error('Error fetching user status:', error));
 }
 
+
 window.onload = function () {
     checkUserAuthentication();
 

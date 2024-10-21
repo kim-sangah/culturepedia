@@ -38,48 +38,46 @@ function fetchCurrentUserId() {
 // 사용자 인증 상태 확인 함수, 인증 상태에 따라 UI 업데이트
 function checkUserAuthentication() {
     const token = getJwtToken();
-
-    const signinBtn = document.getElementById('signin-btn');
-    const signupBtn = document.getElementById('signup-btn');
-    const signoutBtn = document.getElementById('signout-btn');
-    const profileBtn = document.getElementById('profile-btn');
-    const recommendationsBtn = document.getElementById('nav-recommendations-btn');
+    const navSigninBtn = document.getElementById('nav-signin-btn');
+    const navSignupBtn = document.getElementById('nav-signup-btn');
+    const navSignoutBtn = document.getElementById('nav-signout-btn');
+    const navProfileBtn = document.getElementById('nav-profile-btn');
+    const navRecommendationsBtn = document.getElementById('nav-recommendations-btn');
 
     if (!token) {
         // 토큰이 없는 경우
-        signinBtn.style.display = 'block';
-        signupBtn.style.display = 'block';
-        signoutBtn.style.display = 'none';
-        profileBtn.display = 'none';
-        recommendationsBtn.style.display = 'none';
+        navSigninBtn.style.display = 'block';
+        navSignupBtn.style.display = 'block';
+        navSignoutBtn.style.display = 'none';
+        navProfileBtn.display = 'none';
+        navRecommendationsBtn.style.display = 'none';
         return;
     }
 
     // JWT 토큰을 Authorization 헤더에 추가하여 API 요청
-    fetch('/api/user/status/', {
+    fetch('/api/performances/api/user/status/', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`, 
         }
     })
-        .then(response => {
-            if (response.ok) {
-                signinBtn.style.display = 'none';
-                signupBtn.style.display = 'none';
-                signoutBtn.style.display = 'block';
-                profileBtn.display = 'block';
-                recommendationsBtn.style.display = 'block';
-            } else {
-                signinBtn.style.display = 'block';
-                signupBtn.style.display = 'block';
-                signoutBtn.style.display = 'none';
-                profileBtn.display = 'none';
-                recommendationsBtn.style.display = 'none';
-            }
-        })
-        .catch(error => console.error('Error fetching user status:', error));
+    .then(response => {
+        if (response.ok) {
+            navSigninBtn.style.display = 'none';
+            navSignupBtn.style.display = 'none';
+            navSignoutBtn.style.display = 'block';
+            navProfileBtn.display = 'block';
+            navRecommendationsBtn.style.display = 'block';
+        } else {
+            navSigninBtn.style.display = 'block';
+            navSignupBtn.style.display = 'block';
+            navSignoutBtn.style.display = 'none';
+            navProfileBtn.display = 'none';
+            navRecommendationsBtn.style.display = 'none';
+        }
+    })
+    .catch(error => console.error('Error fetching user status:', error));
 }
-
 
 document.addEventListener("DOMContentLoaded", () => {
     const checkboxes = document.querySelectorAll('.tag-checkbox');

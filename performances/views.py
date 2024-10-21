@@ -261,9 +261,8 @@ class RecommendationAPIView(APIView):
 
         return user_preferences
 
+
 # 해시태그
-
-
 class HashtagcreateAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
@@ -277,3 +276,5 @@ class HashtagcreateAPIView(APIView):
                 generate_hashtags_for_performance(performance)
 
         return Response({"message": "Hashtags generated successfully"}, status=status.HTTP_201_CREATED)
+
+

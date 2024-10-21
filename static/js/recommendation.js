@@ -5,7 +5,7 @@ function getQueryParameter(param) {
 
 document.addEventListener("DOMContentLoaded", async () => {
     const checkboxes = document.querySelectorAll('.tag-checkbox');
-    const recommendationBtn = document.querySelector('recommendation-btn');
+    const recommendationBtn = document.querySelector('#recommendation-btn');
     const recommendationsContainer = document.getElementById('recommendations-container');
 
     try {
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             try {
                 // 추천 공연 받아오기
-                const token = getJwtTokens().accessToken;
+                const token = getJwtTokens();
 
                 const response = await fetch(`/api/performances/recommend/${userId}/`, {
                     method: 'POST',

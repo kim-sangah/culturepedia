@@ -4,10 +4,10 @@ function isLoggedIn() {
 
 // 로그인 상태에 따라 표시되는 버튼 바꾸기
 window.onload = function () {
-    const signinBtn = document.getElementById('signin-btn');
-    const signupBtn = document.getElementById('signup-btn');
-    const signoutBtn = document.getElementById('signout-btn');
-    const profileBtn = document.getElementById('profile-btn');
+    const signinBtn = document.getElementById('nav-signin-btn');
+    const signupBtn = document.getElementById('nav-signup-btn');
+    const signoutBtn = document.getElementById('nav-signout-btn');
+    const profileBtn = document.getElementById('nav-profile-btn');
     const recommendationsBtn = document.getElementById('nav-recommendations-btn');
 
     if (isLoggedIn()) {

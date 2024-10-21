@@ -19,17 +19,23 @@ document.getElementById('accountsForm').addEventListener('submit', function (eve
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok: ' + response.statusText);
+                throw response.json(errors);
             }
             return response.json();
         })
         .then(data => {
             // document.getElementById('response').innerText = 'User created:' + data.message;
             document.cookie = `user_id=${data.user_id}; path=/`;
-            saveToken(data.access);
+            saveToken(data.access, data.refresh, data.user_id);
         }) 
         .catch(error => console.error('Error:', error));
 });
+
+function saveToken(access, refresh, user_id) {
+    localStorage.setItem('access_token', access);
+    localStorage.setItem('refresh_token', refresh);
+    localStorage.setItem('user_id', user_id);
+}
 
 document.getElementById('modal-confirm-btn').addEventListener('click', function () {
     window.location.href = 'main.html';

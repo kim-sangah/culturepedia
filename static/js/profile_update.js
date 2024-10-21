@@ -1,10 +1,10 @@
 function getJwtToken() {
-    return localStorage.getItem('access_token');
-}
-
-function getUserId() {
-    return localStorage.getItem('user_id');
-}
+    return {
+    access : localStorage.getItem('access_token'),
+    refresh : localStorage.getItem('refresh_token'),
+    user_id : localStorage.getItem('user_id')
+    }
+    }
 
 document.getElementById('accountupdateForm').addEventListener('submit', function (event) {
     event.preventDefault();
@@ -14,13 +14,15 @@ document.getElementById('accountupdateForm').addEventListener('submit', function
         gender: document.getElementById('gender').value,
         birthday: document.getElementById('birthday').value,
     };
+    var myModal = new bootstrap.Modal(document.getElementById('accountupdate'));
+        myModal.show();
 
     const token = getJwtToken();
 
-    fetch(`/api/accounts/profile/${userId}/`, {
+    fetch(`/api/accounts/profile/${token.user_id}/`, {
         method: 'PUT',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${token.access}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(userData)
@@ -35,4 +37,11 @@ document.getElementById('accountupdateForm').addEventListener('submit', function
             document.getElementById('response').innerText = data.message;
         })
         .catch(error => console.error('Error:', error));
+});
+
+document.getElementById('modal-confirm-btn').addEventListener('click', function () {
+    window.location.href = 'profile.html';
+});
+document.getElementById('modal-close-btn').addEventListener('click', function () {
+    window.location.href = 'profile.html';
 });

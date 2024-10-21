@@ -1,58 +1,4 @@
-// JWT 토큰을 로컬 스토리지에서 가져오는 함수
-function getJwtToken() {
-    return localStorage.getItem('access_token');
-}
-
-// 사용자 인증 상태 확인 함수, 인증 상태에 따라 UI 업데이트
-function checkUserAuthentication() {
-    const token = getJwtToken();
-
-    const signinBtn = document.getElementById('nav-signin-btn');
-    const signupBtn = document.getElementById('nav-signup-btn');
-    const signoutBtn = document.getElementById('nav-signout-btn');
-    const profileBtn = document.getElementById('nav-profile-btn');
-    const recommendationsBtn = document.getElementById('nav-recommendations-btn');
-
-    if (!token) {
-        // 토큰이 없는 경우
-        signinBtn.style.display = 'block';
-        signupBtn.style.display = 'block';
-        signoutBtn.style.display = 'none';
-        profileBtn.display = 'none';
-        recommendationsBtn.style.display = 'none';
-        return;
-    }
-
-    // JWT 토큰을 Authorization 헤더에 추가하여 API 요청
-    fetch('/api/performances/api/user/status/', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        }
-    })
-        .then(response => {
-            if (response.ok) {
-                // 로그인된 경우 수정 및 삭제 버튼 보이기
-                signinBtn.style.display = 'none';
-                signupBtn.style.display = 'none';
-                signoutBtn.style.display = 'block';
-                profileBtn.display = 'block';
-                recommendationsBtn.style.display = 'block';
-            } else {
-                // 로그인하지 않은 경우 버튼 숨기기
-                signinBtn.style.display = 'block';
-                signupBtn.style.display = 'block';
-                signoutBtn.style.display = 'none';
-                profileBtn.display = 'none';
-                recommendationsBtn.style.display = 'none';
-            }
-        })
-        .catch(error => console.error('Error fetching user status:', error));
-}
-
-
 window.onload = function () {
-    checkUserAuthentication();
 
     fetch('/api/performances/', {
         method: 'GET',
@@ -89,6 +35,7 @@ window.onload = function () {
                 </div>
                 `
             });
+            checkUserAuthentication();
         })
         .catch(error => {
             console.error('Error: ', error);

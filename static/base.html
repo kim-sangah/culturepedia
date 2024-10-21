@@ -12,37 +12,27 @@
                 <a class="nav-link" id="nav-top-btn" href="main.html">금주 TOP <span class="sr-only"></span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="nav-ranking-btn" href="category_list.html">카테고리별 랭킹</a>
+                <a class="nav-link" id="nav-ranking-btn" href="category_list.html">카테고리</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="nav-recommendations-btn" href="recommendation.html">추천 공연</a>
-            <li class="nav-item" id="nav-recommendations-btn">
-                <a class="nav-link" href="recommendation.html">추천 공연</a>
+                <a class="nav-link" id="nav-recommendations-btn" href="recommendation.html" style="display: None">추천
+                    공연</a>
             </li>
+            <!-- 로그인하지 않은 유저에게 보이는 회원 기능 버튼 (Signin, Signup) -->
             <li class="nav-item">
                 <a class="btn btn-primary" id="nav-signin-btn" href="signin.html">로그인</a>
-            <!-- 로그인하지 않은 유저에게 보이는 회원 기능 버튼 (Signin, Signup) -->
-            <li class="nav-item" id="nav-signin-btn" style="display:block;"> <!-- "blcok" -> "block"으로 수정 -->
-                <a class="btn btn-primary" href="signin.html">로그인</a>
             </li>
             <li class="nav-item">
                 <a class="btn btn-primary" id="nav-signup-btn" href="signup.html">회원가입</a>
-            <li class="nav-item" id="nav-signup-btn" style="display:block;"> <!-- "blcok" -> "block"으로 수정 -->
-                <a class="btn btn-primary" href="signup.html">회원가입</a>
             </li>
-            <li class="nav-item">
-                <a class="btn btn-primary" id="nav-signout-btn" href="">로그아웃</a>
-
             <!-- 로그인한 유저에게 보이는 회원 기능 버튼 (Signout, Profile) -->
-            <li class="nav-item" id="nav-signout-btn" style="display:none;">
-                <a class="btn btn-primary" href="#">로그아웃</a>
+            <li class="nav-item">
+                <a class="btn btn-primary" id="nav-signout-btn" href="" onclick="logout()"
+                    style="display: None">로그아웃</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" id="nav-profile-btn" href="profile.html">프로필 조회</a>
-            <li class="nav-item" id="nav-profile-btn" style="display:none;">
-                <a class="btn btn-primary" href="profile.html">프로필</a>
+                <a class="btn btn-primary" id="nav-profile-btn" href="profile.html" style="display: None">프로필 조회</a>
             </li>
-
         </ul>
     </div>
 </nav>

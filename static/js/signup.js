@@ -23,7 +23,7 @@ document.getElementById('accountsForm').addEventListener('submit', function (eve
         })
         .then(data => {
             // document.getElementById('response').innerText = 'User created:' + data.message;
-            window.history.back();
+            window.location.href = 'signin.html';
         }) //innerHTML
         .catch(error => console.error('Error:', error));
 });

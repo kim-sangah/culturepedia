@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.cookie = `user_id=${data.user_id}; path=/`;
                 result.innerHTML = `<div>${data.refresh}</div>`;
                 saveToken(data.access, data.refresh, data.user_id);
+
                 window.location.href = 'main.html';
             })
             .catch(error => {
@@ -52,4 +53,3 @@ function saveToken(access, refresh, user_id) {
     localStorage.setItem('access_token', access);
     localStorage.setItem('refresh_token', refresh);
     localStorage.setItem('user_id', user_id);
-}

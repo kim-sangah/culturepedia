@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const response = await fetch(`/api/performances/recommend/${userId}/`, {
                     method: 'POST',
                     headers: {
+                        'Authorization': `Bearer ${token.accessToken}`,
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
                     },
                     body: JSON.stringify(userData)
                 });

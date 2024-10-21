@@ -5,13 +5,20 @@ function getQueryParameter(param) {
 
 // 회원 탈퇴 기능
 function handleAccountDelete() {
+
+
     // Bootstrap JS함수로 회원 탈퇴 modal 보여주기
     $('#deleteAccountModal').modal('show');
 
-    const token = getJwtTokens().accessToken;
+    const token = getJwtTokens();
 
     const deleteAccountConfirmBtn = document.getElementById('delete-account-confirm-btn');
     deleteAccountConfirmBtn.addEventListener('click', handleAccountDeleteConfirm);
+
+    const deleteAccountCancelBtn = document.getElementById('delete-account-cancel-btn');
+    deleteAccountCancelBtn.addEventListener('click', () => {
+        $('#deleteAccountModal').modal('hide');
+    });
 
     function handleAccountDeleteConfirm(event) {
         event.preventDefault();
@@ -32,7 +39,7 @@ function handleAccountDelete() {
         fetch(`/api/accounts/profile/password-check/${userId}/`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token}.accessToken`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -54,7 +61,7 @@ function handleAccountDelete() {
         fetch(`/api/accounts/profile/${userId}/`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token.accessToken}`,
                 'Content-Type': 'application/json',
             },
         })
@@ -94,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch(`/api/accounts/profile/${userId}/`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token.accessToken}`,
                 'Content-Type': 'application/json',
             }
         });

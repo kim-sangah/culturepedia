@@ -12,12 +12,12 @@ console.log(getJwtTokens())
 function fetchCurrentUserId() {
     return new Promise(async (resolve, reject) => {
         try {
-            const token = getJwtToken();
+            const token = getJwtTokens();
 
             const response = await fetch('/api/performances/api/user/status/', {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token.accessToken}`,
                 }
             });
 

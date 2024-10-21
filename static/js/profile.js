@@ -84,7 +84,6 @@ function handleAccountDelete() {
     }
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
     const userInfoContainer = document.getElementById('user-info-container');
     const userReviewsLikesContainer = document.getElementById('user-reviews-likes-container');

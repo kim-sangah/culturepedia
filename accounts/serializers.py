@@ -2,11 +2,13 @@ from .models import User
 from rest_framework import serializers
 from performances.models import Performance
 from performances.serializers import PerformanceListSerializer, ReviewSerializer
+import re
 
 
 class UserSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True)
     likes = serializers.SerializerMethodField()
+    birthday = serializers.DateField(required=False)
 
     class Meta:
         model = User

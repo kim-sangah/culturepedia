@@ -8,14 +8,29 @@ function getJwtToken() {
 
 document.getElementById('accountupdateForm').addEventListener('submit', function (event) {
     event.preventDefault();
+    let password = document.getElementById('password').value,
+        username = document.getElementById('username').value,
+        gender = document.getElementById('gender').value,
+        birthday= document.getElementById('birthday').value
+    if (!password){
+        password=null
+    }
+    if (!username){
+        username=null
+    }
+    if (!gender){
+        gender=null
+    }
+    if (!birthday){
+        birthday=null
+    }
+    username
     let userData = {
-        password: document.getElementById('password').value,
-        username: document.getElementById('username').value,
-        gender: document.getElementById('gender').value,
-        birthday: document.getElementById('birthday').value,
+        password: password,
+        username: username,
+        gender: gender,
+        birthday: birthday,
     };
-    var myModal = new bootstrap.Modal(document.getElementById('accountupdate'));
-        myModal.show();
 
     const token = getJwtToken();
 
@@ -29,12 +44,18 @@ document.getElementById('accountupdateForm').addEventListener('submit', function
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok: ' + response.statusText);
+                return response.json().then(errors => {
+                    alert(errors.message);
+                    //document.getElementById('response').innerText = errors.message;
+                    //throw new Error(errors.message);
+                });
             }
             return response.json();
         })
         .then(data => {
             document.getElementById('response').innerText = data.message;
+            let myModal = new bootstrap.Modal(document.getElementById('accountupdate'));
+            myModal.show();
         })
         .catch(error => console.error('Error:', error));
 });
@@ -45,3 +66,4 @@ document.getElementById('modal-confirm-btn').addEventListener('click', function 
 document.getElementById('modal-close-btn').addEventListener('click', function () {
     window.location.href = 'profile.html';
 });
+

@@ -7,8 +7,10 @@ document.getElementById('accountsForm').addEventListener('submit', function (eve
         gender: document.getElementById('gender').value,
         birthday: document.getElementById('birthday').value,
     };
+    var myModal = new bootstrap.Modal(document.getElementById('signup'));
+        myModal.show();
 
-    fetch('http://127.0.0.1:8000/api/accounts/', {
+    fetch('/api/accounts/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -23,7 +25,15 @@ document.getElementById('accountsForm').addEventListener('submit', function (eve
         })
         .then(data => {
             // document.getElementById('response').innerText = 'User created:' + data.message;
-            window.location.href = 'signin.html';
-        }) //innerHTML
+            document.cookie = `user_id=${data.user_id}; path=/`;
+            saveToken(data.access);
+        }) 
         .catch(error => console.error('Error:', error));
+});
+
+document.getElementById('modal-confirm-btn').addEventListener('click', function () {
+    window.location.href = 'main.html';
+});
+document.getElementById('modal-close-btn').addEventListener('click', function () {
+    window.location.href = 'main.html';
 });

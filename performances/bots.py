@@ -12,8 +12,6 @@ import base64
 CLIENT = OpenAI(api_key=settings.OPENAI_API_KEY,)
 MAX_FILE_SIZE_MB = 10
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
-
 
 # 사용자가 리뷰하거나 찜한 공연들의 해시태그와 입력받은 해시태그를 바탕으로 공연 추천 (openai 사용)
 # def generate_recommendations(user_preferences, input_tags):
@@ -79,11 +77,11 @@ def generate_recommendations(user_preferences, input_tags):
 
         if len(common_hashtags) >= 2:
             recommended_performances.append({
-                "title": performance['title'],
-                "state": performance['state'],
-                "type": performance['type'],
-                "poster": performance['poster'],
-                "hashtags": performance['performance_hashtags'],
+                "title": performance.title,
+                "state": performance.state,
+                "type": performance.type,
+                "poster": performance.poster,
+                "hashtags": [performance_hashtags],
             })
 
     return recommended_performances

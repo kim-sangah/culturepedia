@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 .map(checkbox => checkbox.labels[0].textContent);
 
             const userData = {
-                tags: selectedTags
+                input_tags: selectedTags
             };
 
             try {

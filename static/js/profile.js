@@ -3,21 +3,12 @@ function getQueryParameter(param) {
     return urlParams.get(param);
 }
 
-function getJwtToken() {
-    return localStorage.getItem('access_token');
-}
-
-function getUserId() {
-    return localStorage.getItem('user_id');
-}
-
-
 // 회원 탈퇴 기능
 function handleAccountDelete() {
     // Bootstrap JS함수로 회원 탈퇴 modal 보여주기
     $('#deleteAccountModal').modal('show');
 
-    const token = getJwtToken();
+    const token = getJwtTokens().accessToken;
 
     const deleteAccountConfirmBtn = document.getElementById('delete-account-confirm-btn');
     deleteAccountConfirmBtn.addEventListener('click', handleAccountDeleteConfirm);
@@ -98,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        const token = getJwtToken();
+        const token = getJwtTokens().accessToken;
 
         const response = await fetch(`/api/accounts/profile/${userId}/`, {
             method: 'GET',

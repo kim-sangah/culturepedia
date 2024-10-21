@@ -59,9 +59,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         recommendationsContainer.innerHTML = '';
 
         recommendations.forEach(performance => {
+            console.log(performance)
             const card = `
                 <div class="card">
-                    <a href="${performance.link}"><img class="card-img-top" src="${performance.image}" alt="${performance.title} 포스터"></a>
+                    <a href="${performance.link}"><img class="card-img-top" src="${performance.poster}" alt="${performance.title} 포스터"></a>
                     <div class="card-body">
                         <h5 class="card-title">${performance.title}</h5>
                         <p class="card-state">${performance.state}</p>

@@ -81,6 +81,9 @@ def generate_recommendations(user_preferences, input_tags):
                 "state": performance.state,
                 "type": performance.type,
                 "poster": performance.poster,
+                "startDate": performance.start_date,
+                "endDate": performance.end_date,
+                "facility": performance.facility_name,
                 "hashtags": [performance_hashtags],
             })
 

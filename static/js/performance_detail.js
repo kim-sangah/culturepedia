@@ -338,22 +338,35 @@ window.onload = function () {
     });
 
     // 리뷰 조회, 리뷰 업로드 핸들링
-    fetchCurrentUserId().then(currentUserId => {
-        if (currentUserId) {
-            checkUserAuthentication();
-            fetchReviews(currentUserId);
-            handleReviewSubmit(currentUserId);
-        } else {
-            console.error('User is not authenticated');
+    document.addEventListener("DOMContentLoaded", async () => {
+        try {
+            const currentUserId = await fetchCurrentUserId();
+    
+            if (currentUserId) {
+                checkUserAuthentication();
+                fetchReviews(currentUserId);
+                handleReviewSubmit(currentUserId);
+            } else {
+                console.error('User is not authenticated');
+            }
+        } catch (error) {
+            console.error('Error fetching user ID:', error);
         }
     });
 
     // 찜하기 버튼에 event listener 추가
     const performanceLikeBtn = document.getElementById('performance-like-btn');
-    performanceLikeBtn.addEventListener('click', (event) => {
+    performanceLikeBtn.addEventListener('click', async (event) => {
         event.preventDefault();
-        fetchCurrentUserId().then(currentUserId => {
-            handlePerformanceLike(currentUserId);
-        });
+        try {
+            const currentUserId = await fetchCurrentUserId();
+            if (currentUserId) {
+                handlePerformanceLike(currentUserId);
+            } else {
+                console.error('User is not authenticated');
+            }
+        } catch (error) {
+            console.error('Error fetching user ID:', error);
+        }
     });
 };

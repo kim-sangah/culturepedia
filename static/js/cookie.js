@@ -10,27 +10,28 @@ console.log(getJwtTokens())
 
 // 서버에서 유저 아이디 받아오기
 function fetchCurrentUserId() {
-    const token = getJwtTokens();
+    return new Promise(async (resolve, reject) => {
+        try {
+            const token = getJwtToken();
 
-    return fetch('/api/performances/api/user/status/', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token.accessToken}`
-        }
-    })
-        .then(response => {
+            const response = await fetch('/api/performances/api/user/status/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
             if (!response.ok) {
                 throw new Error('Failed to fetch user info');
             }
-            return response.json();
-        })
-        .then(data => {
-            return data.user_id;
-        })
-        .catch(error => {
+
+            const data = await response.json();
+            resolve(data.user_id);  // Return user ID on success
+        } catch (error) {
             console.error('Error fetching user ID:', error);
-            return null;
-        });
+            resolve(null);  // Resolve as null if an error occurs
+        }
+    });
 }
 
 // 사용자 인증 상태 확인 함수, 인증 상태에 따라 UI 업데이트

@@ -1,9 +1,12 @@
 // JWT 토큰을 로컬 스토리지에서 가져오는 함수
-function getJwtToken() {
-    return localStorage.getItem('access_token');
+function getJwtTokens() {
+    return {
+        accessToken: localStorage.getItem('access_token'),
+        refreshToken: localStorage.getItem('refresh_token')
+    }
 }
 
-console.log(getJwtToken())
+console.log(getJwtTokens())
 
 // 서버에서 유저 아이디 받아오기
 function fetchCurrentUserId() {
@@ -34,7 +37,7 @@ function fetchCurrentUserId() {
 // 사용자 인증 상태 확인 함수, 인증 상태에 따라 UI 업데이트
 
 function checkUserAuthentication() {
-    const token = getJwtToken();
+    const token = getJwtTokens();
     const navSigninBtn = document.getElementById('nav-signin-btn');
     const navSignupBtn = document.getElementById('nav-signup-btn');
     const navSignoutBtn = document.getElementById('nav-signout-btn');
@@ -43,7 +46,7 @@ function checkUserAuthentication() {
     const createReviewBtn = document.getElementById('create-review-btn');
     const LikeBtn = document.getElementById('like-btn');
 
-    if (!token) {
+    if (!token.accessToken) {
         // 토큰이 없는 경우
         navSigninBtn.style.display = 'block';
         navSignupBtn.style.display = 'block';
@@ -59,7 +62,7 @@ function checkUserAuthentication() {
     fetch('/api/performances/api/user/status/', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${token.accessToken}`,
         }
     })
         .then(response => {
@@ -88,27 +91,29 @@ function checkUserAuthentication() {
 window.onload = checkUserAuthentication;
 
 
-function logout() {
-    const token = getJwtToken();
+function signout() {
+    const token = getJwtTokens(); // 토큰을 가져옵니다.
 
-    fetch('/api/accouts/signout/', {
+    fetch('/api/accounts/signout/', {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${token.accessToken}`,
             'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ refresh: token.refreshToken })
     })
         .then(response => {
             if (!response.ok) {
-                console.error('Logout failed:', response.status);
+                return response.text().then(text => {
+                    throw new Error(`Logout failed: ${response.status} - ${text}`);
+                });
             }
+            // 로그아웃 성공 시
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            window.location.href = 'main.html';
         })
         .catch(error => {
-            console.error('Error during logout:', error);
-        })
-        .finally(() => {
-            // 성공 여부에 관계없이 토큰 삭제 및 리다이렉트
-            localStorage.removeItem('access_token');
-            window.location.href = 'main.html';
+            console.error('Error during sign out:', error);
         });
 }

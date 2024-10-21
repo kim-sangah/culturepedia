@@ -1,14 +1,18 @@
 document.getElementById('accountsForm').addEventListener('submit', function (event) {
     event.preventDefault();
+    let birthday= document.getElementById('birthday').value
+    if (!birthday){
+        birthday=null
+    }
     let userData = {
         email: document.getElementById('email').value,
         username: document.getElementById('username').value,
         password: document.getElementById('password').value,
         gender: document.getElementById('gender').value,
-        birthday: document.getElementById('birthday').value,
+        // birthday: document.getElementById('birthday').value,
+        birthday: birthday
     };
-    var myModal = new bootstrap.Modal(document.getElementById('signup'));
-        myModal.show();
+    //console.log(userData)
 
     fetch('/api/accounts/', {
         method: 'POST',
@@ -19,14 +23,24 @@ document.getElementById('accountsForm').addEventListener('submit', function (eve
     })
         .then(response => {
             if (!response.ok) {
-                throw response.json(errors);
+                return response.json().then(errors => {
+                    alert(errors.message);
+                    //document.getElementById('response').innerText = errors.message;
+                    //throw new Error(errors.message);
+                });
             }
+            // console.log(response)
+            // if (!response.ok) {
+            //     throw response.json('message');
+            // }
             return response.json();
         })
         .then(data => {
             // document.getElementById('response').innerText = 'User created:' + data.message;
             document.cookie = `user_id=${data.user_id}; path=/`;
             saveToken(data.access, data.refresh, data.user_id);
+            let myModal = new bootstrap.Modal(document.getElementById('signup'));
+            myModal.show();
         }) 
         .catch(error => console.error('Error:', error));
 });

@@ -24,7 +24,6 @@ document.getElementById('accountupdateForm').addEventListener('submit', function
             userData.password = document.getElementById('password').value;
         }
     
-    console.log(userData)
 
     const token = getJwtToken();
 

@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return response.json();
             })
             .then(data => {
-                console.log(data);
                 // 로그인 성공 시 쿠키에 유저 아이디 저장
                 var result = document.getElementById('result');
                 result.innerHTML = '';

@@ -154,7 +154,6 @@ function handleReviewSubmit(currentUserId, title, content, rating) {
             return response.json();
         })
         .then(data => {
-            console.log('리뷰 업로드 완료: ', data);
             fetchReviews(currentUserId); // 업로드된 리뷰 포함해 다시 공연 리뷰 조회
         })
         .catch(error => console.error('Error submitting review:', error));
@@ -202,7 +201,6 @@ function handleReviewEdit(reviewId) {
                 })
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Review updated: ', data);
                         // 리뷰 수정 후 다시 공연 리뷰 조회
                         fetchReviews(getJwtTokens().user_id);
 
@@ -218,8 +216,6 @@ function handleReviewEdit(reviewId) {
 
 // 리뷰 삭제 기능
 function handleReviewDelete(reviewId) {
-    console.log(`Delete review with ID: ${reviewId}`);
-
     // Bootstrap JS함수로 리뷰 삭제 modal 보여주기
     $('#deleteReviewModal').modal('show');
 
@@ -246,7 +242,6 @@ function handleReviewDelete(reviewId) {
                 return response.json();
             })
             .then(data => {
-                console.log('Review deleted: ', data);
                 // 리뷰 삭제 후 다시 공연 리뷰 조회
                 fetchReviews(getJwtTokens().user_id);
 
@@ -298,7 +293,6 @@ function handlePerformanceLike(currentUserId) {
                 return response.json();
             })
             .then(data => {
-                console.log('Like removed:', data);
                 heartIcon.style.color = '' // 좋아요 버튼 스타일 변경
             })
             .catch(error => console.error('Error removing like:', error));
@@ -319,7 +313,6 @@ function handlePerformanceLike(currentUserId) {
                 return response.json();
             })
             .then(data => {
-                console.log('Like added:', data);
                 heartIcon.style.color = 'red' // 좋아요 버튼 스타일 변경
             })
             .catch(error => console.error('Error adding like:', error));
@@ -411,15 +404,12 @@ async function toggleLikeStatus() {
         }
 
         const likeStatus = await checkLikeStatus(performance_id);
-        console.log('Current like status:', likeStatus);
 
         let result;
         if (likeStatus.liked) {
             result = await handlePerformanceUnlike(performance_id);
-            console.log('Unlike action result:', result);
         } else {
             result = await handlePerformanceLike(performance_id);
-            console.log('Like action result:', result);
         }
         
         updateLikeButtonStyle(!likeStatus.liked, heartIcon); // 버튼 스타일 업데이트

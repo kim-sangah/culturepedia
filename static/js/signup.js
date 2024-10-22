@@ -12,7 +12,6 @@ document.getElementById('accountsForm').addEventListener('submit', function (eve
         // birthday: document.getElementById('birthday').value,
         birthday: birthday
     };
-    //console.log(userData)
 
     fetch('/api/accounts/', {
         method: 'POST',

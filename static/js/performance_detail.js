@@ -421,7 +421,7 @@ async function toggleLikeStatus() {
             result = await handlePerformanceLike(performance_id);
             console.log('Like action result:', result);
         }
-        
+
         updateLikeButtonStyle(!likeStatus.liked, heartIcon); // 버튼 스타일 업데이트
     } catch (error) {
         console.error('Error during toggle like status:', error);
@@ -489,22 +489,8 @@ async function handlePerformanceUnlike(performanceId) {
 // 좋아요 상태에 따라 버튼 스타일을 업데이트하는 함수
 function updateLikeButtonStyle(isLiked) {
     if (isLiked) {
-        heartIcon.style.color = 'red' ; // 좋아요가 눌린 경우
+        heartIcon.style.color = 'red'; // 좋아요가 눌린 경우
     } else {
         heartIcon.style.color = ''; // 기본 스타일로 되돌리기
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

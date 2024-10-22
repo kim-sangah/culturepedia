@@ -7,6 +7,7 @@ from PIL import Image
 import requests
 from io import BytesIO
 import base64
+import os
 
 CLIENT = OpenAI(api_key=settings.OPENAI_API_KEY,)
 MAX_FILE_SIZE_MB = 10
@@ -109,7 +110,8 @@ def generate_hashtags_for_performance(performance):
     for url in images_url:
         file_name = url.split('/')[-1]
         file_path = f"./static/img/{performance.kopis_id}/{file_name}"
-        images_path.append(file_path)
+        if os.path.exists(file_path):
+            images_path.append(file_path)
 
     # 이미지 데이터를 Base64로 인코딩
     base64_images = []

@@ -25,18 +25,11 @@ document.getElementById('accountsForm').addEventListener('submit', function (eve
             if (!response.ok) {
                 return response.json().then(errors => {
                     alert(errors.message);
-                    //document.getElementById('response').innerText = errors.message;
-                    //throw new Error(errors.message);
                 });
             }
-            // console.log(response)
-            // if (!response.ok) {
-            //     throw response.json('message');
-            // }
             return response.json();
         })
         .then(data => {
-            // document.getElementById('response').innerText = 'User created:' + data.message;
             document.cookie = `user_id=${data.user_id}; path=/`;
             saveToken(data.access, data.refresh, data.user_id);
             let myModal = new bootstrap.Modal(document.getElementById('signup'));

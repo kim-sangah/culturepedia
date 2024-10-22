@@ -61,6 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         recommendations.forEach(performance => {
             console.log(performance)
             const card = `
+                <div class="col-12 mb-2">
                 <div class="card">
                     <img class="card-img-top" src="${performance.poster}" alt="${performance.title} 포스터">
                     <div class="card-body">
@@ -71,6 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <p class="card-facility-name">${performance.facility}</p>
                         <p class="card-hashtags">해시태그: ${performance.hashtags.join(', ')}</p>
                     </div>
+                </div>
                 </div>
             `;
             recommendationsContainer.innerHTML += card;

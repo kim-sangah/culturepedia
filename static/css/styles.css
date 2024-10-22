@@ -151,3 +151,5 @@ color: #F79426;
 .rating > input:checked ~ label:hover ~ label {
 color: #FECE31;
 }
+
+.nav-item { margin-right: 1rem; }

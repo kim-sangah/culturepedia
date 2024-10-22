@@ -141,6 +141,14 @@ class PerformanceDetailAPIView(APIView):
 class PerformanceLikeView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, request, pk):
+        performance = get_object_or_404(Performance, pk=pk)
+        user = request.user
+
+        liked = PerformanceLike.objects.filter(user=user, performance=performance).exists()
+
+        return Response({"liked": liked}, status=status.HTTP_200_OK)
+
     def post(self, request, pk):
         performance = get_object_or_404(Performance, pk=pk)
         user = request.user
@@ -155,8 +163,7 @@ class PerformanceLikeView(APIView):
         performance = get_object_or_404(Performance, pk=pk)
         user = request.user
 
-        like = get_object_or_404(
-            PerformanceLike, user=user, performance=performance)
+        like = get_object_or_404(PerformanceLike, user=user, performance=performance)
         like.delete()
         return Response({"message": "찜한 공연목록에서 제외되었습니다"}, status=status.HTTP_200_OK)
 

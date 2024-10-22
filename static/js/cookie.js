@@ -45,18 +45,19 @@ function checkUserAuthentication() {
     const createReviewBtn = document.getElementById('create-review-btn');
     const LikeBtn = document.getElementById('like-btn');
 
+    console.log(navSigninBtn, navSignupBtn, navSignoutBtn, navProfileBtn, navRecommendationsBtn, createReviewBtn, LikeBtn);
+
     if (!token.accessToken) {
         // 토큰이 없는 경우
-        navSigninBtn.style.display = 'block';
-        navSignupBtn.style.display = 'block';
-        navSignoutBtn.style.display = 'none';
-        navProfileBtn.style.display = 'none';
-        navRecommendationsBtn.style.display = 'none';
-        createReviewBtn.style.display = 'none';
-        LikeBtn.style.display = 'none';
+        if (navSigninBtn) navSigninBtn.style.display = 'block';
+        if (navSignupBtn) navSignupBtn.style.display = 'block';
+        if (navSignoutBtn) navSignoutBtn.style.display = 'none';
+        if (navProfileBtn) navProfileBtn.style.display = 'none';
+        if (navRecommendationsBtn) navRecommendationsBtn.style.display = 'none';
+        if (createReviewBtn) createReviewBtn.style.display = 'none';
+        if (LikeBtn) LikeBtn.style.display = 'none';
         return;
     }
-
     // JWT 토큰을 Authorization 헤더에 추가하여 API 요청
     fetch('/api/performances/api/user/status/', {
         method: 'GET',
@@ -66,21 +67,21 @@ function checkUserAuthentication() {
     })
         .then(response => {
             if (response.ok) {
-                navSigninBtn.style.display = 'none';
-                navSignupBtn.style.display = 'none';
-                navSignoutBtn.style.display = 'block';
-                navProfileBtn.style.display = 'block';
-                navRecommendationsBtn.style.display = 'block';
-                createReviewBtn.style.display = 'block';
-                LikeBtn.style.display = 'block';
+                if (navSigninBtn) navSigninBtn.style.display = 'none';
+                if (navSignupBtn) navSignupBtn.style.display = 'none';
+                if (navSignoutBtn) navSignoutBtn.style.display = 'block';
+                if (navProfileBtn) navProfileBtn.style.display = 'block';
+                if (navRecommendationsBtn) navRecommendationsBtn.style.display = 'block';
+                if (createReviewBtn) createReviewBtn.style.display = 'block';
+                if (LikeBtn) LikeBtn.style.display = 'block';
             } else {
-                navSigninBtn.style.display = 'block';
-                navSignupBtn.style.display = 'block';
-                navSignoutBtn.style.display = 'none';
-                navProfileBtn.style.display = 'none';
-                navRecommendationsBtn.style.display = 'none';
-                createReviewBtn.style.display = 'none';
-                LikeBtn.style.display = 'none';
+                if (navSigninBtn) navSigninBtn.style.display = 'block';
+                if (navSignupBtn) navSignupBtn.style.display = 'block';
+                if (navSignoutBtn) navSignoutBtn.style.display = 'none';
+                if (navProfileBtn) navProfileBtn.style.display = 'none';
+                if (navRecommendationsBtn) navRecommendationsBtn.style.display = 'none';
+                if (createReviewBtn) createReviewBtn.style.display = 'none';
+                if (LikeBtn) LikeBtn.style.display = 'none';
             }
         })
         .catch(error => console.error('Error fetching user status:', error));

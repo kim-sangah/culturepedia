@@ -1,5 +1,4 @@
 
-const heartIcon = document.getElementById('heart-icon');
 
 function getQueryParameter(param) {
     let urlParams = new URLSearchParams(window.location.search);
@@ -331,57 +330,10 @@ function handlePerformanceLike(currentUserId) {
 
 const performance_id = getQueryParameter('performance_id');
 
+let heartIcon;
 window.onload = function () {
     // 공연 상세 정보 조회
-    fetch(`/api/performances/detail/${performance_id}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            checkUserAuthentication();
-            var result = document.getElementById('result');
-            result.innerHTML = '';  // 기존 내용을 비웁니다
-            result.innerHTML += `
-            <div class="card mb-4" style="height: 300px;">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <div><img src="${data.poster}" class="img-fluid rounded-start" alt="${data.title}" style="height: 280px"></div>
-                    </div>
-                    <div class="col-md-8 d-flex">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">${data.title}</h5>
-                            <p class="card-text">${data.facility_name}</p>
-                            <p class="card-text">${data.start_date} ~ ${data.end_date}</p>
-                            <p class="card-text">${data.runtime}</p>
-                            <p class="card-text">${data.dtguidance}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `
-            var information = document.getElementById('information');
-            var styurl = data.styurls.styurl
-            information.innerHTML = '';
-            if (Array.isArray(styurl)) {
-                for (let i = 0; i < styurl.length; i++) {
-                    information.innerHTML += `
-                    <img src="${styurl[i]}" class="img-fluid" alt="${data.title}">
-                `;
-                }
-            } else {
-                information.innerHTML += `
-                <img src="${styurl}" class="img-fluid" alt="${data.title}">
-            `;
-            }
-        });
+    fetchPerformanceDetails();
 
     // 리뷰 작성 버튼에 event listener 추가
     const createReviewBtn = document.getElementById('create-review-btn');
@@ -390,36 +342,169 @@ window.onload = function () {
         handleReviewCreate();
     });
 
-    // 리뷰 조회, 리뷰 업로드 핸들링
-    document.addEventListener("DOMContentLoaded", async () => {
-        try {
-            const currentUserId = await fetchCurrentUserId();
-
-            if (currentUserId) {
-                checkUserAuthentication();
-                fetchReviews(currentUserId);
-                handleReviewSubmit(currentUserId);
-            } else {
-                console.error('User is not authenticated');
-            }
-        } catch (error) {
-            console.error('Error fetching user ID:', error);
-        }
-    });
-
     // 찜하기 버튼에 event listener 추가
     const performanceLikeBtn = document.getElementById('performance-like-btn');
     performanceLikeBtn.addEventListener('click', async (event) => {
         event.preventDefault();
-        try {
-            const currentUserId = await fetchCurrentUserId();
-            if (currentUserId) {
-                handlePerformanceLike(currentUserId);
-            } else {
-                console.error('User is not authenticated');
-            }
-        } catch (error) {
-            console.error('Error fetching user ID:', error);
-        }
+        await toggleLikeStatus();
     });
 };
+
+async function fetchPerformanceDetails() {
+    try {
+        const response = await fetch(`/api/performances/detail/${performance_id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+        displayPerformanceDetails(data);
+        checkUserAuthentication();
+        await initializeLikeStatus();
+    } catch (error) {
+        console.error('Error fetching performance details:', error);
+    }
+}
+
+function displayPerformanceDetails(data) {
+    const result = document.getElementById('result');
+    result.innerHTML = `
+        <div class="card mb-4" style="height: 300px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="${data.poster}" class="img-fluid rounded-start" alt="${data.title}" style="height: 280px">
+                </div>
+                <div class="col-md-8 d-flex">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">${data.title}</h5>
+                        <p class="card-text">${data.facility_name}</p>
+                        <p class="card-text">${data.start_date} ~ ${data.end_date}</p>
+                        <p class="card-text">${data.runtime}</p>
+                        <p class="card-text">${data.dtguidance}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const information = document.getElementById('information');
+    const styurl = data.styurls.styurl;
+    information.innerHTML = Array.isArray(styurl) ? styurl.map(url => `<img src="${url}" class="img-fluid" alt="${data.title}">`).join('') : `<img src="${styurl}" class="img-fluid" alt="${data.title}">`;
+}
+
+async function initializeLikeStatus() {
+    heartIcon = document.getElementById('heart-icon');
+    const likeStatus = await checkLikeStatus(performance_id);
+    updateLikeButtonStyle(likeStatus.liked, heartIcon);
+}
+
+async function toggleLikeStatus() {
+
+    try {
+        const currentUserId = await fetchCurrentUserId();
+        if (!currentUserId) {
+            console.error('User is not authenticated');
+            return;
+        }
+
+        const likeStatus = await checkLikeStatus(performance_id);
+        console.log('Current like status:', likeStatus);
+
+        let result;
+        if (likeStatus.liked) {
+            result = await handlePerformanceUnlike(performance_id);
+            console.log('Unlike action result:', result);
+        } else {
+            result = await handlePerformanceLike(performance_id);
+            console.log('Like action result:', result);
+        }
+        
+        updateLikeButtonStyle(!likeStatus.liked, heartIcon); // 버튼 스타일 업데이트
+    } catch (error) {
+        console.error('Error during toggle like status:', error);
+    }
+}
+
+async function checkLikeStatus(performanceId) {
+    try {
+        const response = await fetch(`/api/performances/detail/${performanceId}/like/`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${getJwtTokens().accessToken}`,
+            },
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch like status');
+        }
+        const data = await response.json();
+        return data; // 좋아요 상태 반환 (예: { liked: true })
+    } catch (error) {
+        console.error('Error fetching like status:', error);
+        throw error;
+    }
+}
+// 좋아요 추가하는 함수
+async function handlePerformanceLike(performanceId) {
+    try {
+        const response = await fetch(`/api/performances/detail/${performanceId}/like/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getJwtTokens().accessToken}`,
+            },
+        });
+        if (!response.ok) {
+            throw new Error('Failed to like the performance');
+        }
+        const data = await response.json();
+        return data; // 결과 반환
+    } catch (error) {
+        console.error('Error liking performance:', error);
+        throw error; // 에러 발생 시 상위로 전달
+    }
+}
+// 좋아요 취소하는 함수
+async function handlePerformanceUnlike(performanceId) {
+    try {
+        const response = await fetch(`/api/performances/detail/${performanceId}/like/`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${getJwtTokens().accessToken}`,
+            },
+        });
+        if (!response.ok) {
+            throw new Error('Failed to unlike the performance');
+        }
+        const data = await response.json();
+        return data; // 결과 반환
+    } catch (error) {
+        console.error('Error unliking performance:', error);
+        throw error; // 에러 발생 시 상위로 전달
+    }
+}
+
+// 좋아요 상태에 따라 버튼 스타일을 업데이트하는 함수
+function updateLikeButtonStyle(isLiked) {
+    if (isLiked) {
+        heartIcon.style.color = 'red' ; // 좋아요가 눌린 경우
+    } else {
+        heartIcon.style.color = ''; // 기본 스타일로 되돌리기
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

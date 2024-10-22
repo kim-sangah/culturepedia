@@ -45,8 +45,6 @@ function checkUserAuthentication() {
     const createReviewBtn = document.getElementById('create-review-btn');
     const LikeBtn = document.getElementById('like-btn');
 
-    console.log(navSigninBtn, navSignupBtn, navSignoutBtn, navProfileBtn, navRecommendationsBtn, createReviewBtn, LikeBtn);
-
     if (!token.accessToken) {
         // 토큰이 없는 경우
         if (navSigninBtn) navSigninBtn.style.display = 'block';

@@ -1,3 +1,6 @@
+
+const heartIcon = document.getElementById('heart-icon');
+
 function getQueryParameter(param) {
     let urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
@@ -6,7 +9,7 @@ function getQueryParameter(param) {
 // 공연 리뷰 받아오고 render, 인증 상태에 따라 각 리뷰 안에 수정, 삭제 버튼 추가
 // 리뷰마다 수정/삭제 버튼에 고유 아이디 부여하고 버튼 클릭되면 리뷰 수정/리뷰 삭제 함수 호출
 function fetchReviews(currentUserId) {
-    fetch(`http://127.0.0.1:8000/api/performances/detail/${performance_id}/`, {
+    fetch(`/api/performances/detail/${performance_id}/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -264,24 +267,66 @@ function handlePerformanceLike(currentUserId) {
     }
 
     fetch(`/api/performances/detail/${performance_id}/like/`, {
-        method: 'POST',
+        method: 'GET',
         headers: {
-            'Authorization': `Bearer ${getJwtTokens().accessToken}`,
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getJwtTokens().accessToken}`,
         }
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('공연 찜하기 성공: ', data);
-            // 공연 찜하기 성공시 UI 업데이트
-            const performanceLikeBtn = document.getElementById('performance-like-btn');
-            heartIcon.style.color = 'red'; // 하트 아이콘 빨간색으로 변경
-        })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch likes');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const liked = data.liked;
+    
+        if (liked) {
+            heartIcon.style.color = 'red';
+            // 사용자가 이미 좋아요를 눌렀다면 좋아요 해제
+            fetch(`/api/performances/detail/${performance_id}/like/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getJwtTokens().accessToken}`,
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to remove like');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Like removed:', data);
+                heartIcon.style.color = '' // 좋아요 버튼 스타일 변경
+            })
+            .catch(error => console.error('Error removing like:', error));
+        } else {
+            heartIcon.style.color = '';
+            // 사용자가 좋아요를 누르지 않았다면 좋아요 추가
+            fetch(`/api/performances/detail/${performance_id}/like/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getJwtTokens().accessToken}`,
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to add like');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Like added:', data);
+                heartIcon.style.color = 'red' // 좋아요 버튼 스타일 변경
+            })
+            .catch(error => console.error('Error adding like:', error));
+        }
+    })
+    .catch(error => console.error('Error fetching likes:', error));
 }
 
 const performance_id = getQueryParameter('performance_id');

@@ -32,7 +32,6 @@ document.getElementById('accountupdateForm').addEventListener('submit', function
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${token.access}`,
-
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(userData)

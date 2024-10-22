@@ -30,7 +30,7 @@ OPENAI_API_KEY = config.OPENAI_API_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.Debug
 
-ALLOWED_HOSTS = ['43.201.38.42', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['43.201.38.42', '127.0.0.1', 'localhost', 'culturepedia.info']
 
 # Application definition
 INSTALLED_APPS = [
@@ -64,6 +64,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    'http://culturepedia.info',
     'http://43.201.38.42',
     'http://127.0.0.1:8000',
     'http://localhost:8000',

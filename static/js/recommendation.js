@@ -3,6 +3,7 @@ function getQueryParameter(param) {
     return urlParams.get(param);
 }
 
+
 document.addEventListener("DOMContentLoaded", async () => {
     const checkboxes = document.querySelectorAll('.tag-checkbox');
     const recommendationBtn = document.querySelector('#recommendation-btn');
@@ -17,6 +18,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        // 유저가 태그 입력하기 전 페이지 처음 로드될 때 리뷰하거나 찜한 공연 바탕으로 추천 공연 리스트 미리 표시
+        await fetchRecommendations(userId, []);
+
+        // 유저가 태그 입력하고 공연 추천 받기 버튼 클릭하면 입력받은 태그로 공연 추천
         recommendationBtn.addEventListener('click', async (event) => {
             event.preventDefault();
 
@@ -24,42 +29,56 @@ document.addEventListener("DOMContentLoaded", async () => {
                 .filter(checkbox => checkbox.checked)
                 .map(checkbox => checkbox.labels[0].textContent);
 
-            const userData = {
-                input_tags: selectedTags
-            };
-
             try {
-                // 추천 공연 받아오기
-                const token = getJwtTokens();
-
-                const response = await fetch(`/api/performances/recommend/${userId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token.accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(userData)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const data = await response.json();
-                generateRecommendations(data.recommendations);
+                await fetchRecommendations(userId, selectedTags);
             } catch (error) {
                 console.error('Error generating recommendations:', error);
             }
         });
+
     } catch (error) {
         console.error('Error fetching user ID:', error);
+    }
+
+    async function fetchRecommendations(userId, inputTags) {
+        try {
+            const token = getJwtTokens();
+
+            const response = await fetch(`/api/performances/recommend/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token.accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ input_tags: inputTags })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                displayErrorMessage(data.error);
+                return;
+            }
+
+            generateRecommendations(data.recommendations);
+        } catch (error) {
+            console.error('Error fetching recommendations:', error);
+        }
+    }
+
+    function displayErrorMessage(errorMessage) {
+        const recommendationsContainer = document.getElementById('recommendations-container');
+        recommendationsContainer.innerHTML = `
+            <div class="error-message">
+                <p>${errorMessage}</p>
+            </div>
+        `;
     }
 
     function generateRecommendations(recommendations) {
         recommendationsContainer.innerHTML = '';
 
         recommendations.forEach(performance => {
-            console.log(performance)
             const card = `
                 <div class="card">
                     <img class="card-img-top" src="${performance.poster}" alt="${performance.title} 포스터">
@@ -77,4 +96,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 });
+
+
 

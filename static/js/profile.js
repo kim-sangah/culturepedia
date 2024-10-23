@@ -3,6 +3,7 @@ function getQueryParameter(param) {
     return urlParams.get(param);
 }
 
+
 // 회원 탈퇴 기능
 function handleAccountDelete() {
     // Bootstrap JS함수로 회원 탈퇴 modal 보여주기
@@ -103,6 +104,67 @@ function handleAccountDelete() {
     }
 }
 
+// 리뷰 수정 기능
+function handleReviewEdit(reviewId) {
+    editedReviewData = {
+        title: document.getElementById(`review-title-${reviewId}`).value,
+        content: document.getElementById(`review-content-${reviewId}`).value,
+        rating: document.querySelector('input[name="rating"]:checked').value,
+    }
+
+    console.log(reviewId)
+    // put request 보내 리뷰 수정
+    fetch(`/api/performances/detail/review/${reviewId}/`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getJwtTokens().accessToken}`,
+        },
+        body: JSON.stringify(editedReviewData)
+    })
+        .then(response => response.json())
+        .then(data => {
+            location.reload()
+        })
+        .catch(error => console.error('Error updating review:', error));
+}
+
+
+// 리뷰 삭제 기능
+function handleReviewDelete(reviewId) {
+    // Bootstrap JS함수로 리뷰 삭제 modal 보여주기
+    $('#deleteReviewModal').modal('show');
+
+    const deleteReviewConfirmBtn = document.getElementById(`delete-review-btn-${reviewId}`);
+    // 이전에 설정해놓은 eventListener 없애서 한 번만 eventListener 추가되게함
+    deleteReviewConfirmBtn.removeEventListener('click', handleDeleteConfirm);
+    deleteReviewConfirmBtn.addEventListener('click', handleDeleteConfirm);
+
+    function handleDeleteConfirm(event) {
+        event.preventDefault();
+
+        // 리뷰 삭제
+        fetch(`/api/performances/detail/review/${reviewId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${getJwtTokens().accessToken}`,
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Review deletion failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                location.reload()
+
+            })
+            .catch(error => console.error('Error deleting review:', error));
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const userInfoContainer = document.getElementById('user-info-container');
     const userReviewsLikesContainer = document.getElementById('user-reviews-likes-container');
@@ -169,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 유저가 작성한 리뷰 표시
         userReviewsContainer.innerHTML = '';
         data.reviews.forEach(review => {
-            let starRatingHtml = ''
+            let starRatingHtml = '';
             for (let j = 1; j <= 5; j++) {
                 if (j <= review.rating) {
                     starRatingHtml += `<i class="fas fa-star text-warning"></i>`;
@@ -184,9 +246,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="reviewed-performance-poster">
                         <img src="${review.performance.poster}">
                     </div>
-                    <h5 class="card-title">${review.title}</h5>
-                    <div class="rating">${starRatingHtml}</div>
-                    <p class="card-text">${review.content}</p>
+                    <input type="text" class="form-control" id="review-title-${review.id}" value="${review.title}" placeholder="리뷰 제목">
+                    <div id="rating" class="rating">
+                        <input type="radio" id="star5" name="rating" value="5" ${review.rating === 5 ? 'checked' : ''}>
+                        <label for="star5">5점</label>
+                        <input type="radio" id="star4" name="rating" value="4" ${review.rating === 4 ? 'checked' : ''}>
+                        <label for="star4">4점</label>
+                        <input type="radio" id="star3" name="rating" value="3" ${review.rating === 3 ? 'checked' : ''}>
+                        <label for="star3">3점</label>
+                        <input type="radio" id="star2" name="rating" value="2" ${review.rating === 2 ? 'checked' : ''}>
+                        <label for="star2">2점</label>
+                        <input type="radio" id="star1" name="rating" value="1" ${review.rating === 1 ? 'checked' : ''}>
+                        <label for="star1">1점</label>
+                    </div>
+                    <textarea class="form-control" id="review-content-${review.id}" rows="3" placeholder="리뷰 내용">${review.content}</textarea>
                     <button class="btn btn-primary edit-review-btn" id="edit-review-btn-${review.id}" data-review-id="${review.id}">리뷰 수정</button>
                     <button class="btn btn-danger delete-review-btn" id="delete-review-btn-${review.id}" data-review-id="${review.id}">리뷰 삭제</button>
                 </div>
@@ -194,6 +267,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
 
             userReviewsContainer.innerHTML += reviewHtml;
+
+            // 리뷰 수정 버튼에 이벤트 리스너 추가
+            const editReviewBtn = document.getElementById(`edit-review-btn-${review.id}`);
+            editReviewBtn.addEventListener('click', () => {
+                handleReviewEdit(review.id);
+            });
+
+            // 리뷰 삭제 버튼에 이벤트 리스너 추가
+            const deleteReviewBtn = document.getElementById(`delete-review-btn-${review.id}`);
+            deleteReviewBtn.addEventListener('click', () => {
+                handleReviewDelete(review.id);
+            });
         });
 
         // 유저가 좋아요한 공연 표시

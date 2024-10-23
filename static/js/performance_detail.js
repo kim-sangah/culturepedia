@@ -329,6 +329,7 @@ let heartIcon;
 window.onload = function () {
     // 공연 상세 정보 조회
     fetchPerformanceDetails();
+    fetchReviews();
 
     // 리뷰 작성 버튼에 event listener 추가
     const createReviewBtn = document.getElementById('create-review-btn');

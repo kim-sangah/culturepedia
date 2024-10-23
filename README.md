@@ -118,7 +118,7 @@ It is a platform that allows you to conveniently explore cultural content contai
 
 ## Full Technology Stack Overview
 - Backend: Python, Django REST Framework (DRF), LLM
-- Frontend: HTML, CSS, Bootstrap
+- Frontend: HTML, CSS, JS, Bootstrap
 - Database: SQLite, PostgreSQL
 - Version Control: Github, AWS
 - IDE: VSCode

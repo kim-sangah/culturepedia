@@ -119,7 +119,7 @@ It is a platform that allows you to conveniently explore cultural content contai
 ## Full Technology Stack Overview
 - Backend: Python, Django REST Framework (DRF), LLM
 - Frontend: HTML, CSS, Bootstrap
-- Database: SQLite
+- Database: SQLite, PostgreSQL
 - Version Control: Github, AWS
 - IDE: VSCode
 - APIs Used: KOPIS API (Korea Performance Information System), OpenAI API

@@ -26,7 +26,7 @@ window.onload = function () {
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
-                                <h5 class="card-title"><a href="http://127.0.0.1:8000/static/performance_detail.html?performance_id=${item.공연ID}">${item.공연명}</a></h5>
+                                <h5 class="card-title">${item.공연명}</h5>
                                 <p class="card-text">${item.공연기간}</p>
                                 <p class="card-text"><small class="text-body-secondary">${item.장르}</small></p>
                             </div>

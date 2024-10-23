@@ -194,6 +194,7 @@ It is a platform that allows you to conveniently explore cultural content contai
   - Users can edit reviews they have written.
 - Delete Reviews
   - Users can delete reviews they have written.
+  ![리뷰](https://github.com/user-attachments/assets/aab00e62-a5c2-4c4a-bb8a-5fb25ac0f05e)
 - Add to Favorites
   - Users can add performances to their favorites list.
 - Remove from Favorites

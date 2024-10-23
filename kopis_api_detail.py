@@ -19,21 +19,6 @@ performancedetail_res = []
 existing_ids = set()
 performance_ids = list(Performlist.objects.values_list('kopis_id', flat=True))  # DB 저장된 공연 kopis_id 리스트
 
-
-# def download_images(img_list):
-#     img_folder = './static'
-#     if not os.path.exists(img_folder):
-#         os.makedirs(img_folder)
-        
-#     for url in img_list:
-#         file_name = url.split('/')[-1]
-#         file_path = os.path.join(img_folder, file_name)
-        
-#         if not os.path.exists(file_path):
-#             urlretrieve(url, file_path)
-#         else:
-#             pass
-
 # 이미지 리사이즈
 def resizing_images(url_list, quality=85):      # quaility: 70 ~ 90사이  기본값 85
     
@@ -115,7 +100,6 @@ for performance_code in performance_ids:
                     else:
                         images.append(styurls["styurl"])
                 if images:
-                    # download_images(images) 
                     resizing_images(images)        
 
                 try:

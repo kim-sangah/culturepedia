@@ -119,6 +119,7 @@ class UserProfileView(APIView):
         user.delete()
         return Response({"message": "회원탈퇴가 완료되었습니다."}, status=status.HTTP_200_OK)
 
+
 # 비밀번호 체크
 class PasswordCheckView(APIView):
     permission_classes = [IsAuthenticated]

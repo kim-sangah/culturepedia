@@ -1,11 +1,7 @@
 from django.conf import settings
 from openai import OpenAI
-import openai
 from .models import Performance, Hashtag
 from django.db.models import Q
-from PIL import Image
-import requests
-from io import BytesIO
 import base64
 import os
 
@@ -51,7 +47,6 @@ def generate_recommendations(user_preferences, input_tags):
             })
 
     return recommended_performances
-
 
 
 # 데이터가 없는(리뷰를 작성하거나 찜한 공연이 없는) 사용자로부터 입력받은 해시태그로만 공연 추천 (openai 사용 X)

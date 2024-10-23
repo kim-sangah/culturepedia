@@ -59,8 +59,6 @@ def endpoint_script(url):
 
 
 # 실행 순서 (공연목록 > 공연장 > 공연상세)
-
-
 def process_scripts():
     # 1. kopis_api.py 실행
     if run_script('kopis_api.py'):
@@ -90,7 +88,7 @@ def start_scheduler():
         # 매일 자정 procees_scripts 실행
         scheduler.add_job(
             process_scripts,
-            trigger=CronTrigger(hour=00, minute=00),
+            trigger=CronTrigger(hour=16, minute=58),
             id='process_scripts',
             max_instances=1,
             replace_existing=True,

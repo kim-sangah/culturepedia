@@ -47,7 +47,6 @@ class Performance(models.Model):
     musicalcreate = models.CharField(max_length=2)
     dtguidance = models.TextField(null=True)
     poster = models.TextField(null=True)
-    # styurl = models.TextField(null=True) JSONField 'styurls'로 수정. styurls 리스트 안에 여러 개의 styurl이 있는 경우 있음
     styurls = models.JSONField(null=True, blank=True)
 
     def __str__(self):

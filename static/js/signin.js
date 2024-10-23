@@ -42,8 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(error => {
                 console.error('Error:', error);
-                // let result = document.getElementById('result');
-                // result.innerHTML = `<div style="color:red;">Login failed. Please check your credentials.</div>`;
             });
     });
 });

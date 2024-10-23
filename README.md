@@ -241,7 +241,7 @@ It is a platform that allows you to conveniently explore cultural content contai
 - Profile Page
   - Implement a page where users can view and edit their profile information.
 
-### Database (SQLite, MySQL)
+### Database (SQLite, Postgres)
 - Review Table
   - Stores review data for each performance.
 - Favorites Table

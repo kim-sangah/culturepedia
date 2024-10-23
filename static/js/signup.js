@@ -9,7 +9,6 @@ document.getElementById('accountsForm').addEventListener('submit', function (eve
         password: document.getElementById('password').value,
         username: document.getElementById('username').value,
         gender: document.getElementById('gender').value,
-        // birthday: document.getElementById('birthday').value,
         birthday: birthday
     };
 

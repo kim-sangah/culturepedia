@@ -39,8 +39,6 @@ document.getElementById('accountupdateForm').addEventListener('submit', function
             if (!response.ok) {
                 return response.json().then(errors => {
                     alert(errors.message);
-                    //document.getElementById('response').innerText = errors.message;
-                    //throw new Error(errors.message);
                 });
             }
             return response.json();

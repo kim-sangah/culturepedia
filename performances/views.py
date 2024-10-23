@@ -13,10 +13,8 @@ from .serializers import PerformanceListSerializer, PerformanceDetailSerializer,
 from culturepedia import settings
 import xml.etree.ElementTree as ET
 from datetime import datetime
-from openai import OpenAI
 from django.conf import settings
 from .bots import generate_hashtags_for_performance, generate_recommendations, generate_recommendations_with_tags
-from rest_framework.renderers import TemplateHTMLRenderer
 
 
 API_KEY = settings.API_KEY
@@ -32,23 +30,17 @@ class UserStatusView(APIView):
             'user_id': user.id,
         })
 
+
 # 공연 목록 조회
-
-
 class OPENAPIViews(APIView):
-    # renderer_classes = [TemplateHTMLRenderer]
-    # template_name = 'performances/performances_list.html'
 
     def get(self, request, *args, **kwarg):
         # 공연 목록 조회
         performance_list = self.get_ticket_sales()
         if performance_list is not None:
             return Response(performance_list, status=status.HTTP_200_OK)
-            # return Response({'performances': performance_list})
-            # return render(request, 'performances/index.html', {'performances': performance_list})
         else:
             return Response({'error': '공연 목록을 불러오지 못했습니다.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            # return HttpResponseServerError('공연 목록을 불러오지 못했습니다.')
 
     def get_ticket_sales(self):
         # 예매상황판 (유료 공연 티켓 판매율 기준으로 집계됨) 조회
@@ -100,7 +92,6 @@ class PerformancePagination(PageNumberPagination):
 class PerformanceSearchAPIView(APIView):
     def get(self, request):
         query = request.GET.get('keyword')
-        # type = request.GET.get('type')
         performances = Performance.objects.all()
 
         if query:
@@ -111,10 +102,6 @@ class PerformanceSearchAPIView(APIView):
                 Q(cast__icontains=query)  # 공연출연진
             )
 
-        # if type:
-        #     performances = performances.filter(type=type)
-
-        # if not query and not type:
         else:
             performances = Performance.objects.all()
 
